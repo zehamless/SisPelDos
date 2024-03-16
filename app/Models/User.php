@@ -3,24 +3,40 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser, HasName
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasUlids;
 
+    protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nama',
         'email',
         'password',
+        'no_induk',
+        'no_hp',
+        'jenis_kelamin',
+        'universitas',
+        'prodi',
+        'jabatan_fungsional',
+        'pendidikan_tertinggi',
+        'status_kerja',
+        'status_dosen',
+        'status_akun',
+        'pembayaran',
     ];
 
     /**
@@ -42,4 +58,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // TODO: Implement canAccessPanel() method.
+        return $this->role === 'admin';
+    }
+
+    public function getFilamentName(): string
+    {
+        // TODO: Implement getFilamentName() method.
+        return $this->nama;
+    }
 }
