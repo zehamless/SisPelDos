@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PelatihanResource\Pages;
+use App\Filament\Resources\PelatihanResource\Pages\EditPelatihan;
+use App\Filament\Resources\PelatihanResource\RelationManagers\MateriRelationManager;
 use App\Models\Pelatihan;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -18,6 +20,9 @@ use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -39,7 +44,8 @@ class PelatihanResource extends Resource
     protected static ?string $model = Pelatihan::class;
 
     protected static ?string $slug = '';
-
+    protected static ?string $cluster = \App\Filament\Clusters\Pelatihan::class;
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -212,8 +218,9 @@ class PelatihanResource extends Resource
         return [
             'index' => Pages\ListPelatihans::route('/'),
             'create' => Pages\CreatePelatihan::route('/create'),
-            'edit' => Pages\EditPelatihan::route('/{record}/edit'),
+            'edit' => EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
+            'materi' => Pages\ManageMateri::route('/{record}/materi'),
         ];
     }
 
@@ -229,4 +236,19 @@ class PelatihanResource extends Resource
     {
         return ['slug'];
     }
+
+    public static function getRecordSubNavigation(Page $page):array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewPelatihan::class,
+            EditPelatihan::class,
+            Pages\ManageMateri::class,
+        ]);
+    }
+//    public static function getRelations(): array
+//    {
+//        return[
+//
+//        ];
+//    }
 }
