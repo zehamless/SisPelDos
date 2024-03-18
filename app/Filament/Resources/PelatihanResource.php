@@ -13,6 +13,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -146,6 +151,7 @@ class PelatihanResource extends Resource
                 TrashedFilter::make(),
             ])
             ->actions([
+                \Filament\Tables\Actions\ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
                 RestoreAction::make(),
@@ -160,12 +166,54 @@ class PelatihanResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                \Filament\Infolists\Components\Section::make()
+                    ->schema([
+                        Grid::make(3)
+                            ->schema([
+                                Group::make([
+                                    TextEntry::make('judul')
+                                        ->label('Judul'),
+                                    TextEntry::make('slug')
+                                        ->label('Slug'),
+                                ]),
+                                Group::make([
+                                    TextEntry::make('tgl_mulai')
+                                        ->label('Tanggal Mulai')
+                                        ->dateTime('d M Y')
+                                        ->badge()
+                                        ->color('success'),
+                                    TextEntry::make('tgl_selesai')
+                                        ->label('Tanggal Selesai')
+                                        ->dateTime('d M Y')
+                                        ->badge()
+                                        ->color('danger'),
+                                ]),
+                                Group::make([
+                                    ImageEntry::make('sampul')
+                                        ->label('Sampul'),
+                                ])
+                            ])
+                    ]),
+                \Filament\Infolists\Components\Section::make('Deskripsi')
+                    ->schema([
+                        TextEntry::make('deskripsi')
+                            ->hiddenLabel()
+                            ->html(),
+                    ]),
+            ]);
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListPelatihans::route('/'),
             'create' => Pages\CreatePelatihan::route('/create'),
             'edit' => Pages\EditPelatihan::route('/{record}/edit'),
+            'view' => Pages\ViewPelatihan::route('/{record}'),
         ];
     }
 
