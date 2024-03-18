@@ -22,8 +22,8 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -135,15 +135,17 @@ class PelatihanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('judul'),
-
-                TextColumn::make('sampul'),
-
+                TextColumn::make('judul')
+                ->words(5)
+                    ->searchable(),
+                TextColumn::make('sampul')
+                ->limit(20),
                 TextColumn::make('slug')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('deskripsi'),
+                TextColumn::make('deskripsi')
+                ->limit(50),
 
                 TextColumn::make('tgl_mulai')
                     ->date(),
@@ -157,11 +159,13 @@ class PelatihanResource extends Resource
                 TrashedFilter::make(),
             ])
             ->actions([
-                \Filament\Tables\Actions\ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-                RestoreAction::make(),
-                ForceDeleteAction::make(),
+                ActionGroup::make([
+                    \Filament\Tables\Actions\ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                    RestoreAction::make(),
+                    ForceDeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -237,7 +241,7 @@ class PelatihanResource extends Resource
         return ['slug'];
     }
 
-    public static function getRecordSubNavigation(Page $page):array
+    public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
             Pages\ViewPelatihan::class,
