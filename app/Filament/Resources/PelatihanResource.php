@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PelatihanResource\Pages;
 use App\Models\Pelatihan;
-use App\Models\Periode;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -28,13 +28,12 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class PelatihanResource extends Resource
 {
     protected static ?string $model = Pelatihan::class;
 
-    protected static ?string $slug = 'pelatihans';
+    protected static ?string $slug = '';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -57,14 +56,14 @@ class PelatihanResource extends Resource
                         TextInput::make('judul')
                             ->label('Judul')
                             ->required()
-                            ->live()
+                            ->live(onBlur: true)
                             ->afterStateUpdated(function (Set $set, $state) {
                                 $set('slug', Str::slug($state));
                             }),
 
                         TextInput::make('slug')
                             ->label('Slug')
-                            ->unique('pelatihans', 'slug')
+                            ->unique('pelatihans', 'slug', ignoreRecord: true)
                             ->readOnly(),
 
                         DatePicker::make('tgl_mulai')
@@ -85,6 +84,31 @@ class PelatihanResource extends Resource
                             ->relationship('periode', 'tahun_ajar')
                             ->label('Periode')
                             ->required(),
+                        Select::make('jenis_pelatihan')
+                            ->label('Jenis Pelatihan')
+                            ->options([
+                                'dosen_lokal' => 'Dosen Lokal',
+                                'dosen_luar' => 'Dosen Luar',
+                                'semua' => 'Semua',
+                            ])
+                            ->required()
+                            ->default('semua'),
+                        FileUpload::make('sampul')
+                            ->label('Sampul')
+                            ->hint('Pastikan Ukuran gambar 16:9')
+                            ->image()
+                            ->imageEditor()
+                            ->imageEditorAspectRatios([
+                                '16:9',
+                                '4:3',
+                                '1:1',
+                            ])
+                            ->previewable()
+                            ->disk('public')
+                            ->directory('pelatihan-sampul')
+                            ->visibility('public')
+                            ->maxSize(2048)
+                            ->columnSpan(2),
                         RichEditor::make('deskripsi')
                             ->label('Deskripsi')
                             ->fileAttachmentsDisk('public')
