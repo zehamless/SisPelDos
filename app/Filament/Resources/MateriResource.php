@@ -112,6 +112,7 @@ class MateriResource extends Resource
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('jenis', 'materi'))
             ->deferFilters()
             ->defaultSort('urutan')
             ->reorderable('urutan');
