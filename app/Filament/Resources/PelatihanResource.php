@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PelatihanResource\Pages;
 use App\Filament\Resources\PelatihanResource\Pages\EditPelatihan;
+use App\Filament\Resources\PelatihanResource\RelationManagers\AllTugasRelationManager;
 use App\Filament\Resources\PelatihanResource\RelationManagers\MateriRelationManager;
 use App\Models\Pelatihan;
 use Filament\Forms\Components\DatePicker;
@@ -251,10 +252,10 @@ class PelatihanResource extends Resource
             Pages\ManageTugas::class,
         ]);
     }
-//    public static function getRelations(): array
-//    {
-//        return[
-//
-//        ];
-//    }
+    public static function getRelations(): array
+    {
+        return[
+            AllTugasRelationManager::class,
+        ];
+    }
 }

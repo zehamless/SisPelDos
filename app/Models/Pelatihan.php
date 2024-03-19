@@ -33,6 +33,11 @@ class Pelatihan extends Model
         return $this->belongsTo(Periode::class);
     }
 
+    public function allTugas(): HasMany
+    {
+        return $this->hasMany(MateriTugas::class);
+    }
+
     public function materi(): HasMany
     {
         return $this->hasMany(MateriTugas::class)->where('jenis', 'materi');
