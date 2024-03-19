@@ -37,4 +37,12 @@ class Pelatihan extends Model
     {
         return $this->hasMany(MateriTugas::class)->where('jenis', 'materi');
     }
+
+ public function tugas(): HasMany
+{
+    return $this->hasMany(MateriTugas::class)->where([
+        ['jenis', '=', 'tugas'],
+        ['tipe', '=', 'tugas']
+    ]);
+}
 }

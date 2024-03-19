@@ -225,6 +225,7 @@ class PelatihanResource extends Resource
             'edit' => EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
             'materi' => Pages\ManageMateri::route('/{record}/materi'),
+            'tugas' => Pages\ManageTugas::route('/{record}/tugas'),
         ];
     }
 
@@ -247,6 +248,7 @@ class PelatihanResource extends Resource
             Pages\ViewPelatihan::class,
             EditPelatihan::class,
             Pages\ManageMateri::class,
+            Pages\ManageTugas::class,
         ]);
     }
 //    public static function getRelations(): array
