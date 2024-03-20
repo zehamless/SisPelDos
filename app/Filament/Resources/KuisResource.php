@@ -135,7 +135,7 @@ class KuisResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\KuisRelationManager::class
         ];
     }
 

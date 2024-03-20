@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MateriTugas extends Model
@@ -33,5 +34,10 @@ class MateriTugas extends Model
     public function pelatihan(): BelongsTo
     {
         return $this->belongsTo(Pelatihan::class);
+    }
+
+    public function kuis(): HasMany
+    {
+        return $this->hasMany(kuis::class);
     }
 }
