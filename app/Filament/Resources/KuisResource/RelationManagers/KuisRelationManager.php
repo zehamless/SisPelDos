@@ -48,7 +48,9 @@ class KuisRelationManager extends RelationManager
             ->recordTitleAttribute('pertanyaan')
             ->columns([
                 Tables\Columns\TextColumn::make('pertanyaan')
-                ->label('Pertanyaan'),
+                ->label('Pertanyaan')
+                ->html()
+                ->words(5),
             ])
             ->filters([
                 //
