@@ -40,6 +40,11 @@ class ManageKuis extends ManageRelatedRecords
                             ])
                             ->default('draft')
                             ->required(),
+                        Forms\Components\TextInput::make('max_attempt')
+                            ->label(__('Max Attempt'))
+                            ->required()
+                            ->default(1)
+                            ->numeric(),
                         Forms\Components\TextInput::make('judul')
                             ->label('Judul')
                             ->required()
@@ -86,6 +91,9 @@ class ManageKuis extends ManageRelatedRecords
                     ->color('danger')
                     ->dateTime()
                     ->timezone('Asia/Jakarta'),
+                Tables\Columns\TextColumn::make('max_attempt')
+                    ->label('Max Attempt')
+                ->numeric(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()

@@ -43,6 +43,11 @@ class KuisResource extends Resource
                             ])
                             ->default('draft')
                             ->required(),
+                        Forms\Components\TextInput::make('max_attempt')
+                            ->label(__('Max Attempt'))
+                            ->required()
+                            ->default(1)
+                            ->numeric(),
                         Forms\Components\TextInput::make('judul')
                             ->label('Judul')
                             ->required()
@@ -86,6 +91,9 @@ class KuisResource extends Resource
                     ->color('danger')
                     ->dateTime()
                     ->timezone('Asia/Jakarta'),
+                Tables\Columns\TextColumn::make('max_attempt')
+                    ->label('Max Attempt')
+                ->numeric(),
             ])
             ->filters([
                 //
@@ -114,6 +122,10 @@ class KuisResource extends Resource
                     ->label('Status')
                     ->badge()
                     ->color('primary'),
+                    TextEntry::make('max_attempt')
+                    ->label('Max Attempt')
+                    ->badge()
+                    ->color('info'),
                     TextEntry::make('judul')
                     ->label('Judul'),
                     TextEntry::make('tgl_mulai')
