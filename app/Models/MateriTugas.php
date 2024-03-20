@@ -30,7 +30,15 @@ class MateriTugas extends Model
         'tgl_mulai' => 'datetime',
         'tgl_selesai' => 'datetime',
     ];
+    protected static function boot(): void
+    {
+        parent::boot();
 
+        static::creating(function ($kuis) {
+            $maxUrutan = self::max('urutan');
+            $kuis->urutan = $maxUrutan ? $maxUrutan + 1 : 1;
+        });
+    }
     public function pelatihan(): BelongsTo
     {
         return $this->belongsTo(Pelatihan::class);
