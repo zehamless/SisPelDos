@@ -17,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('get-dosen-data', \App\Http\Controllers\GetDosenDataController::class)->name('get-dosen-data');
+Route::get('list-dosen', \App\Http\Controllers\getListDosenController::class)->name('get-list-dosen');

@@ -31,6 +31,7 @@ class User extends Authenticatable implements FilamentUser, HasName
         'jenis_kelamin',
         'universitas',
         'prodi',
+        'link',
         'jabatan_fungsional',
         'pendidikan_tertinggi',
         'status_kerja',
