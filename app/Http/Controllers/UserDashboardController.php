@@ -13,7 +13,7 @@ class UserDashboardController extends Controller
 
         $pelatihan = Pelatihan::when($query, function ($q) use ($query) {
             return $q->where('judul', 'like', '%' . $query . '%');
-        })->paginate(5);
+        })->paginate(8);
         return view('dashboard', compact('pelatihan'));
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\ViewMateriController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,7 @@ Route::get('/', function () {
 });
 Route::get('user-dashboard', [UserDashboardController::class, 'index'])->name('user-dashboard');
 Route::get('pelatihan/{pelatihan:slug}', PelatihanController::class)->name('pelatihan.show');
+Route::get('pelatihan/{pelatihan:slug}/{materi}', ViewMateriController::class)->name('materi.show');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
