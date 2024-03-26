@@ -1,6 +1,7 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto ">
+            {{\Diglactic\Breadcrumbs\Breadcrumbs::render('materi', $pelatihan, $materi)}}
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg ">
                 <h1 class="font-bold text-center text-2xl py-2">{{$materi->judul}}</h1>
             </div>

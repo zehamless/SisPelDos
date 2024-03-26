@@ -35,7 +35,7 @@ class Pelatihan extends Model
 
     public function allTugas(): HasMany
     {
-        return $this->hasMany(MateriTugas::class);
+        return $this->hasMany(MateriTugas::class)->orderBy('urutan', 'asc');
     }
 
     public function materi(): HasMany

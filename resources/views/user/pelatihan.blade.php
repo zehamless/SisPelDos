@@ -1,12 +1,13 @@
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto">
+        {{\Diglactic\Breadcrumbs\Breadcrumbs::render('pelatihan', $pelatihan)}}
             <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-white">
                 <div class="collapse-title text-xl font-medium">
-                    <h2 class="font-bold">{{$materi->judul??' '}}</h2>
+                    <h2 class="font-bold">{{$pelatihan->judul??' '}}</h2>
                 </div>
                 <div class="collapse-content">
-                    <p>{!!$materi->deskripsi!!}</p>
+                    <p>{!!$pelatihan->deskripsi!!}</p>
                 </div>
             </div>
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg my-2">
@@ -26,7 +27,7 @@
                         </thead>
                             <tbody>
                             <!-- row 1 -->
-                            @forelse($materi->allTugas as $tugas)
+                            @forelse($pelatihan->allTugas as $tugas)
                                 <tr class="hover:bg-gray-50">
                                     <th>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -44,7 +45,7 @@
                                         <div class="badge badge-primary text-white">Dikerjakan</div>
                                     </td>
                                     <td><a class="link link-primary"
-                                           href="{{route('materi.show', ['pelatihan'=>$materi->slug, 'materi'=>$tugas->id])}}">Buka</a>
+                                           href="{{route('materi.show', ['pelatihan'=>$pelatihan->slug, 'materi'=>$tugas->id])}}">Buka</a>
                                     </td>
                                 </tr>
                             @empty
