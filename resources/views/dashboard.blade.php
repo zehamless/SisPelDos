@@ -32,9 +32,9 @@
                                     {{$p->judul}}
                                 </h3>
 
-                                    <p class="mt-3 text-gray-500 trunen ">
-                                        {{$p->deskripsi}}
-                                    </p>
+                                <p class="mt-3 text-gray-500 trunen ">
+                                    {{$p->deskripsi}}
+                                </p>
 
                             </div>
                             <div
@@ -58,14 +58,14 @@
             </div>
         </div>
     </div>
-@push('scripts')
-    <script>
-        document.querySelectorAll('.trunen').forEach(element => {
-            let words = element.innerText.split(' ', 11);
-            if (words.length > 10) words[10] = '...';
-            element.innerText = words.join(' ');
-        });
-    </script>
+    @push('scripts')
+        <script>
+            document.querySelectorAll('.trunen').forEach(element => {
+                let words = element.innerText.split(' ', 11);
+                if (words.length > 10) words[10] = '...';
+                element.innerText = words.join(' ');
+            });
+        </script>
 
-@endpush
+    @endpush
 </x-app-layout>
