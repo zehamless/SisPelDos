@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\MateriTugas;
 use App\Models\Pelatihan;
 use App\Models\Periode;
 use App\Models\User;
+use Database\Factories\MateriTugasFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -31,5 +33,6 @@ class DatabaseSeeder extends Seeder
         User::factory()->admin()->create();
         Periode::factory()->count(2)->create();
         Pelatihan::factory()->count(10)->create();
+        MateriTugas::factory()->count(10)->create();
     }
 }
