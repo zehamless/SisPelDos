@@ -23,6 +23,7 @@ Route::get('/', function () {
 Route::get('user-dashboard', [UserDashboardController::class, 'index'])->name('user-dashboard');
 Route::get('pelatihan/{pelatihan:slug}', PelatihanController::class)->name('pelatihan.show');
 Route::get('pelatihan/{pelatihan:slug}/{materi}', ViewMateriController::class)->name('materi.show');
+Route::get('download/{file}', \App\Http\Controllers\downloadFileController::class)->name('download');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
