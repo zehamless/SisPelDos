@@ -9,16 +9,15 @@
                 <p class="p-2">{!!$materi->deskripsi!!}</p>
                 <hr>
                 <p class="p-2">File : </p>
-    <ul class="list-disc p-2">
-@forelse($materi->file_name as $file => $name)
-    <li class="mx-6">
-
-        <a class="link link-secondary" href="{{route('download', basename($file))}}">{{ $name }}</a>
-    </li>
-@empty
-    <li>No files found.</li>
-@endforelse
-</ul>
+                <ul class="list-disc p-2">
+                    @forelse($materi->file_name ?? [] as $file => $name)
+                        <li class="mx-6">
+                            <a class="link link-secondary" href="{{route('download', basename($file))}}">{{ $name }}</a>
+                        </li>
+                    @empty
+                        <li>No files found.</li>
+                    @endforelse
+                </ul>
             </div>
         </div>
     </div>
