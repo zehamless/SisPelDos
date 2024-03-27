@@ -6,7 +6,7 @@
                 <h1 class="font-bold text-center text-2xl py-2">{{$materi->judul}}</h1>
             </div>
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mt-4">
-                <p class="p-2">{!!$materi->deskripsi!!}</p>
+                <div class="p-2">{!!$materi->deskripsi!!}</div>
                 <hr>
                 <p class="p-2">File : </p>
                 <ul class="list-disc p-2">
