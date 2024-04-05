@@ -72,4 +72,10 @@ class User extends Authenticatable implements FilamentUser, HasName
         // TODO: Implement getFilamentName() method.
         return $this->nama;
     }
+    public function mengerjakan()
+    {
+        return $this->belongsToMany(MateriTugas::class, 'mengerjakan', 'users_id', 'materi_tugas_id')
+            ->withPivot('files', 'pesan', 'penilaian')
+            ->withTimestamps();
+    }
 }
