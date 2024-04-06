@@ -16,6 +16,7 @@ class Pelatihan extends Model
         'judul',
         'sampul',
         'slug',
+        'published',
         'deskripsi',
         'tgl_mulai',
         'tgl_selesai',
@@ -26,6 +27,7 @@ class Pelatihan extends Model
     protected $casts = [
         'tgl_mulai' => 'date',
         'tgl_selesai' => 'date',
+        'published' => 'boolean',
     ];
 
     public function periode(): BelongsTo
@@ -47,7 +49,6 @@ class Pelatihan extends Model
     {
         return $this->hasMany(MateriTugas::class)->where([
             ['jenis', '=', 'tugas'],
-            ['tipe', '=', 'tugas']
         ]);
     }
 

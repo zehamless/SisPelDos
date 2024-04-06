@@ -14,6 +14,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\Grid;
@@ -25,6 +26,7 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -34,9 +36,11 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
@@ -76,14 +80,13 @@ class PelatihanResource extends Resource
                         TextInput::make('slug')
                             ->label('Slug')
                             ->unique('pelatihans', 'slug', ignoreRecord: true)
-                            ->readOnly(),
+                            ->hidden(),
 
                         DatePicker::make('tgl_mulai')
                             ->label('Tanggal Mulai')
                             ->native(false)
                             ->timezone('Asia/Jakarta')
                             ->required(),
-
                         DatePicker::make('tgl_selesai')
                             ->label('Tanggal Selesai')
                             ->after('tgl_mulai')
@@ -96,15 +99,21 @@ class PelatihanResource extends Resource
                             ->relationship('periode', 'tahun_ajar')
                             ->label('Periode')
                             ->required(),
-                        Select::make('jenis_pelatihan')
-                            ->label('Jenis Pelatihan')
-                            ->options([
-                                'dosen_lokal' => 'Dosen Lokal',
-                                'dosen_luar' => 'Dosen Luar',
-                                'semua' => 'Semua',
-                            ])
-                            ->required()
-                            ->default('semua'),
+//                        Select::make('jenis_pelatihan')
+//                            ->label('Jenis Pelatihan')
+//                            ->options([
+//                                'dosen_lokal' => 'Dosen Lokal',
+//                                'dosen_luar' => 'Dosen Luar',
+//                                'semua' => 'Semua',
+//                            ])
+//                            ->required()
+//                            ->default('semua'),
+                        Toggle::make('published')
+                            ->label('Published')
+                            ->onIcon('heroicon-c-check')
+                            ->offIcon('heroicon-c-x-mark')
+                            ->onColor('success')
+                            ->default(false),
                         FileUpload::make('sampul')
                             ->label('Sampul')
                             ->hint('Pastikan Ukuran gambar 16:9')
@@ -136,29 +145,33 @@ class PelatihanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('judul')
-                ->words(5)
-                    ->searchable(),
-                TextColumn::make('sampul')
-                ->limit(20),
-                TextColumn::make('slug')
-                    ->searchable()
+                ToggleColumn::make('published')
+                    ->label('Published')
+                    ->onIcon('heroicon-c-check')
+                    ->offIcon('heroicon-c-x-mark')
+                    ->onColor('success')
                     ->sortable(),
+                TextColumn::make('judul')
+                    ->words(5)
+                    ->searchable(),
 
                 TextColumn::make('deskripsi')
-                ->limit(50),
+                    ->limit(50),
 
                 TextColumn::make('tgl_mulai')
+                    ->sortable()
                     ->date(),
 
                 TextColumn::make('tgl_selesai')
+                    ->sortable()
                     ->date(),
 
-                TextColumn::make('jmlh_user'),
+                TextColumn::make('jmlh_user')
+                    ->sortable(),
             ])
             ->filters([
                 TrashedFilter::make(),
-            ])
+            ])->deferFilters()
             ->actions([
                 ActionGroup::make([
                     \Filament\Tables\Actions\ViewAction::make(),
@@ -173,7 +186,19 @@ class PelatihanResource extends Resource
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                     ForceDeleteBulkAction::make(),
+                    BulkAction::make('publish')
+                        ->label('Publish')
+                        ->icon('heroicon-c-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => true])),
+                    BulkAction::make('draft')
+                        ->label('Draft')
+                        ->icon('heroicon-c-x-circle')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => false])),
                 ]),
+
             ]);
     }
 
@@ -188,8 +213,11 @@ class PelatihanResource extends Resource
                                 Group::make([
                                     TextEntry::make('judul')
                                         ->label('Judul'),
-                                    TextEntry::make('slug')
-                                        ->label('Slug'),
+                                    TextEntry::make('published')
+                                        ->label('Published')
+                                        ->badge()
+                                        ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                                        ->color(fn($state) => $state ? 'success' : 'danger'),
                                 ]),
                                 Group::make([
                                     TextEntry::make('tgl_mulai')
@@ -254,9 +282,10 @@ class PelatihanResource extends Resource
             Pages\ManageKuis::class,
         ]);
     }
+
     public static function getRelations(): array
     {
-        return[
+        return [
             AllTugasRelationManager::class,
         ];
     }

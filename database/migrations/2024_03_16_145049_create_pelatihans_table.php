@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('periode_id')->constrained('periodes');
             $table->string('judul');
+            $table->boolean('published')->default(false);
             $table->string('sampul')->nullable();
             $table->string('slug')->unique();
             $table->text('deskripsi')->nullable();
