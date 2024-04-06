@@ -6,6 +6,7 @@ use App\Filament\Resources\MateriResource\Pages;
 use App\Filament\Resources\MateriResource\RelationManagers;
 use App\Models\Materi;
 use App\Models\MateriTugas;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -71,7 +72,7 @@ class MateriResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
                     ->color(fn($state) => $state ? 'success' : 'danger')
-                ->sortable(),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
@@ -94,7 +95,6 @@ class MateriResource extends Resource
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data) {
                         $data['jenis'] = 'materi';
-                        $data['tipe'] = 'materi';
                         return $data;
                     }),
 //                Tables\Actions\AssociateAction::make(),
@@ -102,6 +102,10 @@ class MateriResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
+                    Action::make('view materi')
+                        ->label('View Materi')
+                        ->icon('heroicon-c-document-magnifying-glass')
+                        ->url(fn ($record): string => route('filament.admin.pelatihan.resources.pelatihans.materi', $record->pelatihan_id)),
                     Tables\Actions\EditAction::make(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
@@ -130,6 +134,25 @@ class MateriResource extends Resource
     {
         return $infolist
             ->schema([
+                Section::make('Status')
+                    ->schema([
+                        TextEntry::make('published')
+                            ->label('Published')
+                            ->badge()
+                            ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                            ->color(fn($state) => $state ? 'success' : 'danger'),
+                        TextEntry::make('terjadwal')
+                            ->label('Terjadwal')
+                            ->badge()
+                            ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                            ->color(fn($state) => $state ? 'success' : 'danger'),
+                        TextEntry::make('created_at')
+                            ->label('Created At')
+                            ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
+                        TextEntry::make('updated_at')
+                            ->label('Updated At')
+                            ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
+                    ])->columns(2),
                 Section::make()
                     ->schema([
                         TextEntry::make('judul')
@@ -137,7 +160,7 @@ class MateriResource extends Resource
                         TextEntry::make('file_name')
                             ->label('File Materi')
                             ->listWithLineBreaks()
-                    ])->columns(1),
+                    ])->columns(2),
                 Section::make()
                     ->schema([
                         TextEntry::make('deskripsi')
