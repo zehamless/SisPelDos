@@ -25,7 +25,6 @@ class ManageMateri extends ManageRelatedRecords
     {
         return 'Materi';
     }
-
     public function form(Form $form): Form
     {
         return $form

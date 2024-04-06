@@ -13,27 +13,19 @@ class kuis extends Model
 
     protected $fillable = [
         'pertanyaan',
-        'jawaban',
-        'urutan'
+        'jawaban_option',
+        'jawaban_benar',
     ];
 
 
     protected $casts = [
         'pertanyaan' => 'array',
-        'jawaban' => 'array',
+        'jawaban_option' => 'array',
+        'jawaban_benar' => 'array',
     ];
 
-    protected static function boot(): void
+    public function materiTugas()
     {
-        parent::boot();
-
-        static::creating(function ($kuis) {
-            $maxUrutan = self::max('urutan');
-            $kuis->urutan = $maxUrutan ? $maxUrutan + 1 : 1;
-        });
-    }
-    protected function materiTugas(): BelongsTo
-    {
-        return $this->belongsTo(MateriTugas::class);
+        return $this->belongsToMany(MateriTugas::class, 'kuis_pertanyaan', 'kuis_id', 'materi_tugas_id');
     }
 }

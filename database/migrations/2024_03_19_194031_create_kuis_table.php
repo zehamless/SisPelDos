@@ -9,9 +9,9 @@ return new class extends Migration {
     {
         Schema::create('kuis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('materi_tugas_id');
             $table->jsonb('pertanyaan')->nullable();
-            $table->jsonb('jawaban')->nullable();
+            $table->jsonb('jawaban_option')->nullable();
+            $table->jsonb('jawaban_benar')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

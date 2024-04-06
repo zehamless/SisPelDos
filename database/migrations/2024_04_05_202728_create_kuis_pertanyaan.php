@@ -7,15 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('kuis', function (Blueprint $table) {
+        Schema::create('kuis_pertanyaan', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('materi_tugas_id')->unsigned();
+            $table->foreignId('kuis_id')->unsigned();
             $table->unsignedInteger('urutan')->nullable()->index();
-        });
-    }
-
-    public function down(): void
-    {
-        Schema::table('kuis', function (Blueprint $table) {
-            //
+            $table->timestamps();
         });
     }
 };

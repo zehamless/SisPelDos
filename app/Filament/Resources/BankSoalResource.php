@@ -1,23 +1,27 @@
 <?php
 
-namespace App\Filament\Resources\KuisResource\RelationManagers;
+namespace App\Filament\Resources;
 
+use App\Filament\Resources\BankSoalResource\Pages;
+use App\Filament\Resources\BankSoalResource\RelationManagers;
+use App\Models\BankSoal;
+use App\Models\kuis;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class KuisRelationManager extends RelationManager
+class BankSoalResource extends Resource
 {
-    protected static string $relationship = 'kuis';
+    protected static ?string $model = kuis::class;
+    protected static ?string $label = 'Bank Soal';
 
-    public function isReadOnly(): bool
-    {
-        return false;
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public function form(Form $form): Form
+    public static function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -40,43 +44,54 @@ class KuisRelationManager extends RelationManager
                 Forms\Components\CheckboxList::make('jawaban_benar')
                     ->label('Jawaban Benar')
                     ->required()
-                ->options(function ($state, $record) {
-                    $options = array_filter($state, function($value) {
-                        return !is_numeric($value);
-                    });
-                    return $options;
-                }),
+                    ->options(function ($state, $record) {
+                        $options = array_filter($state, function($value) {
+                            return !is_numeric($value);
+                        });
+                        return $options;
+                    }),
 
 
             ])->columns(2);
     }
 
-    public function table(Table $table): Table
+    public static function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('pertanyaan')
             ->columns([
                 Tables\Columns\TextColumn::make('pertanyaan')
-                ->label('Pertanyaan')
-                ->html()
-                ->words(5),
+                    ->label('Pertanyaan')
+                    ->html()
+                    ->searchable()
+                    ->words(5),
             ])
             ->filters([
                 //
             ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make()
-                ->preloadRecordSelect(),
-            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListBankSoals::route('/'),
+            'create' => Pages\CreateBankSoal::route('/create'),
+            'edit' => Pages\EditBankSoal::route('/{record}/edit'),
+        ];
     }
 }
