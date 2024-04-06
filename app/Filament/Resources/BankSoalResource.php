@@ -11,8 +11,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BankSoalResource extends Resource
 {
@@ -45,7 +43,7 @@ class BankSoalResource extends Resource
                     ->label('Jawaban Benar')
                     ->required()
                     ->options(function ($state, $record) {
-                        $options = array_filter($state, function($value) {
+                        $options = array_filter($state, function ($value) {
                             return !is_numeric($value);
                         });
                         return $options;
@@ -65,6 +63,10 @@ class BankSoalResource extends Resource
                     ->html()
                     ->searchable()
                     ->words(5),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->searchable()
+                    ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
             ])
             ->filters([
                 //
@@ -76,7 +78,8 @@ class BankSoalResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array

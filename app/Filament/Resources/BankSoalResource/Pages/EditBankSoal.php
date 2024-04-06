@@ -16,22 +16,4 @@ class EditBankSoal extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
-
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        $data['jawabanInput'] = $data['jawaban']['jawabanInput'];
-        $data['jawaban_benar'] = $data['jawaban']['jawaban_benar'];
-//                    dump($data);
-        return $data;
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        $data['jawaban'] = [
-            'jawabanInput' => $data['jawabanInput'],
-            'jawaban_benar' => $data['jawaban_benar'],
-        ];
-        $data = collect($data)->except(['jawabanInput', 'jawaban_benar'])->toArray();
-        return $data;
-    }
 }

@@ -9,13 +9,8 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateBankSoal extends CreateRecord
 {
     protected static string $resource = BankSoalResource::class;
-    protected function mutateFormDataBeforeCreate(array $data): array
+    protected function getRedirectUrl(): string
     {
-        $data['jawaban'] = [
-            'jawabanInput' => $data['jawabanInput'],
-            'jawaban_benar' => $data['jawaban_benar'],
-        ];
-        $data = collect($data)->except(['jawabanInput', 'jawaban_benar'])->toArray();
-        return $data;
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
     }
 }
