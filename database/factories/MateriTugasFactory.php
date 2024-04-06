@@ -20,9 +20,9 @@ class MateriTugasFactory extends Factory
             'deskripsi' => $this->faker->paragraph(),
             'files' => null,
             'jenis' => 'materi',
-            'tipe' => 'materi',
+            'tgl_tenggat'=> Carbon::now()->addWeek(),
             'tgl_mulai' => Carbon::now(),
-            'tgl_selesai' => Carbon::now(),
+            'tgl_selesai' => Carbon::now()->addMonth(),
             'urutan' => $this->faker->randomNumber(),
             'pelatihan_id' => Pelatihan::first()->id,
         ];

@@ -4,10 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MateriResource\Pages;
 use App\Filament\Resources\MateriResource\RelationManagers;
-use App\Filament\Resources\PelatihanResource\Pages\EditPelatihan;
 use App\Models\Materi;
 use App\Models\MateriTugas;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -36,10 +37,16 @@ class MateriResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('judul')
+                TextInput::make('judul')
                     ->label('Judul')
                     ->required()
                     ->maxLength(255),
+                Toggle::make('published')
+                    ->label('Published')
+                    ->onIcon('heroicon-c-check')
+                    ->offIcon('heroicon-c-x-mark')
+                    ->onColor('success')
+                    ->default(false),
                 Forms\Components\RichEditor::make('deskripsi')
                     ->label('Deskripsi'),
                 Forms\Components\FileUpload::make('files')
@@ -59,6 +66,13 @@ class MateriResource extends Resource
         return $table
             ->recordTitleAttribute('judul')
             ->columns([
+                Tables\Columns\TextColumn::make('published')
+                    ->label('Published')
+                    ->badge()
+                    ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                    ->color(fn($state) => $state ? 'success' : 'danger')
+                ->sortable(),
+
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
                     ->words(5)
@@ -72,15 +86,9 @@ class MateriResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Tables\Filters\SelectFilter::make('jenis')
-                    ->label('Jenis')
-                    ->options([
-                        'materi' => 'Materi',
-                        'tugas' => 'Tugas',
-                    ]),
                 Tables\Filters\SelectFilter::make('pelatihan_id')
                     ->label('Pelatihan')
-                    ->relationship('pelatihan', 'id'),
+                    ->relationship('pelatihan', 'judul'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
@@ -89,13 +97,13 @@ class MateriResource extends Resource
                         $data['tipe'] = 'materi';
                         return $data;
                     }),
-                Tables\Actions\AssociateAction::make(),
+//                Tables\Actions\AssociateAction::make(),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\DissociateAction::make(),
+//                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
@@ -103,7 +111,7 @@ class MateriResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DissociateBulkAction::make(),
+//                    Tables\Actions\DissociateBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
@@ -112,7 +120,7 @@ class MateriResource extends Resource
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('jenis', 'materi'))
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('jenis', 'materi'))
             ->deferFilters()
             ->defaultSort('urutan')
             ->reorderable('urutan');
@@ -156,7 +164,8 @@ class MateriResource extends Resource
             'view' => Pages\ViewMateri::route('/{record}'),
         ];
     }
-    public static function getRecordSubNavigation(Page $page):array
+
+    public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
             Pages\ViewMateri::class,

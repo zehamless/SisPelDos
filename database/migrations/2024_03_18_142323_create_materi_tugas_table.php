@@ -14,9 +14,11 @@ return new class extends Migration {
             $table->text('deskripsi')->nullable();
             $table->jsonb('files')->nullable();
             $table->string('jenis');
-            $table->string('tipe');
+$table->boolean('published')->default(false);
             $table->dateTime('tgl_mulai')->nullable();
+            $table->dateTime('tgl_tenggat')->nullable();
             $table->dateTime('tgl_selesai')->nullable();
+            $table->boolean('terjadwal')->default(false);
             $table->unsignedInteger('urutan')->nullable();
             $table->softDeletes();
             $table->timestamps();

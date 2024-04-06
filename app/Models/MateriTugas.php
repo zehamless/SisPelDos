@@ -18,7 +18,10 @@ class MateriTugas extends Model
         'files',
         'file_name',
         'jenis',
-        'tipe',
+        'status',
+        'published',
+        'terjadwal',
+        'tgl_tenggat',
         'tgl_mulai',
         'tgl_selesai',
         'urutan',
@@ -29,6 +32,7 @@ class MateriTugas extends Model
         'file_name' => 'array',
         'tgl_mulai' => 'datetime',
         'tgl_selesai' => 'datetime',
+        'tgl_tenggat' => 'datetime',
     ];
     protected static function boot(): void
     {
@@ -41,7 +45,7 @@ class MateriTugas extends Model
     }
     public function pelatihan(): BelongsTo
     {
-        return $this->belongsTo(Pelatihan::class);
+        return $this->belongsTo(Pelatihan::class)->orderBy('created_at', 'desc');
     }
 
     public function kuis()
