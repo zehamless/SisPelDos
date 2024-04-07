@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PelatihanResource\Pages;
 
 use App\Filament\Resources\PelatihanResource;
 use Filament\Forms;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
@@ -32,14 +33,21 @@ class ManageKuis extends ManageRelatedRecords
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Select::make('tipe')
-                            ->label('Status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'published' => 'Published',
-                            ])
-                            ->default('draft')
-                            ->required(),
+                    Forms\Components\Group::make([
+                        Toggle::make('published')
+                            ->label('Published')
+                            ->onIcon('heroicon-c-check')
+                            ->offIcon('heroicon-c-x-mark')
+                            ->onColor('success')
+                            ->default(false),
+                        Toggle::make('terjadwal')
+                            ->label('Terjadwal')
+                            ->onIcon('heroicon-c-check')
+                            ->offIcon('heroicon-c-x-mark')
+                            ->onColor('success')
+                            ->helperText('Apabila terjadwal, maka kuis akan diterbitkan pada tanggal mulai')
+                            ->default(false),
+                    ])->columns(2),
                         Forms\Components\TextInput::make('max_attempt')
                             ->label(__('Max Attempt'))
                             ->required()
@@ -49,18 +57,24 @@ class ManageKuis extends ManageRelatedRecords
                             ->label('Judul')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\DateTimePicker::make('tgl_mulai')
-                            ->label('Tanggal Mulai')
-                            ->native(false)
-                            ->timezone('Asia/Jakarta')
-                            ->required(),
-                        Forms\Components\DateTimePicker::make('tgl_selesai')
-                            ->label('Tanggal Selesai')
-                            ->native(false)
-                            ->timezone('Asia/Jakarta')
-                            ->after('tgl_mulai')
-                            ->rule('after:tgl_mulai')
-                            ->required(),
+                        Forms\Components\Group::make([
+                            Forms\Components\DateTimePicker::make('tgl_mulai')
+                                ->native(false)
+                                ->timezone('Asia/Jakarta')
+                                ->required(),
+                            Forms\Components\DateTimePicker::make('tgl_tenggat')
+                                ->native(false)
+                                ->timezone('Asia/Jakarta')
+                                ->after('tgl_mulai')
+                                ->rule('after:tgl_mulai')
+                                ->required(),
+                            Forms\Components\DateTimePicker::make('tgl_selesai')
+                                ->native(false)
+                                ->timezone('Asia/Jakarta')
+                                ->after('tgl_tenggat')
+                                ->rule('after:tgl_tenggat')
+                                ->required(),
+                        ])->columns(3),
                     ]),
             ]);
     }

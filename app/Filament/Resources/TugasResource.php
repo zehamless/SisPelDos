@@ -141,7 +141,7 @@ class TugasResource extends Resource
                     Action::make('view materi')
                         ->label('View Materi')
                         ->icon('heroicon-c-document-magnifying-glass')
-                        ->url(fn ($record): string => route('filament.admin.pelatihan.resources.pelatihans.tugas', $record->pelatihan_id)),
+                        ->url(fn($record): string => route('filament.admin.pelatihan.resources.pelatihans.tugas', $record->pelatihan_id)),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
@@ -157,7 +157,7 @@ class TugasResource extends Resource
             ])->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('jenis', 'tugas'))
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('jenis', 'tugas'))
             ->deferFilters()
             ->defaultSort('urutan')
             ->reorderable('urutan');
@@ -224,6 +224,7 @@ class TugasResource extends Resource
                     ])->columns(1),
             ]);
     }
+
     public static function getRelations(): array
     {
         return [
@@ -240,6 +241,7 @@ class TugasResource extends Resource
             'view' => Pages\ViewTugas::route('/{record}'),
         ];
     }
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([

@@ -6,10 +6,13 @@ use App\Filament\Resources\KuisResource\Pages;
 use App\Filament\Resources\KuisResource\RelationManagers;
 use App\Models\MateriTugas;
 use Filament\Forms;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SelectColumn;
@@ -21,7 +24,7 @@ class KuisResource extends Resource
     protected static ?string $model = MateriTugas::class;
     protected static ?string $label = 'Kuis';
 
-
+protected static SubNavigationPosition $subNavigationPosition= SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function canCreate(): bool
@@ -35,14 +38,21 @@ class KuisResource extends Resource
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Select::make('tipe')
-                            ->label('Status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'published' => 'Published',
-                            ])
-                            ->default('draft')
-                            ->required(),
+                        Forms\Components\Group::make([
+                            Toggle::make('published')
+                                ->label('Published')
+                                ->onIcon('heroicon-c-check')
+                                ->offIcon('heroicon-c-x-mark')
+                                ->onColor('success')
+                                ->default(false),
+                            Toggle::make('terjadwal')
+                                ->label('Terjadwal')
+                                ->onIcon('heroicon-c-check')
+                                ->offIcon('heroicon-c-x-mark')
+                                ->onColor('success')
+                                ->helperText('Apabila terjadwal, maka kuis akan diterbitkan pada tanggal mulai')
+                                ->default(false),
+                        ])->columns(2),
                         Forms\Components\TextInput::make('max_attempt')
                             ->label(__('Max Attempt'))
                             ->required()
@@ -52,38 +62,58 @@ class KuisResource extends Resource
                             ->label('Judul')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\DateTimePicker::make('tgl_mulai')
-                            ->label('Tanggal Mulai')
-                            ->native(false)
-                            ->timezone('Asia/Jakarta')
-                            ->required(),
-                        Forms\Components\DateTimePicker::make('tgl_selesai')
-                            ->label('Tanggal Selesai')
-                            ->native(false)
-                            ->timezone('Asia/Jakarta')
-                            ->required(),
+                        Forms\Components\Group::make([
+                            Forms\Components\DateTimePicker::make('tgl_mulai')
+                                ->native(false)
+                                ->timezone('Asia/Jakarta')
+                                ->required(),
+                            Forms\Components\DateTimePicker::make('tgl_tenggat')
+                                ->native(false)
+                                ->timezone('Asia/Jakarta')
+                                ->after('tgl_mulai')
+                                ->rule('after:tgl_mulai')
+                                ->required(),
+                            Forms\Components\DateTimePicker::make('tgl_selesai')
+                                ->native(false)
+                                ->timezone('Asia/Jakarta')
+                                ->after('tgl_tenggat')
+                                ->rule('after:tgl_tenggat')
+                                ->required(),
+                        ])->columns(3),
                     ]),
-            ])->columns(1);
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('published')
+                    ->label('Published')
+                    ->badge()
+                    ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                    ->color(fn($state) => $state ? 'success' : 'danger')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('terjadwal')
+                    ->label('Terjadwal')
+                    ->badge()
+                    ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                    ->color(fn($state) => $state ? 'success' : 'danger')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
                     ->words(5),
-                SelectColumn::make('tipe')
-                    ->label('Status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                    ]),
                 Tables\Columns\TextColumn::make('tgl_mulai')
                     ->label('Tanggal Mulai')
                     ->dateTime()
                     ->badge()
                     ->color('success')
+                    ->timezone('Asia/Jakarta'),
+                Tables\Columns\TextColumn::make('tgl_tenggat')
+                    ->label('Tanggal Mulai')
+                    ->badge()
+                    ->color('warning')
+                    ->dateTime()
                     ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('tgl_selesai')
                     ->label('Tanggal Selesai')
@@ -159,5 +189,13 @@ class KuisResource extends Resource
             'edit' => Pages\EditKuis::route('/{record}/edit'),
             'view' => Pages\ViewKuis::route('/{record}'),
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewKuis::class,
+            Pages\EditKuis::class,
+        ]);
     }
 }
