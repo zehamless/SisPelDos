@@ -63,8 +63,10 @@ class User extends Authenticatable implements FilamentUser, HasName
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // TODO: Implement canAccessPanel() method.
-        return $this->role === 'admin';
+        if ($panel->getId() === 'admin') {
+            return $this->role === 'admin';
+        }
+        return $this->role === 'Internal' || $this->role === 'External' || $this->role === 'admin';
     }
 
     public function getFilamentName(): string
@@ -72,6 +74,7 @@ class User extends Authenticatable implements FilamentUser, HasName
         // TODO: Implement getFilamentName() method.
         return $this->nama;
     }
+
     public function mengerjakan()
     {
         return $this->belongsToMany(MateriTugas::class, 'mengerjakan', 'users_id', 'materi_tugas_id')
