@@ -36,8 +36,6 @@ class UserFactory extends Factory
             'pendidikan_tertinggi' => $this->faker->randomElement(['S1', 'S2', 'S3']),
             'status_kerja' => $this->faker->randomElement(['Aktif', 'Non-aktif']),
             'status_dosen' => $this->faker->randomElement(['Aktif', 'Non-aktif']),
-            'status_akun' => $this->faker->randomElement(['Aktif', 'Non-aktif']),
-            'pembayaran' => $this->faker->randomElement(['Lunas', 'Belum Lunas']),
         ];
     }
     public function admin()
@@ -55,8 +53,6 @@ class UserFactory extends Factory
             'pendidikan_tertinggi' => $this->faker->randomElement(['S1', 'S2', 'S3']),
             'status_kerja' => $this->faker->randomElement(['Aktif', 'Non-aktif']),
             'status_dosen' => $this->faker->randomElement(['Aktif', 'Non-aktif']),
-            'status_akun' => $this->faker->randomElement(['Aktif', 'Non-aktif']),
-            'pembayaran' => $this->faker->randomElement(['Lunas', 'Belum Lunas']),
             'role' => 'admin',
         ]);
     }

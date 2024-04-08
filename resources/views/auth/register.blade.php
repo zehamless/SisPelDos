@@ -49,6 +49,11 @@
                           autocomplete="username"/>
             <x-input-error :messages="$errors->get('email')" class="mt-2"/>
         </div>
+        <x-text-input id="no_induk" name="no_induk" hidden/>
+        <x-text-input id="nama" name="nama" hidden/>
+        <x-text-input id="universitas" name="universitas" hidden/>
+        <x-text-input id="prodi" name="prodi" hidden/>
+        <x-text-input id="link" name="link" hidden/>
 
         <!-- Password -->
         <div class="mt-4">
