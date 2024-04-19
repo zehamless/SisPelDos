@@ -30,6 +30,11 @@ class Pelatihan extends Model
         'published' => 'boolean',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function periode(): BelongsTo
     {
         return $this->belongsTo(Periode::class);

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\MateriTugas;
+use App\Models\Modul;
 use App\Models\Pelatihan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -24,7 +25,7 @@ class MateriTugasFactory extends Factory
             'tgl_mulai' => Carbon::now(),
             'tgl_selesai' => Carbon::now()->addMonth(),
             'urutan' => $this->faker->randomNumber(),
-            'pelatihan_id' => Pelatihan::first()->id,
+            'modul_id' => Modul::first()->id,
         ];
     }
 }

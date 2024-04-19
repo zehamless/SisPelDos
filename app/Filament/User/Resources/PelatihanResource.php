@@ -5,9 +5,7 @@ namespace App\Filament\User\Resources;
 use App\Filament\User\Resources\PelatihanResource\Pages;
 use App\Filament\User\Resources\PelatihanResource\RelationManagers;
 use App\Models\Pelatihan;
-use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
@@ -16,14 +14,16 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PelatihanResource extends Resource
 {
     protected static ?string $model = Pelatihan::class;
 
+    /**
+     * @param string|null $slug
+     */
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
 
     public static function form(Form $form): Form
     {
@@ -38,7 +38,7 @@ class PelatihanResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('judul')
-                ->label('Judul')
+                    ->label('Judul')
             ])
             ->filters([
                 //
@@ -52,6 +52,7 @@ class PelatihanResource extends Resource
                 ]),
             ]);
     }
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -95,6 +96,7 @@ class PelatihanResource extends Resource
                     ]),
             ]);
     }
+
     public static function getRelations(): array
     {
         return [
@@ -108,7 +110,7 @@ class PelatihanResource extends Resource
             'index' => Pages\ListPelatihans::route('/'),
             'create' => Pages\CreatePelatihan::route('/create'),
             'edit' => Pages\EditPelatihan::route('/{record}/edit'),
-            'view'=> Pages\ViewPelatihan::route('/{record}'),
+            'view' => Pages\ViewPelatihan::route('/{record}'),
         ];
     }
 }

@@ -43,9 +43,9 @@ class MateriTugas extends Model
             $kuis->urutan = $maxUrutan ? $maxUrutan + 1 : 1;
         });
     }
-    public function pelatihan(): BelongsTo
+    public function modul(): BelongsTo
     {
-        return $this->belongsTo(Pelatihan::class)->orderBy('created_at', 'desc');
+        return $this->belongsTo(Modul::class)->orderBy('created_at', 'desc');
     }
 
     public function kuis()
