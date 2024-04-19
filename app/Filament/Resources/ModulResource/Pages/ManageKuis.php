@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\PelatihanResource\Pages;
+namespace App\Filament\Resources\ModulResource\Pages;
 
+use App\Filament\Resources\ModulResource;
 use App\Filament\Resources\PelatihanResource;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageKuis extends ManageRelatedRecords
 {
-    protected static string $resource = PelatihanResource::class;
+    protected static string $resource = ModulResource::class;
 
     protected static string $relationship = 'kuis';
 

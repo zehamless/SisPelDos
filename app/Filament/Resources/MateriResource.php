@@ -87,9 +87,9 @@ class MateriResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Tables\Filters\SelectFilter::make('pelatihan_id')
-                    ->label('Pelatihan')
-                    ->relationship('pelatihan', 'judul'),
+                Tables\Filters\SelectFilter::make('modul_id')
+                    ->label('Modul')
+                    ->relationship('modul', 'judul'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
@@ -102,10 +102,10 @@ class MateriResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    Action::make('view materi')
-                        ->label('View Materi')
-                        ->icon('heroicon-c-document-magnifying-glass')
-                        ->url(fn ($record): string => route('filament.admin.pelatihan.resources.pelatihans.materi', $record->pelatihan_id)),
+//                    Action::make('view materi')
+//                        ->label('View Materi')
+//                        ->icon('heroicon-c-document-magnifying-glass')
+//                        ->url(fn ($record): string => route('filament.admin.pelatihan.resources.pelatihans.materi', $record->pelatihan_id)),
                     Tables\Actions\EditAction::make(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),

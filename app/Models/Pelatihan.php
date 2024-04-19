@@ -40,27 +40,9 @@ class Pelatihan extends Model
         return $this->belongsTo(Periode::class);
     }
 
-    public function allTugas(): HasMany
+    public function modul(): HasMany
     {
-        return $this->hasMany(MateriTugas::class)->orderBy('urutan', 'asc');
+        return $this->hasMany(Modul::class);
     }
 
-    public function materi(): HasMany
-    {
-        return $this->hasMany(MateriTugas::class)->where('jenis', 'materi');
-    }
-
-    public function tugas(): HasMany
-    {
-        return $this->hasMany(MateriTugas::class)->where([
-            ['jenis', '=', 'tugas'],
-        ]);
-    }
-
-    public function kuis(): HasMany
-    {
-        return $this->hasMany(MateriTugas::class)->where([
-            ['jenis', '=', 'kuis'],
-        ]);
-    }
 }

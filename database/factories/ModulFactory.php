@@ -16,9 +16,9 @@ class ModulFactory extends Factory
         return [
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
-            'judul' => $this->faker->word(),
+            'judul' => $this->faker->words(6),
             'slug' => $this->faker->slug(),
-            'deskripsi' => $this->faker->word(),
+            'deskripsi' => $this->faker->words(10),
             'pelatihan_id' => Pelatihan::first()->id,
         ];
     }

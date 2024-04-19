@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PelatihanResource\Pages;
 use App\Filament\Resources\PelatihanResource\Pages\EditPelatihan;
-use App\Filament\Resources\PelatihanResource\RelationManagers\AllTugasRelationManager;
 use App\Filament\Resources\PelatihanResource\RelationManagers\MateriRelationManager;
 use App\Models\Pelatihan;
 use Filament\Forms\Components\DatePicker;
@@ -33,9 +32,9 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -53,6 +52,7 @@ class PelatihanResource extends Resource
     protected static ?string $cluster = \App\Filament\Clusters\Pelatihan::class;
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $recordTitleAttribute = 'judul';
 
     public static function form(Form $form): Form
     {
@@ -175,7 +175,7 @@ class PelatihanResource extends Resource
             ])->deferFilters()
             ->actions([
                 ActionGroup::make([
-                    \Filament\Tables\Actions\ViewAction::make(),
+                    ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
                     RestoreAction::make(),
@@ -254,9 +254,8 @@ class PelatihanResource extends Resource
             'create' => Pages\CreatePelatihan::route('/create'),
             'edit' => EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
-            'materi' => Pages\ManageMateri::route('/{record}/materi'),
-            'tugas' => Pages\ManageTugas::route('/{record}/tugas'),
-            'kuis' => Pages\ManageKuis::route('/{record}/kuis'),
+            'modul' => Pages\ManageModul::route('/{record}/modul'),
+
         ];
     }
 
@@ -270,7 +269,7 @@ class PelatihanResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['slug'];
+        return ['judul'];
     }
 
     public static function getRecordSubNavigation(Page $page): array
@@ -278,16 +277,15 @@ class PelatihanResource extends Resource
         return $page->generateNavigationItems([
             Pages\ViewPelatihan::class,
             EditPelatihan::class,
-            Pages\ManageMateri::class,
-            Pages\ManageTugas::class,
-            Pages\ManageKuis::class,
+            Pages\ManageModul::class,
+
         ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            AllTugasRelationManager::class,
+//            AllTugasRelationManager::class,
         ];
     }
 }
