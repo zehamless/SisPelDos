@@ -7,13 +7,17 @@ use App\Filament\Resources\PelatihanResource\Pages\EditPelatihan;
 use App\Filament\Resources\PelatihanResource\RelationManagers\MateriRelationManager;
 use App\Models\Pelatihan;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\Grid;
@@ -68,77 +72,83 @@ class PelatihanResource extends Resource
                             ->label('Last Modified Date')
                             ->content(fn(?Pelatihan $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
                     ])->columns(2),
-                Section::make('Detail Pelatihan')
-                    ->schema([
-                        TextInput::make('judul')
-                            ->label('Judul')
-                            ->required()
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Set $set, $state) {
-                                $set('slug', Str::slug($state));
-                            }),
+                Tabs::make('Tab')
+                    ->tabs([
+                        Tab::make('Detail Pelatihan')
+                            ->schema([
+                                TextInput::make('judul')
+                                    ->label('Judul')
+                                    ->required()
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (Set $set, $state) {
+                                        $set('slug', Str::slug($state));
+                                    }),
 
-                        TextInput::make('slug')
-                            ->label('Slug')
-                            ->unique('pelatihans', 'slug', ignoreRecord: true)
-                            ->hidden(),
+                                TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->unique('pelatihans', 'slug', ignoreRecord: true),
+                                Fieldset::make()
+                                    ->schema([
+                                        DatePicker::make('tgl_mulai')
+                                            ->label('Tanggal Mulai')
+                                            ->native(false)
+                                            ->timezone('Asia/Jakarta')
+                                            ->required(),
+                                        DatePicker::make('tgl_selesai')
+                                            ->label('Tanggal Selesai')
+                                            ->after('tgl_mulai')
+                                            ->timezone('Asia/Jakarta')
+                                            ->native(false)
+                                            ->rule('after:tgl_mulai')
+                                            ->required(),
+                                    ]),
+                                Fieldset::make()
+                                    ->schema([
+                                        Select::make('periode_id')
+                                            ->relationship('periode', 'tahun_ajar')
+                                            ->label('Periode')
+                                            ->required(),
+                                        ToggleButtons::make('published')
+                                            ->label('Status?')
+                                            ->boolean('Published', 'Draft')
+                                            ->default('false')
+                                            ->grouped()
+                                    ]),
 
-                        DatePicker::make('tgl_mulai')
-                            ->label('Tanggal Mulai')
-                            ->native(false)
-                            ->timezone('Asia/Jakarta')
-                            ->required(),
-                        DatePicker::make('tgl_selesai')
-                            ->label('Tanggal Selesai')
-                            ->after('tgl_mulai')
-                            ->timezone('Asia/Jakarta')
-                            ->native(false)
-                            ->rule('after:tgl_mulai')
-                            ->required(),
+                                FileUpload::make('sampul')
+                                    ->label('Sampul')
+                                    ->hint('Pastikan Ukuran gambar 16:9')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios([
+                                        '16:9',
+                                        '4:3',
+                                        '1:1',
+                                    ])
+                                    ->previewable()
+                                    ->disk('public')
+                                    ->directory('pelatihan-sampul')
+                                    ->visibility('public')
+                                    ->maxSize(2048),
+                                RichEditor::make('deskripsi')
+                                    ->label('Deskripsi')
+                                    ->fileAttachmentsDisk('public')
+                                    ->fileAttachmentsDirectory('pelatihan-deskripsi')
+                                    ->fileAttachmentsVisibility('private')
+                                    ->required(),
 
-                        Select::make('periode_id')
-                            ->relationship('periode', 'tahun_ajar')
-                            ->label('Periode')
-                            ->required(),
-//                        Select::make('jenis_pelatihan')
-//                            ->label('Jenis Pelatihan')
-//                            ->options([
-//                                'dosen_lokal' => 'Dosen Lokal',
-//                                'dosen_luar' => 'Dosen Luar',
-//                                'semua' => 'Semua',
-//                            ])
-//                            ->required()
-//                            ->default('semua'),
-                        Toggle::make('published')
-                            ->label('Published')
-                            ->onIcon('heroicon-c-check')
-                            ->offIcon('heroicon-c-x-mark')
-                            ->onColor('success')
-                            ->default(false),
-                        FileUpload::make('sampul')
-                            ->label('Sampul')
-                            ->hint('Pastikan Ukuran gambar 16:9')
-                            ->image()
-                            ->imageEditor()
-                            ->imageEditorAspectRatios([
-                                '16:9',
-                                '4:3',
-                                '1:1',
+
+                            ]),
+                        Tab::make('Syarat Dan Ketentuan')
+                        ->schema([
+                            Repeater::make('syarat')
+                            ->schema([
+                                TextInput::make('syaratKetentuan')
+                                ->label('Syarat dan Ketentuan'),
                             ])
-                            ->previewable()
-                            ->disk('public')
-                            ->directory('pelatihan-sampul')
-                            ->visibility('public')
-                            ->maxSize(2048)
-                            ->columnSpan(2),
-                        RichEditor::make('deskripsi')
-                            ->label('Deskripsi')
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('pelatihan-deskripsi')
-                            ->fileAttachmentsVisibility('private')
-                            ->required()
-                            ->columnSpan(2),
-                    ])->columns(2)
+                        ])
+                    ])->columnSpanFull()
+
             ]);
     }
 

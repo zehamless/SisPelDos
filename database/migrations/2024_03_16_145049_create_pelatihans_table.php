@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->date('tgl_selesai');
             $table->unsignedBigInteger('jmlh_user')->nullable();
             $table->index(['slug', 'tgl_mulai', 'tgl_selesai']);
-            $table->enum('jenis_pelatihan', ['dosen_lokal', 'dosen_luar', 'semua'])->default('semua');
+            $table->jsonb('syarat')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

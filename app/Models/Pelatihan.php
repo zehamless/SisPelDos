@@ -21,13 +21,14 @@ class Pelatihan extends Model
         'tgl_mulai',
         'tgl_selesai',
         'jmlh_user',
-        'jenis_pelatihan',
+        'syarat'
     ];
 
     protected $casts = [
         'tgl_mulai' => 'date',
         'tgl_selesai' => 'date',
         'published' => 'boolean',
+        'syarat' => 'array'
     ];
 
     public function getRouteKeyName()
