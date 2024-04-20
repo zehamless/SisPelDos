@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
         Model::unguard();
         PanelSwitch::configureUsing(function (PanelSwitch $panelSwitch) {
             $panelSwitch->modalWidth('sm')
-            ->visible(fn() =>  auth()->user()->role === 'admin');
+            ->visible(fn() =>  auth()->check()&&auth()->user()->role === 'admin' );
         });
     }
 }

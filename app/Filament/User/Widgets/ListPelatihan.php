@@ -9,11 +9,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Hydrat\TableLayoutToggle\Concerns\HasToggleableTable;
 
 class ListPelatihan extends BaseWidget
 {
-    use HasToggleableTable;
 
     protected int|string|array $columnSpan = 2;
 
