@@ -81,4 +81,10 @@ class User extends Authenticatable implements FilamentUser, HasName
             ->withPivot('files', 'pesan', 'penilaian')
             ->withTimestamps();
     }
+    public function mendaftar()
+    {
+        return $this->belongsToMany(Pelatihan::class, 'mendaftar', 'users_id', 'pelatihan_id')
+            ->withPivot('status', 'files','file_name', 'pesan', 'created_at')
+            ->withTimestamps();
+    }
 }
