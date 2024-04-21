@@ -31,6 +31,7 @@ class User extends Authenticatable implements FilamentUser, HasName
         'jenis_kelamin',
         'universitas',
         'prodi',
+        'link',
         'jabatan_fungsional',
         'pendidikan_tertinggi',
         'status_kerja',
@@ -62,13 +63,28 @@ class User extends Authenticatable implements FilamentUser, HasName
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // TODO: Implement canAccessPanel() method.
-        return $this->role === 'admin';
+        if ($panel->getId() === 'admin') {
+            return $this->role === 'admin';
+        }
+        return $this->role === 'Internal' || $this->role === 'External' || $this->role === 'admin';
     }
 
     public function getFilamentName(): string
     {
         // TODO: Implement getFilamentName() method.
         return $this->nama;
+    }
+
+    public function mengerjakan()
+    {
+        return $this->belongsToMany(MateriTugas::class, 'mengerjakan', 'users_id', 'materi_tugas_id')
+            ->withPivot('files', 'pesan', 'penilaian')
+            ->withTimestamps();
+    }
+    public function mendaftar()
+    {
+        return $this->belongsToMany(Pelatihan::class, 'mendaftar', 'users_id', 'pelatihan_id')
+            ->withPivot('status', 'files','file_name', 'pesan', 'created_at')
+            ->withTimestamps();
     }
 }

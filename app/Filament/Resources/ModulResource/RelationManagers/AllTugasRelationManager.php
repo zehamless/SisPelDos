@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PelatihanResource\RelationManagers;
+namespace App\Filament\Resources\ModulResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -19,7 +19,6 @@ class AllTugasRelationManager extends RelationManager
     {
         return false;
     }
-
     public function form(Form $form): Form
     {
         return $form

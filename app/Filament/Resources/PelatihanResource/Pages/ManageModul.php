@@ -4,24 +4,26 @@ namespace App\Filament\Resources\PelatihanResource\Pages;
 
 use App\Filament\Resources\PelatihanResource;
 use Filament\Forms;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ManageTugas extends ManageRelatedRecords
+class ManageModul extends ManageRelatedRecords
 {
     protected static string $resource = PelatihanResource::class;
 
-    protected static string $relationship = 'tugas';
+    protected static string $relationship = 'modul';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getNavigationLabel(): string
     {
-        return 'Tugas';
+        return 'Modul';
     }
 
     public function form(Form $form): Form
@@ -30,31 +32,16 @@ class ManageTugas extends ManageRelatedRecords
             ->schema([
                 Forms\Components\TextInput::make('judul')
                     ->required()
-                    ->columnSpan(2)
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('tgl_mulai')
-                    ->native(false)
-                    ->timezone('Asia/Jakarta')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('tgl_selesai')
-                    ->native(false)
-                    ->timezone('Asia/Jakarta')
-                    ->after('tgl_mulai')
-                    ->rule('after:tgl_mulai')
-                    ->required(),
+                Toggle::make('published')
+                    ->label('Published')
+                    ->onIcon('heroicon-c-check')
+                    ->offIcon('heroicon-c-x-mark')
+                    ->onColor('success')
+                    ->default(false),
                 Forms\Components\RichEditor::make('deskripsi')
-                    ->columnSpan(2)
                     ->label('Deskripsi'),
-                Forms\Components\FileUpload::make('files')
-                    ->columnSpan(2)
-                    ->label('File Materi')
-                    ->disk('public')
-                    ->directory('materi')
-                    ->downloadable()
-                    ->multiple()
-                    ->storeFileNamesIn('file_name')
-                    ->visibility('public'),
-            ])->columns(2);
+            ])->columns(1);
     }
 
     public function table(Table $table): Table
@@ -62,55 +49,44 @@ class ManageTugas extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('judul')
             ->columns([
-                Tables\Columns\TextColumn::make('judul')
-                    ->label('Judul')
-                    ->words(5),
+                ToggleColumn::make('published')
+                    ->label('Published')
+                    ->onIcon('heroicon-c-check')
+                    ->offIcon('heroicon-c-x-mark')
+                    ->onColor('success')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('judul'),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
                     ->limit(50),
-                Tables\Columns\TextColumn::make('tgl_mulai')
-                    ->label('Tanggal Mulai')
-                    ->badge()
-                    ->color('success')
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta'),
-                Tables\Columns\TextColumn::make('tgl_selesai')
-                    ->label('Tanggal Mulai')
-                    ->badge()
-                    ->color('danger')
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta'),
-
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->mutateFormDataUsing(function (array $data) {
-                        $data['jenis'] = 'tugas';
-                        $data['tipe'] = 'tugas';
+                    ->mutateFormDataUsing(function ($data) {
+                        $data['slug'] = \Str::slug($data['judul']);
                         return $data;
                     }),
-                Tables\Actions\AssociateAction::make(),
+//                Tables\Actions\AssociateAction::make(),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('view')
-                        ->label('View')
-                        ->action(fn($record) => $this->redirectRoute('filament.admin.resources.tugas.view', $record))
-                        ->icon('heroicon-o-eye'),
+                            Tables\Actions\Action::make('view')
+                                ->label('View')
+                                ->action(fn($record) => $this->redirectRoute('filament.admin.resources.moduls.view', $record))
+                                ->icon('heroicon-o-eye'),
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\DissociateAction::make(),
+//                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                 ]),
-
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DissociateBulkAction::make(),
+//                    Tables\Actions\DissociateBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),

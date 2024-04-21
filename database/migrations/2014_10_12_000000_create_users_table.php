@@ -26,9 +26,7 @@ return new class extends Migration
             $table->string('pendidikan_tertinggi')->nullable();
             $table->string('status_kerja')->nullable();
             $table->string('status_dosen')->nullable();
-            $table->string('status_akun')->default('nonaktif');
-            $table->string('pembayaran')->nullable();
-            $table->enum('role', ['admin', 'dosen_lokal', 'dosen_luar'])->default('dosen_luar');
+            $table->enum('role', ['admin', 'Internal', 'External'])->default('External');
             $table->rememberToken();
             $table->timestamps();
         });

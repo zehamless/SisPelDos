@@ -4,16 +4,20 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PelatihanResource\Pages;
 use App\Filament\Resources\PelatihanResource\Pages\EditPelatihan;
-use App\Filament\Resources\PelatihanResource\RelationManagers\AllTugasRelationManager;
 use App\Filament\Resources\PelatihanResource\RelationManagers\MateriRelationManager;
 use App\Models\Pelatihan;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\Grid;
@@ -25,6 +29,7 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -33,10 +38,13 @@ use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
@@ -48,6 +56,7 @@ class PelatihanResource extends Resource
     protected static ?string $cluster = \App\Filament\Clusters\Pelatihan::class;
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $recordTitleAttribute = 'judul';
 
     public static function form(Form $form): Form
     {
@@ -63,72 +72,83 @@ class PelatihanResource extends Resource
                             ->label('Last Modified Date')
                             ->content(fn(?Pelatihan $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
                     ])->columns(2),
-                Section::make('Detail Pelatihan')
-                    ->schema([
-                        TextInput::make('judul')
-                            ->label('Judul')
-                            ->required()
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Set $set, $state) {
-                                $set('slug', Str::slug($state));
-                            }),
+                Tabs::make('Tab')
+                    ->tabs([
+                        Tab::make('Detail Pelatihan')
+                            ->schema([
+                                TextInput::make('judul')
+                                    ->label('Judul')
+                                    ->required()
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (Set $set, $state) {
+                                        $set('slug', Str::slug($state));
+                                    }),
 
-                        TextInput::make('slug')
-                            ->label('Slug')
-                            ->unique('pelatihans', 'slug', ignoreRecord: true)
-                            ->readOnly(),
+                                TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->unique('pelatihans', 'slug', ignoreRecord: true),
+                                Fieldset::make()
+                                    ->schema([
+                                        DatePicker::make('tgl_mulai')
+                                            ->label('Tanggal Mulai')
+                                            ->native(false)
+                                            ->timezone('Asia/Jakarta')
+                                            ->required(),
+                                        DatePicker::make('tgl_selesai')
+                                            ->label('Tanggal Selesai')
+                                            ->after('tgl_mulai')
+                                            ->timezone('Asia/Jakarta')
+                                            ->native(false)
+                                            ->rule('after:tgl_mulai')
+                                            ->required(),
+                                    ]),
+                                Fieldset::make()
+                                    ->schema([
+                                        Select::make('periode_id')
+                                            ->relationship('periode', 'tahun_ajar')
+                                            ->label('Periode')
+                                            ->required(),
+                                        ToggleButtons::make('published')
+                                            ->label('Status?')
+                                            ->boolean('Published', 'Draft')
+                                            ->default('false')
+                                            ->grouped()
+                                    ]),
 
-                        DatePicker::make('tgl_mulai')
-                            ->label('Tanggal Mulai')
-                            ->native(false)
-                            ->timezone('Asia/Jakarta')
-                            ->required(),
+                                FileUpload::make('sampul')
+                                    ->label('Sampul')
+                                    ->hint('Pastikan Ukuran gambar 16:9')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios([
+                                        '16:9',
+                                        '4:3',
+                                        '1:1',
+                                    ])
+                                    ->previewable()
+                                    ->disk('public')
+                                    ->directory('pelatihan-sampul')
+                                    ->visibility('public')
+                                    ->maxSize(2048),
+                                RichEditor::make('deskripsi')
+                                    ->label('Deskripsi')
+                                    ->fileAttachmentsDisk('public')
+                                    ->fileAttachmentsDirectory('pelatihan-deskripsi')
+                                    ->fileAttachmentsVisibility('private')
+                                    ->required(),
 
-                        DatePicker::make('tgl_selesai')
-                            ->label('Tanggal Selesai')
-                            ->after('tgl_mulai')
-                            ->timezone('Asia/Jakarta')
-                            ->native(false)
-                            ->rule('after:tgl_mulai')
-                            ->required(),
 
-                        Select::make('periode_id')
-                            ->relationship('periode', 'tahun_ajar')
-                            ->label('Periode')
-                            ->required(),
-                        Select::make('jenis_pelatihan')
-                            ->label('Jenis Pelatihan')
-                            ->options([
-                                'dosen_lokal' => 'Dosen Lokal',
-                                'dosen_luar' => 'Dosen Luar',
-                                'semua' => 'Semua',
+                            ]),
+                        Tab::make('Syarat Dan Ketentuan')
+                        ->schema([
+                            Repeater::make('syarat')
+                            ->schema([
+                                TextInput::make('syaratKetentuan')
+                                ->label('Syarat dan Ketentuan'),
                             ])
-                            ->required()
-                            ->default('semua'),
-                        FileUpload::make('sampul')
-                            ->label('Sampul')
-                            ->hint('Pastikan Ukuran gambar 16:9')
-                            ->image()
-                            ->imageEditor()
-                            ->imageEditorAspectRatios([
-                                '16:9',
-                                '4:3',
-                                '1:1',
-                            ])
-                            ->previewable()
-                            ->disk('public')
-                            ->directory('pelatihan-sampul')
-                            ->visibility('public')
-                            ->maxSize(2048)
-                            ->columnSpan(2),
-                        RichEditor::make('deskripsi')
-                            ->label('Deskripsi')
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('pelatihan-deskripsi')
-                            ->fileAttachmentsVisibility('private')
-                            ->required()
-                            ->columnSpan(2),
-                    ])->columns(2)
+                        ])
+                    ])->columnSpanFull()
+
             ]);
     }
 
@@ -136,32 +156,36 @@ class PelatihanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('judul')
-                ->words(5)
-                    ->searchable(),
-                TextColumn::make('sampul')
-                ->limit(20),
-                TextColumn::make('slug')
-                    ->searchable()
+                ToggleColumn::make('published')
+                    ->label('Published')
+                    ->onIcon('heroicon-c-check')
+                    ->offIcon('heroicon-c-x-mark')
+                    ->onColor('success')
                     ->sortable(),
+                TextColumn::make('judul')
+                    ->words(5)
+                    ->searchable(),
 
                 TextColumn::make('deskripsi')
-                ->limit(50),
+                    ->limit(50),
 
                 TextColumn::make('tgl_mulai')
+                    ->sortable()
                     ->date(),
 
                 TextColumn::make('tgl_selesai')
+                    ->sortable()
                     ->date(),
 
-                TextColumn::make('jmlh_user'),
+                TextColumn::make('jmlh_user')
+                    ->sortable(),
             ])
             ->filters([
                 TrashedFilter::make(),
-            ])
+            ])->deferFilters()
             ->actions([
                 ActionGroup::make([
-                    \Filament\Tables\Actions\ViewAction::make(),
+                    ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
                     RestoreAction::make(),
@@ -173,7 +197,19 @@ class PelatihanResource extends Resource
                     DeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                     ForceDeleteBulkAction::make(),
+                    BulkAction::make('publish')
+                        ->label('Publish')
+                        ->icon('heroicon-c-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => true])),
+                    BulkAction::make('draft')
+                        ->label('Draft')
+                        ->icon('heroicon-c-x-circle')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => false])),
                 ]),
+
             ]);
     }
 
@@ -188,8 +224,11 @@ class PelatihanResource extends Resource
                                 Group::make([
                                     TextEntry::make('judul')
                                         ->label('Judul'),
-                                    TextEntry::make('slug')
-                                        ->label('Slug'),
+                                    TextEntry::make('published')
+                                        ->label('Published')
+                                        ->badge()
+                                        ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                                        ->color(fn($state) => $state ? 'success' : 'danger'),
                                 ]),
                                 Group::make([
                                     TextEntry::make('tgl_mulai')
@@ -225,9 +264,8 @@ class PelatihanResource extends Resource
             'create' => Pages\CreatePelatihan::route('/create'),
             'edit' => EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
-            'materi' => Pages\ManageMateri::route('/{record}/materi'),
-            'tugas' => Pages\ManageTugas::route('/{record}/tugas'),
-            'kuis' => Pages\ManageKuis::route('/{record}/kuis'),
+            'modul' => Pages\ManageModul::route('/{record}/modul'),
+
         ];
     }
 
@@ -241,7 +279,7 @@ class PelatihanResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['slug'];
+        return ['judul'];
     }
 
     public static function getRecordSubNavigation(Page $page): array
@@ -249,15 +287,15 @@ class PelatihanResource extends Resource
         return $page->generateNavigationItems([
             Pages\ViewPelatihan::class,
             EditPelatihan::class,
-            Pages\ManageMateri::class,
-            Pages\ManageTugas::class,
-            Pages\ManageKuis::class,
+            Pages\ManageModul::class,
+
         ]);
     }
+
     public static function getRelations(): array
     {
-        return[
-            AllTugasRelationManager::class,
+        return [
+//            AllTugasRelationManager::class,
         ];
     }
 }

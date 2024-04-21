@@ -24,22 +24,31 @@ class KuisRelationManager extends RelationManager
                 Forms\Components\RichEditor::make('pertanyaan')
                     ->label('Pertanyaan')
                     ->required()
+                    ->columnSpan(2)
                     ->maxLength(255),
-                Forms\Components\TagsInput::make('jawabanInput')
-                    ->label('Jawaban')
+                Forms\Components\TagsInput::make('jawaban_option')
+                    ->label('Pilihan')
+                    ->hint("Gunakan petik satu (') untuk pilihan berupa angka atau numeric. Contoh: '1', '2', '3', '4', '5")
+                    ->hintColor('warning')
                     ->required()
                     ->live(onBlur: true)
                     ->reorderable()
                     ->afterStateUpdated(function (Forms\Set $set, $state) {
+//                        dump($state);
                         $set('jawaban_benar', $state);
                     }),
                 Forms\Components\CheckboxList::make('jawaban_benar')
                     ->label('Jawaban Benar')
                     ->required()
-                    ->options(function ($state) {
-                        return is_array($state) ? array_combine($state, $state) : [];
+                    ->options(function ($state, $record) {
+                        $options = array_filter($state, function ($value) {
+                            return !is_numeric($value);
+                        });
+                        return $options;
                     }),
-            ]);
+
+
+            ])->columns(2);
     }
 
     public function table(Table $table): Table
@@ -48,51 +57,30 @@ class KuisRelationManager extends RelationManager
             ->recordTitleAttribute('pertanyaan')
             ->columns([
                 Tables\Columns\TextColumn::make('pertanyaan')
-                ->label('Pertanyaan')
-                ->html()
-                ->words(5),
+                    ->label('Pertanyaan')
+                    ->html()
+                    ->words(5),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->searchable()
+                    ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                ->mutateFormDataUsing(function (array $data) {
-                    $data['jawaban'] = [
-                        'jawabanInput' => $data['jawabanInput'],
-                        'jawaban_benar' => $data['jawaban_benar'],
-                    ];
-                    $data = collect($data)->except(['jawabanInput', 'jawaban_benar'])->toArray();
-                    return $data;
-                }),
+                Tables\Actions\CreateAction::make(),
+                Tables\Actions\AttachAction::make()
+                    ->preloadRecordSelect(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                ->mutateRecordDataUsing(function (array $data) {
-//                    $jawaban = json_decode($data['jawaban'], true);
-//                    $data['jawabanInput'] = $jawaban['jawabanInput'];
-//                    $data['jawaban_benar'] = $jawaban['jawaban_benar'];
-                    $data['jawabanInput'] = $data['jawaban']['jawabanInput'];
-                    $data['jawaban_benar'] = $data['jawaban']['jawaban_benar'];
-//                    dump($data);
-                    return $data;
-                })
-                ->mutateFormDataUsing(function (array $data) {
-                    $data['jawaban'] = [
-                        'jawabanInput' => $data['jawabanInput'],
-                        'jawaban_benar' => $data['jawaban_benar'],
-                    ];
-                    $data = collect($data)->except(['jawabanInput', 'jawaban_benar'])->toArray();
-                    return $data;
-                }),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->reorderable('urutan')
-            ->defaultSort('urutan', 'asc');
+            ]);
     }
 }

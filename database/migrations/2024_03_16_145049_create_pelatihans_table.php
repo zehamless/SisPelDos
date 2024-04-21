@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('periode_id')->constrained('periodes');
             $table->string('judul');
+            $table->boolean('published')->default(false);
             $table->string('sampul')->nullable();
             $table->string('slug')->unique();
             $table->text('deskripsi')->nullable();
@@ -18,7 +19,7 @@ return new class extends Migration {
             $table->date('tgl_selesai');
             $table->unsignedBigInteger('jmlh_user')->nullable();
             $table->index(['slug', 'tgl_mulai', 'tgl_selesai']);
-            $table->enum('jenis_pelatihan', ['dosen_lokal', 'dosen_luar', 'semua'])->default('semua');
+            $table->jsonb('syarat')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

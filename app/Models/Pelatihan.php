@@ -16,45 +16,41 @@ class Pelatihan extends Model
         'judul',
         'sampul',
         'slug',
+        'published',
         'deskripsi',
         'tgl_mulai',
         'tgl_selesai',
         'jmlh_user',
-        'jenis_pelatihan',
+        'syarat'
     ];
 
     protected $casts = [
         'tgl_mulai' => 'date',
         'tgl_selesai' => 'date',
+        'published' => 'boolean',
+        'syarat' => 'array'
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 
     public function periode(): BelongsTo
     {
         return $this->belongsTo(Periode::class);
     }
 
-    public function allTugas(): HasMany
+    public function modul(): HasMany
     {
-        return $this->hasMany(MateriTugas::class);
+        return $this->hasMany(Modul::class);
     }
 
-    public function materi(): HasMany
+    public function pendaftar()
     {
-        return $this->hasMany(MateriTugas::class)->where('jenis', 'materi');
+        return $this->belongsToMany(User::class, 'mendaftar', 'pelatihan_id', 'users_id')
+            ->withPivot('status', 'pesan', 'files', 'file_name')
+            ->withTimestamps();
     }
 
-    public function tugas(): HasMany
-    {
-        return $this->hasMany(MateriTugas::class)->where([
-            ['jenis', '=', 'tugas'],
-            ['tipe', '=', 'tugas']
-        ]);
-    }
-
-    public function kuis(): HasMany
-    {
-        return $this->hasMany(MateriTugas::class)->where([
-            ['jenis', '=', 'kuis'],
-        ]);
-    }
 }
