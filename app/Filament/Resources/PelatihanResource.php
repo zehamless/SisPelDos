@@ -265,6 +265,7 @@ class PelatihanResource extends Resource
             'edit' => EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
             'modul' => Pages\ManageModul::route('/{record}/modul'),
+            'pendaftar' => Pages\ManagePendaftar::route('/{record}/pendaftar'),
 
         ];
     }
@@ -288,6 +289,7 @@ class PelatihanResource extends Resource
             Pages\ViewPelatihan::class,
             EditPelatihan::class,
             Pages\ManageModul::class,
+            Pages\ManagePendaftar::class,
 
         ]);
     }

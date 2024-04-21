@@ -73,6 +73,8 @@ class ManageTugas extends ManageRelatedRecords
                     ->label('Deskripsi'),
                 Forms\Components\FileUpload::make('files')
                     ->columnSpan(2)
+                    ->deletable(true)
+                    ->minFiles(1)
                     ->label('File Materi')
                     ->disk('public')
                     ->directory('materi')

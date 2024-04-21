@@ -121,6 +121,8 @@ class PelatihanResource extends Resource
                         ->action(function (array $data, Pelatihan $record) {
                             if (auth()->check()) {
                                 $record->pendaftar()->attach(auth()->id(), [
+                                    'role' => auth()->user()->role,
+                                    'nama' => auth()->user()->nama,
                                     'files' => $data['files'],
                                     'file_name' => $data['file_name'],
                                 ]);
@@ -141,7 +143,7 @@ class PelatihanResource extends Resource
                         ->modalDescription('Lihat Status Pendaftaran')
                         ->fillForm(function (Pelatihan $record) {
                             $pendaftar = $record->pendaftar()->where('users_id', auth()->id())->first()->pivot;
-
+//                            dump($pendaftar);
                             return [
                                 'status' => $pendaftar->status,
                                 'files' => $pendaftar->files,
@@ -174,8 +176,8 @@ class PelatihanResource extends Resource
                         ->action(function (array $data, Pelatihan $record) {
                             $pendaftar = $record->pendaftar()->where('users_id', auth()->id())->first()->pivot;
                             $pendaftar->update([
-                                'files' => json_encode($data['files']),
-                                'file_name' => json_encode($data['file_name']),
+                                'files' => $data['files'],
+                                'file_name' => $data['file_name'],
                             ]);
                             Notification::make()
                                 ->title('File Pendaftaran Berhasil')

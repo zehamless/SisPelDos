@@ -49,7 +49,7 @@ class Pelatihan extends Model
     public function pendaftar()
     {
         return $this->belongsToMany(User::class, 'mendaftar', 'pelatihan_id', 'users_id')
-            ->withPivot('status', 'pesan', 'files', 'file_name')
+            ->withPivot('status', 'pesan', 'files', 'file_name', 'nama', 'role')
             ->withTimestamps();
     }
 
