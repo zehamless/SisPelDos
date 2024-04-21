@@ -46,4 +46,11 @@ class Pelatihan extends Model
         return $this->hasMany(Modul::class);
     }
 
+    public function pendaftar()
+    {
+        return $this->belongsToMany(User::class, 'mendaftar', 'pelatihan_id', 'users_id')
+            ->withPivot('status', 'pesan', 'files', 'file_name')
+            ->withTimestamps();
+    }
+
 }

@@ -1,4 +1,5 @@
 <x-guest-layout>
+    <x-auth-session-status class="mb-4" :status="session('warning')" />
     <form method="POST" action="{{ route('register') }}" id="register-form">
         @csrf
 
