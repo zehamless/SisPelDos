@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PelatihanResource\Pages;
 
 use App\Filament\Resources\PelatihanResource;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\ToggleButtons;
@@ -11,30 +12,19 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ManagePendaftar extends ManageRelatedRecords
+class ManagePeserta extends ManageRelatedRecords
 {
     protected static string $resource = PelatihanResource::class;
 
-    protected static string $relationship = 'pendaftar';
+    protected static string $relationship = 'peserta';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getNavigationLabel(): string
     {
-        return 'Pendaftar';
-    }
-
-    protected function canCreate(): bool
-    {
-        return false;
-    }
-
-    protected function canEdit(Model $record): bool
-    {
-        return auth()->user()->role === 'admin';
+        return 'Peserta';
     }
 
     public function form(Form $form): Form
@@ -44,9 +34,6 @@ class ManagePendaftar extends ManageRelatedRecords
                 Forms\Components\TextInput::make('nama')
                     ->disabled()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('pesan')
-                    ->label('Pesan')
-                    ->placeholder('Masukkan pesan'),
                 FileUpload::make('files')
                     ->label('File')
                     ->deletable(false)
@@ -67,8 +54,8 @@ class ManagePendaftar extends ManageRelatedRecords
                         'pending' => 'primary',
                         'ditolak' => 'danger',
                     ])
-                    ->hint('Jika status diterima, maka peserta akan masuk ke dalam daftar peserta pelatihan.')
-                    ->hintColor('warning')
+                    ->hint('Jika status pending, maka peserta akan masuk kembali ke daftar pendaftar pelatihan.')
+                    ->hintColor('danger')
                     ->grouped(),
             ])->columns(1);
     }
@@ -82,17 +69,18 @@ class ManagePendaftar extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('role')
                     ->label('Status Dosen')
                     ->badge()
-                    ->color(fn($record) => match ($record->role) {
+                    ->color(fn ($record) => match ($record->role) {
                         'admin' => 'primary',
                         'Internal' => 'success',
                         'External' => 'info',
                     }),
             ])
             ->filters([
-//                Tables\Filters\TrashedFilter::make()
+                //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make(),
+//                Tables\Actions\CreateAction::make(),
+//                Tables\Actions\AttachAction::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -100,24 +88,16 @@ class ManagePendaftar extends ManageRelatedRecords
                     ->icon('heroicon-o-user')
                     ->label('Lihat Pengguna')
                     ->url(fn($record) => route('filament.admin.resources.users.view', $record)),
-                Tables\Actions\EditAction::make()
-                    ->label('Kirim Pesan'),
+                Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make()
-                    ->label('Hapus Pendaftar'),
+                ->label('Hapus Peserta'),
 //                Tables\Actions\DeleteAction::make(),
-//                Tables\Actions\ForceDeleteAction::make(),
-//                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DetachBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
-//                    Tables\Actions\RestoreBulkAction::make(),
-//                    Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
-            ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]));
+            ]);
     }
 }

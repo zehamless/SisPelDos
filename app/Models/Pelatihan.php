@@ -48,7 +48,16 @@ class Pelatihan extends Model
 
     public function pendaftar()
     {
-        return $this->belongsToMany(User::class, 'mendaftar', 'pelatihan_id', 'users_id')
+        return $this->belongsToMany(User::class, 'daftarPeserta', 'pelatihan_id', 'users_id')
+            ->wherePivotNotIn('status', ['diterima'])
+            ->withPivot('status', 'pesan', 'files', 'file_name', 'nama', 'role')
+            ->withTimestamps();
+    }
+
+    public function peserta()
+    {
+        return $this->belongsToMany(User::class, 'daftarPeserta', 'pelatihan_id', 'users_id')
+            ->wherePivot('status', 'diterima')
             ->withPivot('status', 'pesan', 'files', 'file_name', 'nama', 'role')
             ->withTimestamps();
     }

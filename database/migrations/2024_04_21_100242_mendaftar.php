@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('mendaftar', function (Blueprint $table) {
+        Schema::create('daftarPeserta', function (Blueprint $table) {
             $table->foreignUlid('users_id')->constrained()->onDelete('cascade');
             $table->string('nama');
-            $table->enum('role', ['admin', 'Internal', 'External'])->default('External');
+            $table->enum('role', ['admin', 'Internal', 'External'])->default('External')->index();
             $table->foreignId('pelatihan_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
             $table->string('files')->nullable();
