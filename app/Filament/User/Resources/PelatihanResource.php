@@ -29,12 +29,14 @@ class PelatihanResource extends Resource
 
     protected static ?string $label = 'PelatihanKu';
     protected static ?string $pluralLabel = 'PelatihanKu';
-    /**
-     * @param string|null $slug
-     */
+
+    protected static ?string $recordTitleAttribute = 'judul';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-
+    public static function canCreate(): bool
+    {
+        return false;
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -46,10 +48,10 @@ class PelatihanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(
-                Pelatihan::whereIn('id', auth()->user()->peserta()->get()->pluck('id'))->newQuery()
-
-            )
+//            ->query(
+//                Pelatihan::whereIn('id', auth()->user()->peserta()->get()->pluck('id'))->newQuery()
+//
+//            )
             ->columns([
                 Tables\Columns\Layout\Grid::make()
                     ->columns(2)
@@ -107,13 +109,8 @@ class PelatihanResource extends Resource
             ->schema([
                 \Filament\Infolists\Components\Section::make()
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(2)
                             ->schema([
-                                Group::make([
-                                    TextEntry::make('judul')
-                                        ->label('Judul'),
-                                ]),
-
                                 TextEntry::make('tgl_mulai')
                                     ->label('Tanggal Mulai')
                                     ->dateTime('d M Y')
