@@ -27,6 +27,8 @@ class PelatihanResource extends Resource
 {
     protected static ?string $model = Pelatihan::class;
 
+    protected static ?string $label = 'PelatihanKu';
+    protected static ?string $pluralLabel = 'PelatihanKu';
     /**
      * @param string|null $slug
      */
@@ -44,10 +46,41 @@ class PelatihanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->query(
+                Pelatihan::whereIn('id', auth()->user()->peserta()->get()->pluck('id'))->newQuery()
+
+            )
             ->columns([
-                Tables\Columns\TextColumn::make('judul')
-                    ->label('Judul')
-            ])
+                Tables\Columns\Layout\Grid::make()
+                    ->columns(2)
+                    ->schema([
+                        Tables\Columns\ImageColumn::make('sampul')
+                            ->label('Sampul')
+                            ->width('100%')
+                            ->height('100%')
+                            ->extraImgAttributes(['loading' => 'lazy'])
+                            ->columnSpanFull()
+                            ->alignCenter(),
+                        Tables\Columns\TextColumn::make('tgl_mulai')
+                            ->label('Tanggal Mulai')
+                            ->badge()
+                            ->date('d M Y', 'Asia/Jakarta')
+                            ->color('primary'),
+                        Tables\Columns\TextColumn::make('tgl_selesai')
+                            ->label('Tanggal Selesai')
+                            ->badge()
+                            ->date('d M Y', 'Asia/Jakarta')
+                            ->columnStart(2)
+                            ->alignEnd()
+                            ->color('danger'),
+                        Tables\Columns\TextColumn::make('judul')
+                            ->label('Judul')
+                            ->limit(50)
+                            ->columnSpanFull()
+                            ->searchable(),
+                    ])
+
+            ])->contentGrid(['md' => 2, 'lg' => 3, 'xl' => 4])
             ->filters([
                 //
             ])
@@ -64,8 +97,11 @@ class PelatihanResource extends Resource
     public static function infolist(Infolist $infolist): Infolist
     {
         $userPelatihanIds = [];
+        $userTerimaPelatihanIds = [];
         if (auth()->check()) {
             $userPelatihanIds = auth()->user()->mendaftar()->pluck('pelatihan_id')->toArray();
+            $userTerimaPelatihanIds = auth()->user()->peserta()->pluck('pelatihan_id')->toArray();
+//            dump($userPelatihanIds);
         }
         return $infolist
             ->schema([
@@ -140,13 +176,13 @@ class PelatihanResource extends Resource
                                 return redirect()->route('register');
                             }
                         })
-                        ->visible(fn($record) => !auth()->check() || !in_array($record->id, $userPelatihanIds)),
+                        ->visible(fn($record) => !auth()->check() || !in_array($record->id, $userPelatihanIds) && !in_array($record->id, $userTerimaPelatihanIds)),
                     Action::make('Status Pendaftaran')
 //                        ->icon('heroicon-s-clipboard-check')
                         ->modalDescription('Lihat Status Pendaftaran')
                         ->fillForm(function (Pelatihan $record) {
-                            $pendaftar = $record->pendaftar()->where('users_id', auth()->id())->first()->pivot;
-//                            dump($pendaftar);
+//                            dump($record);
+                            $pendaftar = $record->pendaftar()->where('users_id', auth()->id())->where('pelatihan_id', $record->id)->first()->pivot;
                             return [
                                 'status' => $pendaftar->status,
                                 'files' => $pendaftar->files,
@@ -193,8 +229,8 @@ class PelatihanResource extends Resource
                                 ->success()
                                 ->send();
                             Notification::make()
-                                ->title('Pendaftaran '.$pendaftar->judul)
-                                ->body(auth()->user()->nama.' mengubah file pendaftaran')
+                                ->title('Pendaftaran ' . $pendaftar->judul)
+                                ->body(auth()->user()->nama . ' mengubah file pendaftaran')
                                 ->actions([
                                     \Filament\Notifications\Actions\Action::make('Lihat')
                                         ->url(route('filament.admin.pelatihan.resources.pelatihans.view', $record->slug))
