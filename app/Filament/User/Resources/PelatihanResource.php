@@ -137,7 +137,7 @@ class PelatihanResource extends Resource
                             ->schema([
                                 TextEntry::make('')
                             ]),
-                    ]),
+                    ])                        ->visible(fn($record) => !auth()->check() || !in_array($record->id, $userPelatihanIds) && !in_array($record->id, $userTerimaPelatihanIds)),
                 Actions::make([
                     Action::make('Daftar')
                         ->icon('heroicon-s-document-text')
@@ -244,7 +244,7 @@ class PelatihanResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ModulRelationManager::class
         ];
     }
 
