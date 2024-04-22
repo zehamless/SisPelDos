@@ -3,16 +3,19 @@
 namespace App\Filament\Resources\PelatihanResource\Pages;
 
 use App\Filament\Resources\PelatihanResource;
+use App\Models\Pelatihan;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Notifications\Actions\Action;
 
 class ManagePendaftar extends ManageRelatedRecords
 {
@@ -101,7 +104,34 @@ class ManagePendaftar extends ManageRelatedRecords
                     ->label('Lihat Pengguna')
                     ->url(fn($record) => route('filament.admin.resources.users.view', $record)),
                 Tables\Actions\EditAction::make()
-                    ->label('Kirim Pesan'),
+                    ->label('Kirim Pesan')
+                    ->successNotification(function (array $data, $record) {
+//                        dump($data);
+
+                        $message = match ($data['status']) {
+                            'pending' => 'Pendaftaran anda masih dalam proses. Silahkan cek pesan dari admin',
+                            'diterima' => 'Selamat! Pendaftaran anda telah diterima.',
+                            'ditolak' => 'Maaf, pendaftaran anda pada pelatihan telah ditolak. Silahkan cek pesan dari admin',
+                            default => 'Status tidak dikenal',
+                        };
+
+                        Notification::make()
+                            ->title('Pelatihan '.$record->judul.' - Status Pendaftaran')
+                            ->status(
+                                match ($data['status']) {
+                                    'pending' => 'warning',
+                                    'diterima' => 'success',
+                                    'ditolak' => 'danger',
+                                    default => 'info',
+                                }
+                            )
+                            ->body($message)
+                            ->actions([
+                                Action::make('Lihat')
+                                    ->url(route('filament.user.resources.pelatihans.view', $record->slug))
+                            ])
+                            ->sendToDatabase($record);
+                    }),
                 Tables\Actions\DetachAction::make()
                     ->label('Hapus Pendaftar'),
 //                Tables\Actions\DeleteAction::make(),

@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources;
 use App\Filament\User\Resources\PelatihanResource\Pages;
 use App\Filament\User\Resources\PelatihanResource\RelationManagers;
 use App\Models\Pelatihan;
+use App\Models\User;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;
@@ -121,6 +122,8 @@ class PelatihanResource extends Resource
                         ->action(function (array $data, Pelatihan $record) {
                             if (auth()->check()) {
                                 $record->pendaftar()->attach(auth()->id(), [
+                                    'slug' => $record->slug,
+                                    'judul' => $record->judul,
                                     'role' => auth()->user()->role,
                                     'nama' => auth()->user()->nama,
                                     'files' => $data['files'],
@@ -159,6 +162,11 @@ class PelatihanResource extends Resource
                                     'pending' => 'Pending',
                                     'ditolak' => 'Ditolak',
                                 ])
+                                ->colors([
+                                    'diterima' => 'success',
+                                    'pending' => 'primary',
+                                    'ditolak' => 'danger',
+                                ])
                                 ->grouped()
                                 ->disabled(),
                             Textarea::make('pesan')
@@ -174,6 +182,7 @@ class PelatihanResource extends Resource
                                 ->visibility('public')
                         ])
                         ->action(function (array $data, Pelatihan $record) {
+//                            dump(User::admin()->get() ) ;
                             $pendaftar = $record->pendaftar()->where('users_id', auth()->id())->first()->pivot;
                             $pendaftar->update([
                                 'files' => $data['files'],
@@ -183,6 +192,15 @@ class PelatihanResource extends Resource
                                 ->title('File Pendaftaran Berhasil')
                                 ->success()
                                 ->send();
+                            Notification::make()
+                                ->title('Pendaftaran '.$pendaftar->judul)
+                                ->body(auth()->user()->nama.' mengubah file pendaftaran')
+                                ->actions([
+                                    \Filament\Notifications\Actions\Action::make('Lihat')
+                                        ->url(route('filament.admin.pelatihan.resources.pelatihans.view', $record->slug))
+                                ])
+                                ->info()
+                                ->sendToDatabase(User::admin()->get());
                         })
                         ->visible(fn($record) => in_array($record->id, $userPelatihanIds)),
                 ]),
