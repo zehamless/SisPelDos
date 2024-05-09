@@ -89,7 +89,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     {
         return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
             ->whereNot('status', 'diterima')
-            ->withPivot('status', 'files','file_name', 'pesan', 'created_at', 'nama', 'role')
+            ->withPivot('status', 'files','file_name', 'pesan', 'created_at')
             ->withTimestamps();
     }
     public function peserta()

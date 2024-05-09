@@ -46,9 +46,12 @@ class ModulRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+//                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
+                Tables\Actions\Action::make('Lihat Modul')
+                    ->icon('heroicon-s-eye')
+                    ->action(fn($record) => $this->redirectRoute('filament.user.resources.pelatihans.modul', $record->slug)),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

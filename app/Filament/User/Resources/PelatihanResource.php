@@ -155,10 +155,6 @@ class PelatihanResource extends Resource
                         ->action(function (array $data, Pelatihan $record) {
                             if (auth()->check()) {
                                 $record->pendaftar()->attach(auth()->id(), [
-                                    'slug' => $record->slug,
-                                    'judul' => $record->judul,
-                                    'role' => auth()->user()->role,
-                                    'nama' => auth()->user()->nama,
                                     'files' => $data['files'],
                                     'file_name' => $data['file_name'],
                                 ]);
@@ -217,6 +213,7 @@ class PelatihanResource extends Resource
                         ->action(function (array $data, Pelatihan $record) {
 //                            dump(User::admin()->get() ) ;
                             $pendaftar = $record->pendaftar()->where('users_id', auth()->id())->first()->pivot;
+//                            dump($pendaftar);
                             $pendaftar->update([
                                 'files' => $data['files'],
                                 'file_name' => $data['file_name'],
@@ -226,7 +223,7 @@ class PelatihanResource extends Resource
                                 ->success()
                                 ->send();
                             Notification::make()
-                                ->title('Pendaftaran ' . $pendaftar->judul)
+                                ->title('Pendaftaran ' . $record->judul)
                                 ->body(auth()->user()->nama . ' mengubah file pendaftaran')
                                 ->actions([
                                     \Filament\Notifications\Actions\Action::make('Lihat')
@@ -255,6 +252,7 @@ class PelatihanResource extends Resource
             'create' => Pages\CreatePelatihan::route('/create'),
             'edit' => Pages\EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
+            'modul' =>Pages\ViewModul::route('/modul/{record}')
         ];
     }
 }

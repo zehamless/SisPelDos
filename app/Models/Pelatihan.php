@@ -51,7 +51,7 @@ class Pelatihan extends Model
     {
         return $this->belongsToMany(User::class, 'daftarPeserta', 'pelatihan_id', 'users_id')
             ->wherePivotNotIn('status', ['diterima'])
-            ->withPivot('status', 'pesan', 'files', 'file_name', 'nama', 'role')
+            ->withPivot('status', 'pesan', 'files', 'file_name')
             ->withTimestamps();
     }
 
@@ -59,7 +59,7 @@ class Pelatihan extends Model
     {
         return $this->belongsToMany(User::class, 'daftarPeserta', 'pelatihan_id', 'users_id')
             ->wherePivot('status', 'diterima')
-            ->withPivot('status', 'pesan', 'files', 'file_name', 'nama', 'role')
+            ->withPivot('status', 'pesan', 'files', 'file_name')
             ->withTimestamps();
     }
 

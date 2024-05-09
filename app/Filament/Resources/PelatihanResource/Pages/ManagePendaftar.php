@@ -78,6 +78,7 @@ class ManagePendaftar extends ManageRelatedRecords
 
     public function table(Table $table): Table
     {
+        $pelatihan = $this->getRecord();
         return $table
             ->recordTitleAttribute('nama')
             ->columns([
@@ -98,6 +99,7 @@ class ManagePendaftar extends ManageRelatedRecords
                 Tables\Actions\AttachAction::make(),
             ])
             ->actions([
+
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('lihatPengguna')
                     ->icon('heroicon-o-user')
@@ -105,9 +107,8 @@ class ManagePendaftar extends ManageRelatedRecords
                     ->url(fn($record) => route('filament.admin.resources.users.view', $record)),
                 Tables\Actions\EditAction::make()
                     ->label('Kirim Pesan')
-                    ->successNotification(function (array $data, $record) {
-//                        dump($data);
-
+                    ->successNotification(function (array $data, $record) use ($pelatihan) {
+//                        dump($pelat)
                         $message = match ($data['status']) {
                             'pending' => 'Pendaftaran anda masih dalam proses. Silahkan cek pesan dari admin',
                             'diterima' => 'Selamat! Pendaftaran anda telah diterima.',
@@ -116,7 +117,7 @@ class ManagePendaftar extends ManageRelatedRecords
                         };
 
                         Notification::make()
-                            ->title('Pelatihan '.$record->judul.' - Status Pendaftaran')
+                            ->title('Pelatihan '.$pelatihan->judul.' - Status Pendaftaran')
                             ->status(
                                 match ($data['status']) {
                                     'pending' => 'warning',
@@ -128,7 +129,7 @@ class ManagePendaftar extends ManageRelatedRecords
                             ->body($message)
                             ->actions([
                                 Action::make('Lihat')
-                                    ->url(route('filament.user.resources.pelatihans.view', $record->slug))
+                                    ->url(route('filament.user.resources.pelatihans.view', $pelatihan->slug))
                             ])
                             ->sendToDatabase($record);
                     }),
