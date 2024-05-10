@@ -42,7 +42,7 @@ class ModulRelationManager extends RelationManager
                 ]),
                 Tables\Columns\Layout\Panel::make([
                     Tables\Columns\TextColumn::make('deskripsi')
-                        ->searchable(),
+                        ->markdown()
                 ])->collapsed(false)
             ])
             ->filters([
@@ -54,8 +54,8 @@ class ModulRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\Action::make('Lihat Modul')
                     ->icon('heroicon-s-eye')
-                    ->action(fn($record) => $this->redirectRoute('filament.user.pelatihan.resources.pelatihans.modul', $record->slug)),
-                Tables\Actions\ViewAction::make()->visible(!$peserta),
+                    ->action(fn($record) => $this->redirectRoute('filament.user.resources.moduls.view', $record->slug))->visible($peserta),
+//                Tables\Actions\ViewAction::make()->visible(!$peserta),
             ])
             ->bulkActions([
                 //
