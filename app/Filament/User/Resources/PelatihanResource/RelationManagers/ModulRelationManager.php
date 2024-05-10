@@ -25,6 +25,9 @@ class ModulRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
+
+     $peserta = auth()->check() && auth()->user()->peserta()->where('pelatihan_id', $this->getOwnerRecord()->id)->exists();
+//        dump($peserta);
         return $table
             ->recordTitleAttribute('judul')
             ->columns([
@@ -51,14 +54,11 @@ class ModulRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\Action::make('Lihat Modul')
                     ->icon('heroicon-s-eye')
-                    ->action(fn($record) => $this->redirectRoute('filament.user.resources.pelatihans.modul', $record->slug)),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                    ->action(fn($record) => $this->redirectRoute('filament.user.pelatihan.resources.pelatihans.modul', $record->slug)),
+                Tables\Actions\ViewAction::make()->visible(!$peserta),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                //
             ])
             ->defaultSort('urutan');
     }
