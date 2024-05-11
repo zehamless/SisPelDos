@@ -6,10 +6,12 @@ use App\Filament\User\Resources\PelatihanResource;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListPelatihans extends ListRecords
 {
+    Use NestedPage;
     protected static string $resource = PelatihanResource::class;
 
     protected function getHeaderActions(): array

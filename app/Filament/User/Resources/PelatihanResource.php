@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources;
 
+use App\Filament\User\Resources\ModulResource\Pages\ViewModul;
 use App\Filament\User\Resources\PelatihanResource\Pages;
 use App\Filament\User\Resources\PelatihanResource\RelationManagers;
 use App\Models\Pelatihan;
@@ -22,10 +23,14 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Ancestor;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Model;
 
 class PelatihanResource extends Resource
 {
+    Use NestedResource;
+
     protected static ?string $model = Pelatihan::class;
 
     protected static ?string $label = 'PelatihanKu';
@@ -33,6 +38,11 @@ class PelatihanResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'judul';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function getAncestor(): ?Ancestor
+    {
+        return null;
+    }
 
     public static function canCreate(): bool
     {

@@ -12,6 +12,7 @@
         "bezhansalleh/filament-panel-switch": "^1.0",
         "diglactic/laravel-breadcrumbs": "^9.0",
         "filament/filament": "3.2",
+        "guava/filament-nested-resources": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",

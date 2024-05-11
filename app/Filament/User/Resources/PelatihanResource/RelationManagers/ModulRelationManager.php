@@ -8,9 +8,11 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 
 class ModulRelationManager extends RelationManager
 {
+    Use NestedRelationManager;
     protected static string $relationship = 'modul';
 
     public function form(Form $form): Form
@@ -52,10 +54,10 @@ class ModulRelationManager extends RelationManager
 //                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\Action::make('Lihat Modul')
-                    ->icon('heroicon-s-eye')
-                    ->action(fn($record) => $this->redirectRoute('filament.user.resources.moduls.view', $record->slug))->visible($peserta),
-//                Tables\Actions\ViewAction::make()->visible(!$peserta),
+//                Tables\Actions\Action::make('Lihat Modul')
+//                    ->icon('heroicon-s-eye')
+//                    ->action(fn($record) => $this->redirectRoute('filament.user.resources.moduls.view', $record->slug))->visible($peserta),
+                Tables\Actions\ViewAction::make()->visible($peserta),
             ])
             ->bulkActions([
                 //

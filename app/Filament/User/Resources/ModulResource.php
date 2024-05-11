@@ -9,19 +9,28 @@ use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Ancestor;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Model;
 
 class ModulResource extends Resource
 {
+    use NestedResource;
+
     protected static ?string $model = Modul::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static bool $shouldRegisterNavigation = false;
-protected static ?string $recordTitleAttribute = 'judul';
+    protected static ?string $recordTitleAttribute = 'judul';
+
+    public static function getAncestor(): ?Ancestor
+    {
+        return Ancestor::make('modul', 'pelatihan');
+    }
+
     public static function canEdit(Model $record): bool
     {
         return false;
@@ -86,7 +95,7 @@ protected static ?string $recordTitleAttribute = 'judul';
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\AllTugasRelationManager::make()
         ];
     }
 

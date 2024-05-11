@@ -25,7 +25,7 @@ class Modul extends Model
         return 'slug';
     }
 
-    protected function pelatihan(): BelongsTo
+    public function pelatihan(): BelongsTo
     {
         return $this->belongsTo(Pelatihan::class);
     }
