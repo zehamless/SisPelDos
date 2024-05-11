@@ -87,7 +87,7 @@ class AllTugasRelationManager extends RelationManager
                         fn($record) => match ($record->jenis) {
                             'tugas' => 'primary',
                             'materi' => 'info',
-                            'kuis' => 'warning',
+                            'kuis' => 'danger',
                             default => 'secondary',
                         }
                     )
