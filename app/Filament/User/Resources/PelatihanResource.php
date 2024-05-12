@@ -2,7 +2,6 @@
 
 namespace App\Filament\User\Resources;
 
-use App\Filament\User\Resources\ModulResource\Pages\ViewModul;
 use App\Filament\User\Resources\PelatihanResource\Pages;
 use App\Filament\User\Resources\PelatihanResource\RelationManagers;
 use App\Models\Pelatihan;
@@ -14,7 +13,6 @@ use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -29,7 +27,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PelatihanResource extends Resource
 {
-    Use NestedResource;
+    use NestedResource;
 
     protected static ?string $model = Pelatihan::class;
 
@@ -48,6 +46,7 @@ class PelatihanResource extends Resource
     {
         return false;
     }
+
     public static function canEdit(Model $record): bool
     {
         return false;
@@ -153,7 +152,7 @@ class PelatihanResource extends Resource
                             ->schema([
                                 TextEntry::make('')
                             ]),
-                    ])                        ->visible(fn($record) => !auth()->check() || !in_array($record->id, $userPelatihanIds) && !in_array($record->id, $userTerimaPelatihanIds)),
+                    ])->visible(fn($record) => !auth()->check() || !in_array($record->id, $userPelatihanIds) && !in_array($record->id, $userTerimaPelatihanIds)),
                 Actions::make([
                     Action::make('Daftar')
                         ->icon('heroicon-s-document-text')

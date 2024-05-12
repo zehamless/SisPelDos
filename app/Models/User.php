@@ -82,7 +82,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function mengerjakan()
     {
         return $this->belongsToMany(MateriTugas::class, 'mengerjakan', 'users_id', 'materi_tugas_id')
-            ->withPivot('files', 'pesan', 'penilaian')
+            ->withPivot('files', 'pesan_peserta', 'penilaian', 'pesan_admin', 'file_name', 'status')
             ->withTimestamps();
     }
     public function mendaftar()

@@ -69,13 +69,13 @@ class ModulResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+//                Tables\Actions\ViewAction::make(),
+//                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+//                Tables\Actions\BulkActionGroup::make([
+//                    Tables\Actions\DeleteBulkAction::make(),
+//                ]),
             ]);
     }
 
@@ -102,10 +102,10 @@ class ModulResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListModuls::route('/'),
-            'create' => Pages\CreateModul::route('/create'),
+//            'index' => Pages\ListModuls::route('/'),
+//            'create' => Pages\CreateModul::route('/create'),
             'view' => Pages\ViewModul::route('/{record}'),
-            'edit' => Pages\EditModul::route('/{record}/edit'),
+//            'edit' => Pages\EditModul::route('/{record}/edit'),
         ];
     }
 }

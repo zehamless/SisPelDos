@@ -52,4 +52,5 @@ class MateriTugas extends Model
     {
         return $this->belongsToMany(Kuis::class, 'kuis_pertanyaan', 'materi_tugas_id', 'kuis_id');
     }
+
 }

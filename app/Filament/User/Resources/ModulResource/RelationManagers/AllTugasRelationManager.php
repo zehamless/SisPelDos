@@ -7,12 +7,12 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AllTugasRelationManager extends RelationManager
 {
+    Use NestedRelationManager;
     protected static string $relationship = 'allTugas';
     protected static ?string $label = 'Semua Tugas';
 
@@ -100,27 +100,25 @@ class AllTugasRelationManager extends RelationManager
 
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+//
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    Tables\Actions\Action::make('Detail')
-                        ->label('Detail')
-                        ->action(
-                            function ($record) {
-                                switch ($record->jenis) {
-                                    case 'tugas':
-                                        return $this->redirectRoute('filament.admin.resources.tugas.view', $record);
-                                    case 'materi':
-                                        return $this->redirectRoute('filament.admin.resources.materis.view', $record);
-                                }
-                            }
-                        )
-                        ->icon('heroicon-o-document-magnifying-glass')
-                        ->color('info'),
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make(),
+//                    Tables\Actions\Action::make('Detail')
+//                        ->label('Detail')
+//                        ->action(
+//                            function ($record) {
+//                                switch ($record->jenis) {
+//                                    case 'tugas':
+//                                        return $this->redirectRoute('filament.admin.resources.tugas.view', $record);
+//                                    case 'materi':
+//                                        return $this->redirectRoute('filament.admin.resources.materis.view', $record);
+//                                }
+//                            }
+//                        )
+//                        ->icon('heroicon-o-document-magnifying-glass')
+//                        ->color('info'),
                 ]),
 
             ])
