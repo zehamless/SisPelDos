@@ -43,6 +43,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Ancestor;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -50,6 +52,7 @@ use Illuminate\Support\Str;
 
 class PelatihanResource extends Resource
 {
+    Use NestedResource;
     protected static ?string $model = Pelatihan::class;
 
     protected static ?string $slug = '';
@@ -57,6 +60,11 @@ class PelatihanResource extends Resource
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $recordTitleAttribute = 'judul';
+
+    public static function getAncestor(): ?Ancestor
+    {
+        return null;
+    }
 
     public static function form(Form $form): Form
     {
@@ -265,7 +273,8 @@ class PelatihanResource extends Resource
             'edit' => EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
             'modul' => Pages\ManageModul::route('/{record}/modul'),
-
+            'pendaftar' => Pages\ManagePendaftar::route('/{record}/pendaftar'),
+            'peserta' => Pages\ManagePeserta::route('/{record}/peserta'),
         ];
     }
 
@@ -288,7 +297,8 @@ class PelatihanResource extends Resource
             Pages\ViewPelatihan::class,
             EditPelatihan::class,
             Pages\ManageModul::class,
-
+            Pages\ManagePendaftar::class,
+            Pages\ManagePeserta::class,
         ]);
     }
 

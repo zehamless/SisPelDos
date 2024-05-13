@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TugasResource\Pages;
 use App\Filament\Resources\TugasResource\RelationManagers;
+use App\Filament\User\Resources\MateriTugasResource;
 use App\Models\MateriTugas;
 use App\Models\Tugas;
 use Filament\Actions\Action;
@@ -18,17 +19,24 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Ancestor;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TugasResource extends Resource
 {
+    Use NestedResource;
     protected static ?string $model = MateriTugas::class;
-
     protected static ?string $label = 'Tugas';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $recordTitleAttribute = 'judul';
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
+    public static function getAncestor(): ?Ancestor
+    {
+        return Ancestor::make('tugas', 'modul');
+    }
     public static function canCreate(): bool
     {
         return false;
@@ -138,10 +146,10 @@ class TugasResource extends Resource
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
 //                    Tables\Actions\DissociateAction::make(),
-                    Action::make('view materi')
-                        ->label('View Materi')
-                        ->icon('heroicon-c-document-magnifying-glass')
-                        ->url(fn($record): string => route('filament.admin.pelatihan.resources.pelatihans.tugas', $record->pelatihan_id)),
+//                    Action::make('view materi')
+//                        ->label('View Materi')
+//                        ->icon('heroicon-c-document-magnifying-glass')
+//                        ->url(fn($record): string => MateriTugasResource::getUrl('view', $record->id)),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
@@ -235,7 +243,7 @@ class TugasResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTugas::route('/'),
+//            'index' => Pages\ListTugas::route('/'),
             'create' => Pages\CreateTugas::route('/create'),
             'edit' => Pages\EditTugas::route('/{record}/edit'),
             'view' => Pages\ViewTugas::route('/{record}'),

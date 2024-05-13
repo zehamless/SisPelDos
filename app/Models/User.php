@@ -6,6 +6,7 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -60,7 +61,10 @@ class User extends Authenticatable implements FilamentUser, HasName
         'password' => 'hashed',
     ];
 
-
+    public function scopeAdmin(Builder $query): Builder
+    {
+        return $query->where('role', 'admin');
+    }
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'admin') {
@@ -78,13 +82,19 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function mengerjakan()
     {
         return $this->belongsToMany(MateriTugas::class, 'mengerjakan', 'users_id', 'materi_tugas_id')
-            ->withPivot('files', 'pesan', 'penilaian')
+            ->withPivot('files', 'pesan_peserta', 'penilaian', 'pesan_admin', 'file_name', 'status')
             ->withTimestamps();
     }
     public function mendaftar()
     {
-        return $this->belongsToMany(Pelatihan::class, 'mendaftar', 'users_id', 'pelatihan_id')
+        return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
+            ->whereNot('status', 'diterima')
             ->withPivot('status', 'files','file_name', 'pesan', 'created_at')
             ->withTimestamps();
+    }
+    public function peserta()
+    {
+        return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
+            ->wherePivot('status', 'diterima');
     }
 }

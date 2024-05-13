@@ -20,7 +20,12 @@ class Modul extends Model
         'deskripsi',
     ];
 
-    protected function pelatihan(): BelongsTo
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    public function pelatihan(): BelongsTo
     {
         return $this->belongsTo(Pelatihan::class);
     }

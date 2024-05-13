@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ModulResource\Pages;
 use App\Filament\Resources\ModulResource\RelationManagers;
+use App\Filament\Resources\TugasResource\Pages\CreateTugas;
 use App\Models\Modul;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
@@ -17,14 +18,23 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Ancestor;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
 
 class ModulResource extends Resource
 {
+    Use NestedResource;
     protected static ?string $model = Modul::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $recordTitleAttribute = 'judul';
+
+    public static function getAncestor(): ?Ancestor
+    {
+        return Ancestor::make('modul', 'pelatihan');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -110,7 +120,7 @@ class ModulResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListModuls::route('/'),
+//            'index' => Pages\ListModuls::route('/'),
             'create' => Pages\CreateModul::route('/create'),
             'edit' => Pages\EditModul::route('/{record}/edit'),
             'view' => Pages\ViewModul::route('/{record}'),

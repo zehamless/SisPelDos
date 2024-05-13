@@ -20,7 +20,7 @@ class MateriTugasFactory extends Factory
             'judul' => $this->faker->word(),
             'deskripsi' => $this->faker->paragraph(),
             'files' => null,
-            'jenis' => 'materi',
+            'jenis' => $this->faker->randomElement(['materi', 'tugas', 'kuis']),
             'tgl_tenggat'=> Carbon::now()->addWeek(),
             'tgl_mulai' => Carbon::now(),
             'tgl_selesai' => Carbon::now()->addMonth(),

@@ -11,11 +11,13 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageKuis extends ManageRelatedRecords
 {
+    Use NestedPage;
     protected static string $resource = ModulResource::class;
 
     protected static string $relationship = 'kuis';

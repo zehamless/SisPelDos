@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('mengerjakan', function (Blueprint $table) {
             $table->foreignUlid('users_id')->constrained()->onDelete('cascade');
             $table->foreignId('materi_tugas_id')->constrained()->onDelete('cascade');
-            $table->string('file')->nullable();
-            $table->text('pesan')->nullable();
+            $table->enum('status', ['selesai', 'telat', 'belum'])->default('belum');
+            $table->string('files')->nullable();
+            $table->string('file_name')->nullable();
+            $table->text('pesan_peserta')->nullable();
+            $table->text('pesan_admin')->nullable();
             $table->string('penilaian')->nullable();
             $table->timestamps();
         });

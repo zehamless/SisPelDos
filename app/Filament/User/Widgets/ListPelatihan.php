@@ -91,6 +91,8 @@ class ListPelatihan extends BaseWidget
 //                            ->visibility('public')
 //                    ])
             ])
+            ->filters([
+            ])
             ->defaultSort('created_at', 'desc')
             ->contentGrid(['md' => 2, 'lg' => 3, 'xl' => 4]);
     }

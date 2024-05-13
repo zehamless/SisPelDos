@@ -54,8 +54,8 @@ class UserResource extends Resource
                     ->label('Role')
                     ->options([
                         'admin' => 'Admin',
-                        'dosen_lokal' => 'Dosen Lokal',
-                        'dosen_luar' => 'Dosen Luar',
+                        'External' => 'Dosen External',
+                        'Internal' => 'Dosen Internal',
                     ])
                     ->required(),
                 Select::make('jenis_kelamin')
@@ -103,9 +103,9 @@ class UserResource extends Resource
                     ->badge()
                     ->color(fn ($record) => match ($record->role) {
                         'admin' => 'info',
-                        'dosen_lokal' => 'success',
-                        'dosen_luar' => 'warning',
-                        default => 'warning', // Menangani nilai lain jika ada
+                        'Internal' => 'success',
+                        'External' => 'warning',
+                        default => 'danger',
                     })
                     ->searchable()
                     ->sortable(),
@@ -120,8 +120,8 @@ class UserResource extends Resource
                 SelectFilter::make('role')
                     ->options([
                         'admin' => 'Admin',
-                        'dosen_lokal' => 'Dosen Lokal',
-                        'dosen_luar' => 'Dosen Luar',
+                        'External' => 'Dosen External',
+                        'Internal' => 'Dosen Internal',
                     ])
                     ->label('Role'),
             ])
@@ -184,20 +184,13 @@ class UserResource extends Resource
                         'Aktif' => 'success',
                         'Non-aktif' => 'danger',
                     }),
-                    TextEntry::make('pembayaran')
-                        ->label('Pembayaran')
-                    ->badge()
-                    ->color(fn ($record) => match ($record->pembayaran) {
-                        'Lunas' => 'success',
-                        'Belum Lunas' => 'danger',
-                    }),
                     TextEntry::make('role')
                         ->label('Role')
                     ->badge()
                     ->color(fn ($record) => match ($record->role) {
                         'admin' => 'info',
-                        'dosen_lokal' => 'success',
-                        'dosen_luar' => 'warning',
+                        'Internal' => 'success',
+                        'External' => 'warning',
                     }),
                     ImageEntry::make('foto')
                         ->label('Foto')

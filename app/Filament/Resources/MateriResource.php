@@ -19,16 +19,24 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Ancestor;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MateriResource extends Resource
 {
+    Use NestedResource;
     protected static ?string $model = MateriTugas::class;
     protected static ?string $navigationLabel = 'Materi';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $recordTitleAttribute = 'judul';
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
+    public static function getAncestor(): ?Ancestor
+    {
+        return  Ancestor::make('materi', 'modul');
+    }
     public static function canCreate(): bool
     {
         return false;
@@ -181,7 +189,7 @@ class MateriResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMateris::route('/'),
+//            'index' => Pages\ListMateris::route('/'),
             'create' => Pages\CreateMateri::route('/create'),
             'edit' => Pages\EditMateri::route('/{record}/edit'),
             'view' => Pages\ViewMateri::route('/{record}'),

@@ -12,16 +12,16 @@ use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageTugas extends ManageRelatedRecords
 {
+    Use NestedPage;
     protected static string $resource = ModulResource::class;
-
     protected static string $relationship = 'tugas';
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getNavigationLabel(): string
@@ -73,6 +73,8 @@ class ManageTugas extends ManageRelatedRecords
                     ->label('Deskripsi'),
                 Forms\Components\FileUpload::make('files')
                     ->columnSpan(2)
+                    ->deletable(true)
+                    ->minFiles(1)
                     ->label('File Materi')
                     ->disk('public')
                     ->directory('materi')
