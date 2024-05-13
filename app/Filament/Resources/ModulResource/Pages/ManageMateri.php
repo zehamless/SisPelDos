@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Clusters\Pelatihan;
 use App\Filament\Resources\ModulResource;
-use App\Filament\Resources\PelatihanResource;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -13,12 +12,14 @@ use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageMateri extends ManageRelatedRecords
 {
+    Use NestedPage;
     protected static string $resource = ModulResource::class;
 
     protected static ?string $cluster = Pelatihan::class;
@@ -39,18 +40,24 @@ class ManageMateri extends ManageRelatedRecords
                     ->label('Judul')
                     ->required()
                     ->maxLength(255),
-                Toggle::make('published')
-                    ->label('Published')
-                    ->onIcon('heroicon-c-check')
-                    ->offIcon('heroicon-c-x-mark')
-                    ->onColor('success')
-                    ->default(false),
-                Toggle::make('terjadwal')
-                    ->label('Terjadwal')
-                    ->onIcon('heroicon-c-check')
-                    ->offIcon('heroicon-c-x-mark')
-                    ->onColor('success')
-                    ->default(false),
+                Forms\Components\Fieldset::make()
+                    ->schema([
+                        Toggle::make('published')
+                            ->label('Published')
+                            ->onIcon('heroicon-c-check')
+                            ->offIcon('heroicon-c-x-mark')
+                            ->onColor('success')
+                            ->default(false),
+                        Toggle::make('terjadwal')
+                            ->label('Terjadwal')
+                            ->columnSpan(2)
+                            ->onIcon('heroicon-c-check')
+                            ->offIcon('heroicon-c-x-mark')
+                            ->onColor('success')
+                            ->helperText('Apabila terjadwal, maka materi akan diterbitkan pada tanggal mulai')
+                            ->default(false),
+                    ])
+                ->columns(3),
                 Forms\Components\RichEditor::make('deskripsi')
                     ->label('Deskripsi'),
                 Forms\Components\FileUpload::make('files')
@@ -86,7 +93,7 @@ class ManageMateri extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')
                     ->date('Y-m-d H:i:s', 'Asia/Jakarta')
-                ->sortable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('file_name')
                     ->label('File Materi')
                     ->limit(20),

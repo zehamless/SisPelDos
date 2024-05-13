@@ -17,14 +17,23 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Ancestor;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 
 class KuisResource extends Resource
 {
+    Use NestedResource;
     protected static ?string $model = MateriTugas::class;
     protected static ?string $label = 'Kuis';
+    protected static ?string $recordTitleAttribute = 'judul';
 
-protected static SubNavigationPosition $subNavigationPosition= SubNavigationPosition::Top;
+    public static function getAncestor(): ?Ancestor
+    {
+       return Ancestor::make('kuis', 'modul');
+    }
+
+    protected static SubNavigationPosition $subNavigationPosition= SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function canCreate(): bool
@@ -184,7 +193,7 @@ protected static SubNavigationPosition $subNavigationPosition= SubNavigationPosi
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKuis::route('/'),
+//            'index' => Pages\ListKuis::route('/'),
             'create' => Pages\CreateKuis::route('/create'),
             'edit' => Pages\EditKuis::route('/{record}/edit'),
             'view' => Pages\ViewKuis::route('/{record}'),
