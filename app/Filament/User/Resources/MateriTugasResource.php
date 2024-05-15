@@ -250,6 +250,7 @@ class MateriTugasResource extends Resource
                         ])
 
                     ])
+                ->visible(fn($record) => $record->jenis === 'tugas'),
             ]);
     }
 
