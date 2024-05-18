@@ -55,8 +55,8 @@ class KuisRelationManager extends RelationManager
                                 Forms\Components\Radio::make('jawaban_benar')
                                     ->label('Jawaban Benar')
                                     ->required()
-                                    ->options(function ($state, $record) {
-                                        $state = is_array($state) ? $state : [];
+                                    ->options(function (Forms\Get $get) {
+                                        $state = $get('jawaban_option');
                                         $options = array_filter($state, function ($value) {
                                             return !is_numeric($value);
                                         });

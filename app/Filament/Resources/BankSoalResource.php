@@ -51,14 +51,14 @@ class BankSoalResource extends Resource
                                     ->live(onBlur: true)
                                     ->reorderable()
                                     ->afterStateUpdated(function (Forms\Set $set, $state) {
-//                        dump($state);
+//                        dd($state);
                                         $set('jawaban_benar', $state);
                                     }),
                                 Forms\Components\Radio::make('jawaban_benar')
                                     ->label('Jawaban Benar')
                                     ->required()
-                                    ->options(function ($state, $record) {
-                                        $state = is_array($state) ? $state : [];
+                                    ->options(function (Forms\Get $get) {
+                                        $state = $get('jawaban_option');
                                         $options = array_filter($state, function ($value) {
                                             return !is_numeric($value);
                                         });
@@ -75,7 +75,6 @@ class BankSoalResource extends Resource
                                     ->live(onBlur: true)
                                     ->reorderable()
                                     ->afterStateUpdated(function (Forms\Set $set, $state) {
-//                        dump($state);
                                         $set('jawaban_benar', $state);
                                     }),
                                 Forms\Components\CheckboxList::make('jawaban_benar')
@@ -85,6 +84,7 @@ class BankSoalResource extends Resource
                                         $options = array_filter($state, function ($value) {
                                             return !is_numeric($value);
                                         });
+                                        dump($options);
                                         return $options;
                                     }),
 
