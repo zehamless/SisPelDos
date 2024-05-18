@@ -7,10 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('kuis', function (Blueprint $table) {
+        Schema::create('kategori_soals', function (Blueprint $table) {
             $table->id();
-            $table->jsonb('pertanyaan');
-            $table->jsonb('jawaban');
+            $table->string('kategori');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -18,6 +17,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('kuis');
+        Schema::dropIfExists('kategori_soals');
     }
 };

@@ -8,6 +8,7 @@ use App\Models\MateriTugas;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -15,7 +16,6 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
@@ -23,17 +23,18 @@ use Illuminate\Database\Eloquent\Builder;
 
 class KuisResource extends Resource
 {
-    Use NestedResource;
+    use NestedResource;
+
     protected static ?string $model = MateriTugas::class;
     protected static ?string $label = 'Kuis';
     protected static ?string $recordTitleAttribute = 'judul';
 
     public static function getAncestor(): ?Ancestor
     {
-       return Ancestor::make('kuis', 'modul');
+        return Ancestor::make('kuis', 'modul');
     }
 
-    protected static SubNavigationPosition $subNavigationPosition= SubNavigationPosition::Top;
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function canCreate(): bool
@@ -62,11 +63,20 @@ class KuisResource extends Resource
                                 ->helperText('Apabila terjadwal, maka kuis akan diterbitkan pada tanggal mulai')
                                 ->default(false),
                         ])->columns(2),
-                        Forms\Components\TextInput::make('max_attempt')
-                            ->label(__('Max Attempt'))
-                            ->required()
-                            ->default(1)
-                            ->numeric(),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('max_attempt')
+                                ->label(__('Max Attempt'))
+                                ->required()
+                                ->default(1)
+                                ->numeric(),
+                            Forms\Components\TextInput::make('durasi')
+                                ->label('Durasi Pengerjaan')
+                                ->suffix(' menit')
+                                ->required()
+                                ->step(10)
+                                ->default(0)
+                                ->numeric(),
+                        ])->columns(2),
                         Forms\Components\TextInput::make('judul')
                             ->label('Judul')
                             ->required()
@@ -132,7 +142,7 @@ class KuisResource extends Resource
                     ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('max_attempt')
                     ->label('Max Attempt')
-                ->numeric(),
+                    ->numeric(),
             ])
             ->filters([
                 //
@@ -151,35 +161,47 @@ class KuisResource extends Resource
             ->defaultSort('created_at', 'desc');
 
     }
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
             ->schema([
                 Section::make()
-                ->schema([
-                    TextEntry::make('tipe')
-                    ->label('Status')
-                    ->badge()
-                    ->color('primary'),
-                    TextEntry::make('max_attempt')
-                    ->label('Max Attempt')
-                    ->badge()
-                    ->color('info'),
-                    TextEntry::make('judul')
-                    ->label('Judul'),
-                    TextEntry::make('tgl_mulai')
-                    ->label('Tanggal Mulai')
-                    ->badge()
-                    ->color('success')
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta'),
-                    TextEntry::make('tgl_selesai')
-                    ->label('Tanggal Selesai')
-                    ->badge()
-                    ->color('danger')
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta'),
-                ])->columns(2),
+                    ->schema([
+                        TextEntry::make('published')
+                            ->label('Status')
+                            ->badge()
+                            ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
+                            ->color(fn($state) => $state ? 'success' : 'danger'),
+                        TextEntry::make('max_attempt')
+                            ->label(__('Max Attempt')),
+                        TextEntry::make('durasi')
+                            ->label('Durasi Pengerjaan')
+                            ->suffix(' menit'),
+                        TextEntry::make('judul')
+                            ->label('Judul'),
+                        Group::make([
+                            TextEntry::make('tgl_mulai')
+                                ->label('Tanggal Mulai')
+                                ->badge()
+                                ->color('success')
+                                ->dateTime()
+                                ->timezone('Asia/Jakarta'),
+                            TextEntry::make('tgl_tenggat')
+                                ->label('Tanggal Tenggat')
+                                ->badge()
+                                ->color('warning')
+                                ->dateTime()
+                                ->timezone('Asia/Jakarta'),
+                            TextEntry::make('tgl_selesai')
+                                ->label('Tanggal Selesai')
+                                ->badge()
+                                ->color('danger')
+                                ->dateTime()
+                                ->timezone('Asia/Jakarta'),
+                        ])->columns(3),
+
+                    ])->columns(2),
             ]);
     }
 
