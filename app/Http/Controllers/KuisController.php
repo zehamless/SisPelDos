@@ -59,8 +59,17 @@ class KuisController extends Controller
         }
 
         $arrData = ['jawaban' => $request->data, 'correct' => $corrects, 'total' => $totalQuestion];
-        auth()->user()->mengerjakan()->attach($request->kuis_id, ['files' => json_encode($arrData),'penilaian' => $corrects/$totalQuestion*100, 'status' => 'selesai', 'is_kuis' => true]);
-        return response()->json(['correct' => $corrects, 'total' => $arrData]);
+        auth()->user()->mengerjakan()->attach($request->kuis_id, ['files' => json_encode($arrData), 'penilaian' => $corrects / $totalQuestion * 100, 'status' => 'selesai', 'is_kuis' => true]);
+        return response()->json(['correct' => $corrects, 'total' => $arrData, 'data' => $data['kuis']]);
+    }
+
+    public function review($kuis)
+    {
+        $jawaban = auth()->user()->kuis()->wherePivot('id', $kuis)->first();
+        $jsonData = MateriTugas::with('kuis')->where('id', $jawaban->pivot->materi_tugas_id)->first()->toJson();
+        $jsonJawaban = $jawaban->toJson();
+//        return response()->json($data);
+        return view('kuis.reviewKuis', compact('jsonData', 'jsonJawaban'));
     }
 
 }

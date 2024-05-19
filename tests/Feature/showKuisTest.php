@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Http\Resources\KuisCollection;
 use App\Http\Resources\kuisResource;
 use App\Models\MateriTugas;
+use App\Models\User;
 use Tests\TestCase;
 
 class showKuisTest extends TestCase
@@ -79,4 +80,18 @@ class showKuisTest extends TestCase
 
     }
 
+    public function testReviewKuis()
+    {
+        $user = User::admin()->first();
+        $this->actingAs($user);
+        $response = $this->get(route('kuis.review', 2));
+        $response->assertJson([
+            'data' => [
+                'jawaban' => 'g',
+                'correct' => 1,
+                'total' => 1,
+            ],
+        ]);
+        $response->assertStatus(200);
+    }
 }

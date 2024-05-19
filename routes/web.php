@@ -31,6 +31,7 @@ Route::get('/', function () {
 Route::get('download/{file}', \App\Http\Controllers\downloadFileController::class)->name('download');
 Route::get('kuis/{kuis}', [KuisController::class, 'show'])->name('kuis.show');
 Route::post('kuis', [KuisController::class, 'store'])->name('kuis.store');
+Route::get('reviewKuis/{kuis}', [KuisController::class, 'review'])->name('kuis.review');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
