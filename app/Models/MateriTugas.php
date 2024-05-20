@@ -53,4 +53,9 @@ class MateriTugas extends Model
         return $this->belongsToMany(Kuis::class, 'kuis_pertanyaan', 'materi_tugas_id', 'kuis_id');
     }
 
+    public function peserta()
+    {
+        return $this->belongsToMany(User::class, 'mengerjakan', 'materi_tugas_id', 'users_id')
+            ->withPivot('id');
+    }
 }

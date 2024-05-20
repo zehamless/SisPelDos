@@ -11,7 +11,7 @@ use Filament\Tables\Table;
 class KuisRelationManager extends RelationManager
 {
     protected static string $relationship = 'kuis';
-
+    protected static ?string $title = 'Daftar Pertanyaan';
     public function isReadOnly(): bool
     {
         return false;
