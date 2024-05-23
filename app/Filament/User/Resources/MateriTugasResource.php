@@ -294,7 +294,7 @@ class MateriTugasResource extends Resource
                                 })
                                 ->requiresConfirmation()
                         ])
-                        ->visible(fn($record) => $record->tgl_mulai < now() && $record->tgl_selesai > now() && $record->tgl_tenggat > now() && $attemped <= $record->max_attempt),
+                        ->visible(fn($record) => $record->tgl_mulai < now() && $record->tgl_selesai > now() && $record->tgl_tenggat > now() && $attemped < $record->max_attempt),
                     ])
                     ->columns(1)
                     ->visible(fn($record) => $record->jenis === 'kuis' ),
@@ -304,7 +304,7 @@ class MateriTugasResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\MengerjakanKuisRelationManager::make(),
         ];
     }
 
