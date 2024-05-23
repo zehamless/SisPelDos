@@ -26,7 +26,7 @@ class KuisController extends Controller
         $arrayAnswer = $request->data;
         $corrects = 0;
         $totalQuestion = 0;
-        function array_flatten($array)
+       function array_flatten($array)
         {
             $return = array();
             foreach ($array as $key => $value) {
@@ -59,8 +59,16 @@ class KuisController extends Controller
         }
 
         $arrData = ['jawaban' => $request->data, 'correct' => $corrects, 'total' => $totalQuestion];
-        auth()->user()->mengerjakan()->attach($request->kuis_id, ['files' => json_encode($arrData), 'penilaian' => $corrects / $totalQuestion * 100, 'status' => 'selesai', 'is_kuis' => true]);
+        $status = 'belum';
+        if ($data['tgl_selesai'] > now()) {
+            $status = $data['tgl_tenggat'] > now() ? 'selesai' : 'telat';
+        }
+
+        if (auth()->user()->kuis()->where('materi_tugas_id', $request->kuis_id)->count() < $data['max_attempt']) {
+        auth()->user()->mengerjakan()->attach($request->kuis_id, ['files' => json_encode($arrData), 'penilaian' => $corrects / $totalQuestion * 100, 'status' => $status, 'is_kuis' => true]);
         return response()->json(['correct' => $corrects, 'total' => $arrData, 'data' => $data['kuis']]);
+        }
+        return response()->json(['message' => 'anda sudah mencoba sebanyak ' . $data['max_attempt'] . ' kali'], 400);
     }
 
     public function review($kuis)

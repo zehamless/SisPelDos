@@ -6,7 +6,6 @@ use App\Filament\User\Resources\MateriTugasResource\Pages;
 use App\Filament\User\Resources\MateriTugasResource\RelationManagers;
 use App\Models\MateriTugas;
 use App\Models\Modul;
-use Faker\Provider\Text;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -16,6 +15,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -75,7 +75,8 @@ class MateriTugasResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        $modul = Modul::where('id', $infolist->getRecord()->modul_id)->first(['judul', 'deskripsi']);
+        $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->count();
+        $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi']);
         return $infolist
             ->schema([
                 Section::make('Modul')
@@ -250,7 +251,53 @@ class MateriTugasResource extends Resource
                         ])
 
                     ])
-                ->visible(fn($record) => $record->jenis === 'tugas'),
+                    ->visible(fn($record) => $record->jenis === 'tugas'),
+                Section::make('Kuis')
+                    ->schema([
+                        TextEntry::make('judul'),
+                        Group::make()
+                            ->schema([
+                                TextEntry::make('max_attempt')
+                                    ->label('Percobaan Maksimal')
+                                    ->numeric()
+                                    ->badge()
+                                    ->color('info'),
+                                TextEntry::make('max_attempt')
+                                    ->label('Percobaan Dikerjakan')
+                                    ->formatStateUsing(function ($record ) use ($attemped){
+                                        return $attemped;
+                                    })
+                                    ->badge()
+                                    ->color('warning'),
+                            ])->columns(2),
+
+
+                        Fieldset::make('Tanggal')
+                            ->schema([
+                                TextEntry::make('tgl_mulai')
+                                    ->label('Mulai')
+                                    ->badge()
+                                    ->color('success'),
+                                TextEntry::make('tgl_tenggat')
+                                    ->label('Tenggat')
+                                    ->badge()
+                                    ->color('warning'),
+                                TextEntry::make('tgl_selesai')
+                                    ->label('Selesai')
+                                    ->badge()
+                                    ->color('danger'),
+                            ])->columns(3),
+                        Actions::make([
+                            Actions\Action::make('Kerjakan Sekarang')
+                                ->action(function ($record) {
+                                    return redirect()->route('kuis.show', $record->id);
+                                })
+                                ->requiresConfirmation()
+                        ])
+                        ->visible(fn($record) => $record->tgl_mulai < now() && $record->tgl_selesai > now() && $record->tgl_tenggat > now() && $attemped <= $record->max_attempt),
+                    ])
+                    ->columns(1)
+                    ->visible(fn($record) => $record->jenis === 'kuis' ),
             ]);
     }
 

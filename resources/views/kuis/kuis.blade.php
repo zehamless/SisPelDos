@@ -116,6 +116,7 @@
             console.log(response);
         }).catch(function (error) {
             console.log(error);
+            window.location.href = document.referrer;
         });
     })
     // console.log(kuisData);
