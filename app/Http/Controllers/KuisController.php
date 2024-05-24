@@ -70,8 +70,9 @@ class KuisController extends Controller
 
         if (auth()->user()->kuis()->where('materi_tugas_id', $request->kuis_id)->count() < $data['max_attempt']) {
             auth()->user()->mengerjakan()->attach($request->kuis_id, ['files' => json_encode($arrData), 'penilaian' => $corrects / $totalQuestion * 100, 'status' => $status, 'is_kuis' => true]);
-            activity()
+            activity('mengerjakan')
                 ->performedOn($model)
+                ->event('kuis')
                 ->log('mengerjakan kuis ' . $data['judul']);
             return response()->json(['correct' => $corrects, 'total' => $arrData, 'data' => $data['kuis']]);
         }
