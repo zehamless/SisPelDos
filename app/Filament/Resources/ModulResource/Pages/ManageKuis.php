@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
@@ -50,28 +51,42 @@ class ManageKuis extends ManageRelatedRecords
                             ->onColor('success')
                             ->helperText('Apabila terjadwal, maka kuis akan diterbitkan pada tanggal mulai')
                             ->default(false),
-                    ])->columns(2),
+                    ])->columns(2)->grow(false),
+                        Forms\Components\Group::make([
                         Forms\Components\TextInput::make('max_attempt')
                             ->label(__('Max Attempt'))
                             ->required()
                             ->default(1)
                             ->numeric(),
+                            Forms\Components\TextInput::make('durasi')
+                                ->label('Durasi Pengerjaan')
+                                ->suffix(' menit')
+                                ->required()
+                                ->step(10)
+                                ->default(0)
+                                ->numeric(),
+                        ])->columns(2),
                         Forms\Components\TextInput::make('judul')
                             ->label('Judul')
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\Textarea::make('deskripsi')
+                        ->label('Deskripsi Singkat'),
                         Forms\Components\Group::make([
                             Forms\Components\DateTimePicker::make('tgl_mulai')
+                                ->label('Tanggal Mulai')
                                 ->native(false)
                                 ->timezone('Asia/Jakarta')
                                 ->required(),
                             Forms\Components\DateTimePicker::make('tgl_tenggat')
+                                ->label('Tanggal Tenggat')
                                 ->native(false)
                                 ->timezone('Asia/Jakarta')
                                 ->after('tgl_mulai')
                                 ->rule('after:tgl_mulai')
                                 ->required(),
                             Forms\Components\DateTimePicker::make('tgl_selesai')
+                                ->label('Tanggal Selesai')
                                 ->native(false)
                                 ->timezone('Asia/Jakarta')
                                 ->after('tgl_tenggat')
@@ -87,15 +102,21 @@ class ManageKuis extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('judul')
             ->columns([
+                ToggleColumn::make('published')
+                    ->label('Published')
+                    ->onIcon('heroicon-c-check')
+                    ->offIcon('heroicon-c-x-mark')
+                    ->onColor('success')
+                    ->sortable(),
+                ToggleColumn::make('terjadwal')
+                    ->label('Terjadwal')
+                    ->onIcon('heroicon-c-check')
+                    ->offIcon('heroicon-c-x-mark')
+                    ->onColor('success')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
                 ->words(5),
-                SelectColumn::make('tipe')
-                    ->label('Status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                    ]),
                 Tables\Columns\TextColumn::make('tgl_mulai')
                     ->label('Tanggal Mulai')
                     ->dateTime()

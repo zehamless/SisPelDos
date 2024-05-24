@@ -8,9 +8,11 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageModul extends ManageRelatedRecords
@@ -86,7 +88,17 @@ class ManageModul extends ManageRelatedRecords
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-//                    Tables\Actions\DissociateBulkAction::make(),
+                    BulkAction::make('publish')
+                        ->label('Publish')
+                        ->icon('heroicon-c-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => true])),
+                    BulkAction::make('draft')
+                        ->label('Draft')
+                        ->icon('heroicon-c-x-circle')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => false])),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),

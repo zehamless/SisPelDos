@@ -117,7 +117,7 @@ class KuisResource extends Resource
                     ->label('Terjadwal')
                     ->badge()
                     ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
-                    ->color(fn($state) => $state ? 'success' : 'danger')
+                    ->color('info')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
@@ -173,6 +173,11 @@ class KuisResource extends Resource
                             ->badge()
                             ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
                             ->color(fn($state) => $state ? 'success' : 'danger'),
+                        TextEntry::make('terjadwal')
+                            ->label('Terjadwal')
+                            ->badge()
+                            ->formatStateUsing(fn($state) => $state ? 'Ya' : 'Tidak')
+                            ->color('info'),
                         TextEntry::make('max_attempt')
                             ->label(__('Max Attempt')),
                         TextEntry::make('durasi')
