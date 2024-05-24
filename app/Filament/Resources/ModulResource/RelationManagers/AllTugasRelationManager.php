@@ -120,6 +120,8 @@ class AllTugasRelationManager extends RelationManager
                                         return $this->redirectRoute('filament.admin.resources.tugas.view', $record);
                                     case 'materi':
                                         return $this->redirectRoute('filament.admin.resources.materis.view', $record);
+                                    case 'kuis':
+                                        return $this->redirectRoute('filament.admin.resources.kuis.view', $record);
                                 }
                             }
                         )
