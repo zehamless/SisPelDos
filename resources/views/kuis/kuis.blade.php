@@ -84,7 +84,7 @@
         // console.log(data)
         // console.log(survey.timeSpent)
         data.timeSpent = survey.timeSpent;
-        window.localStorage.setItem(storageItemKey, btoa(JSON.stringify(data)));
+        window.sessionStorage.setItem(storageItemKey, btoa(JSON.stringify(data)));
     }
 
     // Save survey results to the local storage
@@ -92,7 +92,7 @@
     survey.onCurrentPageChanged.add(saveSurveyData);
 
     // Restore survey results
-    const prevData = window.localStorage.getItem(storageItemKey) || null;
+    const prevData = window.sessionStorage.getItem(storageItemKey) || null;
     if (prevData) {
         const data = JSON.parse(atob(prevData));
         // console.log(data)
@@ -105,18 +105,18 @@
 
     // Empty the local storage after the survey is completed
 
-    survey.onComplete.add(function (sender, options){
-        window.localStorage.setItem(storageItemKey, "");
+    survey.onComplete.add(function (sender, options) {
         options.showSaveInProgress()
         console.log(JSON.stringify(sender.data));
         axios.post('{{route('kuis.store')}}', {
             data: sender.data,
             kuis_id: jsonData.id
         }).then(function (response) {
+            window.sessionStorage.setItem(storageItemKey, "");
             console.log(response);
+            window.location.href = document.referrer;
         }).catch(function (error) {
             console.log(error);
-            window.location.href = document.referrer;
         });
     })
     // console.log(kuisData);
