@@ -84,7 +84,7 @@ class BankSoalResource extends Resource
                                         $options = array_filter($state, function ($value) {
                                             return !is_numeric($value);
                                         });
-                                        dump($options);
+//                                        dump($options);
                                         return $options;
                                     }),
 
