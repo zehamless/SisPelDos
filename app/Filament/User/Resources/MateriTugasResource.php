@@ -264,7 +264,7 @@ class MateriTugasResource extends Resource
                                     ->color('info'),
                                 TextEntry::make('max_attempt')
                                     ->label('Percobaan Dikerjakan')
-                                    ->formatStateUsing(function ($record ) use ($attemped){
+                                    ->formatStateUsing(function ($record) use ($attemped) {
                                         return $attemped;
                                     })
                                     ->badge()
@@ -294,10 +294,10 @@ class MateriTugasResource extends Resource
                                 })
                                 ->requiresConfirmation()
                         ])
-                        ->visible(fn($record) => $record->tgl_mulai < now() && $record->tgl_selesai > now() && $record->tgl_tenggat > now() && $attemped < $record->max_attempt),
+                            ->visible(fn($record) => $record->tgl_mulai < now() && $record->tgl_selesai > now() && $attemped < $record->max_attempt),
                     ])
                     ->columns(1)
-                    ->visible(fn($record) => $record->jenis === 'kuis' ),
+                    ->visible(fn($record) => $record->jenis === 'kuis'),
             ]);
     }
 

@@ -65,6 +65,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     {
         return $query->where('role', 'admin');
     }
+
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'admin') {
@@ -82,7 +83,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function mengerjakan()
     {
         return $this->belongsToMany(MateriTugas::class, 'mengerjakan', 'users_id', 'materi_tugas_id')
-            ->withPivot('files', 'pesan_peserta', 'penilaian', 'pesan_admin', 'file_name', 'status','id')
+            ->withPivot('files', 'pesan_peserta', 'penilaian', 'pesan_admin', 'file_name', 'status', 'id')
             ->using(Tugas::class)
             ->withTimestamps();
     }
@@ -96,12 +97,18 @@ class User extends Authenticatable implements FilamentUser, HasName
     {
         return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
             ->whereNot('status', 'diterima')
-            ->withPivot('status', 'files','file_name', 'pesan', 'created_at')
+            ->withPivot('status', 'files', 'file_name', 'pesan', 'created_at')
             ->withTimestamps();
     }
+
     public function peserta()
     {
         return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
             ->wherePivot('status', 'diterima');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(\Spatie\Activitylog\Models\Activity::class, 'causer_id');
     }
 }

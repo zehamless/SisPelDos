@@ -6,6 +6,7 @@ use App\Http\Resources\KuisCollection;
 use App\Http\Resources\kuisResource;
 use App\Models\MateriTugas;
 use App\Models\User;
+use Spatie\Activitylog\Contracts\Activity;
 use Tests\TestCase;
 
 class showKuisTest extends TestCase
@@ -93,5 +94,12 @@ class showKuisTest extends TestCase
             ],
         ]);
         $response->assertStatus(200);
+    }
+
+    public function testActivitylog()
+    {
+        $user = User::admin()->with('peserta')->first();
+//        $lastActivity = \Spatie\Activitylog\Models\Activity::causedBy($user)->latest()->first();
+        dump($user);
     }
 }
