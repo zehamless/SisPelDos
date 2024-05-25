@@ -152,7 +152,6 @@ class MateriTugasResource extends Resource
                                         ->disk('public')
                                         ->directory('tugas')
                                         ->downloadable()
-                                        ->multiple()
                                         ->storeFileNamesIn('file_name')
                                         ->visibility('public'),
                                     Textarea::make('pesan_peserta')
@@ -168,8 +167,8 @@ class MateriTugasResource extends Resource
                                     auth()->user()->mengerjakan()->syncWithoutDetaching([
                                         $record->id => [
                                             'status' => $status,
-                                            'files' => json_encode($data['files']),
-                                            'file_name' => json_encode($data['file_name']),
+                                            'files' =>$data['files'],
+                                            'file_name' => $data['file_name'],
                                             'pesan_peserta' => $data['pesan_peserta'],
                                         ]
                                     ]);
@@ -188,8 +187,8 @@ class MateriTugasResource extends Resource
                                     return [
                                         'tgl_submit' => $mengerjakan->updated_at,
                                         'penilaian' => $mengerjakan->penilaian,
-                                        'files' => json_decode($mengerjakan->files, true),
-                                        'file_name' => json_decode($mengerjakan->file_name, true),
+                                        'files' => $mengerjakan->files,
+                                        'file_name' => $mengerjakan->file_name,
                                         'pesan_peserta' => $mengerjakan->pesan_peserta,
                                         'status' => $mengerjakan->status,
                                         'pesan_admin' => $mengerjakan->pesan_admin,
@@ -234,7 +233,6 @@ class MateriTugasResource extends Resource
                                         ->disk('public')
                                         ->directory('tugas')
                                         ->downloadable()
-                                        ->multiple()
                                         ->storeFileNamesIn('file_name')
                                         ->visibility('public'),
                                     Textarea::make('pesan_peserta')

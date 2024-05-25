@@ -62,6 +62,11 @@ class MateriTugas extends Model
 
     public function mengerjakanKuis()
     {
-        return $this->peserta()->wherePivot('is_kuis', true)->withPivot('created_at');
+        return $this->peserta()->wherePivot('is_kuis', true)->withPivot('created_at','updated_at');
+    }
+
+    public function mengerjakanTugas()
+    {
+        return $this->peserta()->wherePivot('is_kuis', false)->withPivot('created_at', 'files', 'file_name','updated_at');
     }
 }
