@@ -173,6 +173,11 @@ class MateriTugasResource extends Resource
                                             'pesan_peserta' => $data['pesan_peserta'],
                                         ]
                                     ]);
+                                    activity('mengerjakan')
+                                        ->causedBy(auth()->user())
+                                        ->performedOn($record)
+                                        ->event('tugas')
+                                        ->log('Mengerjakan tugas '.$record->judul);
                                 })
                                 ->visible(fn($record) => auth()->user()->mengerjakan()->where('materi_tugas_id', $record->id)->doesntExist())
                                 ->disabled(fn($record) => $record->tgl_selesai < now()),
