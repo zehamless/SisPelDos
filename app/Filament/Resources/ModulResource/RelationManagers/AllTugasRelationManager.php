@@ -6,7 +6,10 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class AllTugasRelationManager extends RelationManager
@@ -57,6 +60,12 @@ class AllTugasRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('judul')
             ->columns([
+                ToggleColumn::make('published')
+                    ->label('Published')
+                    ->onIcon('heroicon-c-check')
+                    ->offIcon('heroicon-c-x-mark')
+                    ->onColor('success')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
                     ->searchable()
@@ -120,6 +129,8 @@ class AllTugasRelationManager extends RelationManager
                                         return $this->redirectRoute('filament.admin.resources.tugas.view', $record);
                                     case 'materi':
                                         return $this->redirectRoute('filament.admin.resources.materis.view', $record);
+                                    case 'kuis':
+                                        return $this->redirectRoute('filament.admin.resources.kuis.view', $record);
                                 }
                             }
                         )
@@ -132,6 +143,17 @@ class AllTugasRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('publish')
+                        ->label('Publish')
+                        ->icon('heroicon-c-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => true])),
+                    BulkAction::make('draft')
+                        ->label('Draft')
+                        ->icon('heroicon-c-x-circle')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => false])),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])

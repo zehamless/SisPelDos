@@ -8,6 +8,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class AllTugasRelationManager extends RelationManager
@@ -127,6 +128,7 @@ class AllTugasRelationManager extends RelationManager
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('published', true))
             ->defaultSort('urutan');
     }
 }

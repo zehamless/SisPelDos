@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MateriTugas extends Model
@@ -34,6 +33,7 @@ class MateriTugas extends Model
         'tgl_selesai' => 'datetime',
         'tgl_tenggat' => 'datetime',
     ];
+
     protected static function boot(): void
     {
         parent::boot();
@@ -43,6 +43,7 @@ class MateriTugas extends Model
             $kuis->urutan = $maxUrutan ? $maxUrutan + 1 : 1;
         });
     }
+
     public function modul(): BelongsTo
     {
         return $this->belongsTo(Modul::class)->orderBy('created_at', 'desc');
@@ -53,4 +54,14 @@ class MateriTugas extends Model
         return $this->belongsToMany(Kuis::class, 'kuis_pertanyaan', 'materi_tugas_id', 'kuis_id');
     }
 
+    public function peserta()
+    {
+        return $this->belongsToMany(User::class, 'mengerjakan', 'materi_tugas_id', 'users_id')
+            ->withPivot('id');
+    }
+
+    public function mengerjakanKuis()
+    {
+        return $this->peserta()->wherePivot('is_kuis', true)->withPivot('created_at');
+    }
 }

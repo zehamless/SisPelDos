@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->dateTime('tgl_tenggat')->nullable();
             $table->dateTime('tgl_selesai')->nullable();
             $table->boolean('terjadwal')->default(false);
+            $table->unsignedInteger('durasi')->nullable();
             $table->unsignedInteger('urutan')->nullable();
             $table->softDeletes();
             $table->timestamps();

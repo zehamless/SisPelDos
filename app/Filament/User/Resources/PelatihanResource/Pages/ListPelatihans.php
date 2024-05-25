@@ -23,7 +23,8 @@ class ListPelatihans extends ListRecords
     public function getTabs(): array
     {
         return [
-            'Semua' =>Tab::make(),
+            'Semua' =>Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('published', true)),
             'Pelatihanku' =>Tab::make()
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('id', auth()->user()->peserta()->get()->pluck('id'))),
             'Daftar Tunggu' =>Tab::make()

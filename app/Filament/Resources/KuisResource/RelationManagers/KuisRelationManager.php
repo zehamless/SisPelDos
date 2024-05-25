@@ -11,7 +11,7 @@ use Filament\Tables\Table;
 class KuisRelationManager extends RelationManager
 {
     protected static string $relationship = 'kuis';
-
+    protected static ?string $title = 'Daftar Pertanyaan';
     public function isReadOnly(): bool
     {
         return false;
@@ -21,34 +21,78 @@ class KuisRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('kategori_soal_id')
+                    ->label('Kategori Soal')
+                    ->relationship('kategori', 'kategori')
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('kategori')
+                            ->label('Kategori')
+                            ->required()
+                    ])
+                    ->preload()
+                    ->searchable()
+                    ->required(),
                 Forms\Components\RichEditor::make('pertanyaan')
                     ->label('Pertanyaan')
                     ->required()
-                    ->columnSpan(2)
-                    ->maxLength(255),
-                Forms\Components\TagsInput::make('jawaban_option')
-                    ->label('Pilihan')
-                    ->hint("Gunakan petik satu (') untuk pilihan berupa angka atau numeric. Contoh: '1', '2', '3', '4', '5")
-                    ->hintColor('warning')
-                    ->required()
-                    ->live(onBlur: true)
-                    ->reorderable()
-                    ->afterStateUpdated(function (Forms\Set $set, $state) {
+                    ->columnSpan(2),
+                Forms\Components\Builder::make('jawaban')
+                    ->label('Tipe Soal')
+                    ->blocks([
+                        Forms\Components\Builder\Block::make('Radio')
+                            ->schema([
+                                Forms\Components\TagsInput::make('jawaban_option')
+                                    ->label('Pilihan')
+                                    ->hint("Gunakan petik satu (') untuk pilihan berupa angka atau numeric. Contoh: '1', '2', '3', '4', '5")
+                                    ->hintColor('warning')
+                                    ->required()
+                                    ->live(onBlur: true)
+                                    ->reorderable()
+                                    ->afterStateUpdated(function (Forms\Set $set, $state) {
 //                        dump($state);
-                        $set('jawaban_benar', $state);
-                    }),
-                Forms\Components\CheckboxList::make('jawaban_benar')
-                    ->label('Jawaban Benar')
+                                        $set('jawaban_benar', $state);
+                                    }),
+                                Forms\Components\Radio::make('jawaban_benar')
+                                    ->label('Jawaban Benar')
+                                    ->required()
+                                    ->options(function (Forms\Get $get) {
+                                        $state = $get('jawaban_option');
+                                        $options = array_filter($state, function ($value) {
+                                            return !is_numeric($value);
+                                        });
+                                        return $options;
+                                    }),
+                            ])->columns(2),
+                        Forms\Components\Builder\Block::make('Checkbox')
+                            ->schema([
+                                Forms\Components\TagsInput::make('jawaban_option')
+                                    ->label('Pilihan')
+                                    ->hint("Gunakan petik satu (') untuk pilihan berupa angka atau numeric. Contoh: '1', '2', '3', '4', '5")
+                                    ->hintColor('warning')
+                                    ->required()
+                                    ->live(onBlur: true)
+                                    ->reorderable()
+                                    ->afterStateUpdated(function (Forms\Set $set, $state) {
+//                        dump($state);
+                                        $set('jawaban_benar', $state);
+                                    }),
+                                Forms\Components\CheckboxList::make('jawaban_benar')
+                                    ->label('Jawaban Benar')
+                                    ->required()
+                                    ->options(function ($state, $record) {
+                                        $options = array_filter($state, function ($value) {
+                                            return !is_numeric($value);
+                                        });
+                                        return $options;
+                                    }),
+
+                            ])->columns(2),
+                    ])
+                    ->reorderable(false)
+                    ->maxItems(1)
                     ->required()
-                    ->options(function ($state, $record) {
-                        $options = array_filter($state, function ($value) {
-                            return !is_numeric($value);
-                        });
-                        return $options;
-                    }),
-
-
-            ])->columns(2);
+                    ->columnSpanFull()
+            ]);
     }
 
     public function table(Table $table): Table

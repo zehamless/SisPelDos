@@ -9,6 +9,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
+use Illuminate\Database\Eloquent\Builder;
 
 class ModulRelationManager extends RelationManager
 {
@@ -62,6 +63,7 @@ class ModulRelationManager extends RelationManager
             ->bulkActions([
                 //
             ])
+            ->modifyQueryUsing(fn(Builder $query)=> $query->where('published', true))
             ->defaultSort('urutan');
     }
 }

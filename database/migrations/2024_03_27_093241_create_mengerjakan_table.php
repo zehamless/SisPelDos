@@ -12,14 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mengerjakan', function (Blueprint $table) {
+            $table->id();
             $table->foreignUlid('users_id')->constrained()->onDelete('cascade');
             $table->foreignId('materi_tugas_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['selesai', 'telat', 'belum'])->default('belum');
+            $table->boolean('is_kuis')->default(false);
             $table->string('files')->nullable();
             $table->string('file_name')->nullable();
             $table->text('pesan_peserta')->nullable();
             $table->text('pesan_admin')->nullable();
-            $table->string('penilaian')->nullable();
+            $table->string('penilaian')->default('belum dinilai');
             $table->timestamps();
         });
     }
