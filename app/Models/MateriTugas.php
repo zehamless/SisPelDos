@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -68,5 +69,10 @@ class MateriTugas extends Model
     public function mengerjakanTugas()
     {
         return $this->peserta()->wherePivot('is_kuis', false)->withPivot('created_at', 'files', 'file_name','updated_at');
+    }
+
+    public function scopePeserta(Builder $query): Builder
+    {
+        return $this->peserta()->where();
     }
 }

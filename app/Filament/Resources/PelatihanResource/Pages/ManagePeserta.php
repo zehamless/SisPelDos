@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PelatihanResource\Pages;
 
 use App\Filament\Resources\PelatihanResource;
+use App\Filament\Resources\StatUserResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
@@ -91,6 +92,8 @@ class ManagePeserta extends ManageRelatedRecords
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make()
                 ->label('Hapus Peserta'),
+Tables\Actions\Action::make('stat')
+                ->url(fn($record)=> StatUserResource::getUrl('view', ['user' => $record->id, 'pelatihan' => $record->pelatihan_id]))
 //                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
