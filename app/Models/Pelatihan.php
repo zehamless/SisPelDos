@@ -50,7 +50,7 @@ class Pelatihan extends Model
     public function pendaftar()
     {
         return $this->belongsToMany(User::class, 'daftarPeserta', 'pelatihan_id', 'users_id')
-            ->wherePivotNotIn('status', ['diterima'])
+            ->wherePivotNotIn('status', ['diterima','selesai'])
             ->withPivot('status', 'pesan', 'files', 'file_name')
             ->withTimestamps();
     }
@@ -58,7 +58,7 @@ class Pelatihan extends Model
     public function peserta()
     {
         return $this->belongsToMany(User::class, 'daftarPeserta', 'pelatihan_id', 'users_id')
-            ->wherePivot('status', 'diterima')
+            ->wherePivotIn('status', ['diterima','selesai'])
             ->withPivot('status', 'pesan', 'files', 'file_name')
             ->withTimestamps();
     }

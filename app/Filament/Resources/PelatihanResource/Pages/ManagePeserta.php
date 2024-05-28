@@ -4,7 +4,6 @@ namespace App\Filament\Resources\PelatihanResource\Pages;
 
 use App\Filament\Resources\PelatihanResource;
 use App\Filament\Resources\StatUserResource;
-use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\ToggleButtons;
@@ -12,8 +11,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManagePeserta extends ManageRelatedRecords
 {
@@ -49,11 +46,13 @@ class ManagePeserta extends ManageRelatedRecords
                         'diterima' => 'Terima',
                         'pending' => 'Pending',
                         'ditolak' => 'Tolak',
+                        'selesai' => 'Selesai',
                     ])
                     ->colors([
                         'diterima' => 'success',
                         'pending' => 'primary',
                         'ditolak' => 'danger',
+                        'selesai' => 'info',
                     ])
                     ->hint('Jika status pending, maka peserta akan masuk kembali ke daftar pendaftar pelatihan.')
                     ->hintColor('danger')
@@ -70,10 +69,19 @@ class ManagePeserta extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('role')
                     ->label('Status Dosen')
                     ->badge()
-                    ->color(fn ($record) => match ($record->role) {
+                    ->color(fn($record) => match ($record->role) {
                         'admin' => 'primary',
                         'Internal' => 'success',
                         'External' => 'info',
+                    }),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn($record) => match ($record->status) {
+                        'diterima' => 'info',
+                        'pending' => 'primary',
+                        'ditolak' => 'danger',
+                        'selesai' => 'success',
                     }),
             ])
             ->filters([
@@ -91,9 +99,9 @@ class ManagePeserta extends ManageRelatedRecords
                     ->url(fn($record) => route('filament.admin.resources.users.view', $record)),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make()
-                ->label('Hapus Peserta'),
-Tables\Actions\Action::make('stat')
-                ->url(fn($record)=> StatUserResource::getUrl('view', ['user' => $record->id, 'pelatihan' => $record->pelatihan_id]))
+                    ->label('Hapus Peserta'),
+                Tables\Actions\Action::make('stat')
+                    ->url(fn($record) => StatUserResource::getUrl('view', ['user' => $record->id, 'pelatihan' => $record->pelatihan_id]))
 //                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
