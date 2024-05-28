@@ -67,14 +67,14 @@ class AllTugasRelationManager extends RelationManager
                     ->limit(20),
                 Tables\Columns\TextColumn::make('jenis')
                     ->badge(),
-                Tables\Columns\TextColumn::make('deskripsi')
+                Tables\Columns\TextColumn::make('terjadwal')
                     ->label('Nilai')
                     ->badge()
                     ->color('info')
                     ->formatStateUsing(function ($record) {
                         $data = $record->peserta()->where('users_id', $this->user)->orderBy('mengerjakan.created_at', 'desc')->pluck('penilaian')->first();
                         if ($data) {
-                            return $data;
+                            return  $data;
                         } else {
                             return 'Belum Dikerjakan';
                         }
