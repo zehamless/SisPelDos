@@ -75,4 +75,13 @@ class MateriTugas extends Model
     {
         return $this->peserta()->where();
     }
+
+    public function scopeMateri(Builder $query): Builder
+    {
+        return $this->where('jenis', 'materi');
+    }
+    public function scopeTugas(Builder $query): Builder
+    {
+        return $this->where('jenis', 'tugas');
+    }
 }
