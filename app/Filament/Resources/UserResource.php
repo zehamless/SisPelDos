@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\User\Resources\UserResource\RelationManagers\RiwayatPelatihanRelationManager;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -199,7 +200,8 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ActivityRelationManager::make()
+            RelationManagers\ActivityRelationManager::make(),
+            RiwayatPelatihanRelationManager::make()
         ];
     }
 

@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('daftarPeserta', function (Blueprint $table) {
             $table->foreignUlid('users_id')->constrained()->onDelete('cascade');
             $table->foreignId('pelatihan_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['pending', 'diterima', 'ditolak', 'selesai'])->default('pending');
+            $table->enum('status', ['pending', 'diterima', 'ditolak', 'selesai', 'tidak_selesai'])->default('pending');
             $table->string('files')->nullable();
             $table->string('file_name')->nullable();
             $table->text('pesan')->nullable();

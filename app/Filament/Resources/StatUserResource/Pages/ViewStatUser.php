@@ -52,6 +52,7 @@ class ViewStatUser extends ViewRecord
                     ]),
                 Actions::make([
                     Action::make('Kelulusan')
+                        ->requiresConfirmation()
                         ->fillForm(function ($record) {
                             $sertifkat = $record->sertifikat()->where('pelatihan_id', $this->pelatihan)->first();
                             return [
@@ -66,11 +67,11 @@ class ViewStatUser extends ViewRecord
                                 ->required()
                                 ->options([
                                     'selesai' => 'Lulus',
-                                    'diterima' => 'Tidak'
+                                    'tidak_selesai' => 'Tidak'
                                 ])
                                 ->colors([
                                     'selesai' => 'success',
-                                    'diterima' => 'danger'
+                                    'tidak_selesai' => 'danger'
                                 ])->grouped(),
                             FileUpload::make('files')
                                 ->label('File')
