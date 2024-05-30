@@ -22,7 +22,7 @@ class NilaiTugasResource extends Resource
     protected static ?string $model = Tugas::class;
     protected static ?string $slug = 'nilai-penugasan';
     protected static ?string $label = 'Penilaian Tugas & Kuis';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     public static function canCreate(): bool
     {

@@ -23,7 +23,8 @@ class PengumumanResource extends Resource
     protected static ?string $slug = 'pengumuman';
     protected static ?string $pluralLabel = 'Pengumuman';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationIcon = 'heroicon-o-megaphone';
 
     public static function form(Form $form): Form
     {
