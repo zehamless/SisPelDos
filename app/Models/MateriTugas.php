@@ -84,4 +84,9 @@ class MateriTugas extends Model
     {
         return $this->where('jenis', 'tugas');
     }
+
+    public function scopeTerjadwal(Builder $query): Builder
+    {
+        return $query->where('terjadwal', true)->where('published', false)->whereTime('tgl_mulai', '<=', now())->whereTime('tgl_selesai', '>=', now());
+    }
 }
