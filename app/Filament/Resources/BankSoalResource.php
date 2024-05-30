@@ -107,13 +107,8 @@ class BankSoalResource extends Resource
                     ->html()
                     ->searchable()
                     ->words(5),
-                Tables\Columns\TextColumn::make('tipe')
-                    ->label('Tipe Soal')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Radio' => 'info',
-                        'Checkbox' => 'primary',
-                    }),
+                Tables\Columns\TextColumn::make('kategori.kategori')
+                    ->label('Kategori'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')
                     ->searchable()
