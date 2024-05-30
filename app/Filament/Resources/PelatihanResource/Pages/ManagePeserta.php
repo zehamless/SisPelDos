@@ -94,14 +94,20 @@ class ManagePeserta extends ManageRelatedRecords
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('lihatPengguna')
-                    ->icon('heroicon-o-user')
+                    ->icon('heroicon-s-user')
                     ->label('Lihat Pengguna')
+                    ->color('info')
                     ->url(fn($record) => route('filament.admin.resources.users.view', $record)),
+                Tables\Actions\Action::make('stat')
+                    ->label('Penentuan Kelulusan')
+                    ->icon('heroicon-s-check-badge')
+                    ->url(fn($record) => StatUserResource::getUrl('view', ['user' => $record->id, 'pelatihan' => $record->pelatihan_id]))
+                    ->openUrlInNewTab(),
+                Tables\Actions\ActionGroup::make([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make()
                     ->label('Hapus Peserta'),
-                Tables\Actions\Action::make('stat')
-                    ->url(fn($record) => StatUserResource::getUrl('view', ['user' => $record->id, 'pelatihan' => $record->pelatihan_id]))
+                ]),
 //                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -4,10 +4,12 @@ namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Clusters\Pelatihan;
 use App\Filament\Resources\ModulResource;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ToggleColumn;
@@ -102,13 +104,17 @@ class ManageMateri extends ManageRelatedRecords
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
+                Tables\Actions\Action::make('Kembali')
+                    ->url(url()->previous())
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('secondary'),
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data) {
                         $data['jenis'] = 'materi';
                         return $data;
                     }),
 //                Tables\Actions\AssociateAction::make(),
-            ])
+            ])->headerActionsPosition(Tables\Actions\HeaderActionsPosition::Bottom)
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('view')

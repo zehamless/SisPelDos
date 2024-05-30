@@ -9,6 +9,7 @@ use App\Models\Modul;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -29,7 +30,6 @@ class ModulResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $recordTitleAttribute = 'judul';
-
     public static function getAncestor(): ?Ancestor
     {
         return Ancestor::make('modul', 'pelatihan');
@@ -85,6 +85,12 @@ class ModulResource extends Resource
     {
         return $infolist
             ->schema([
+                Actions::make([
+                    Actions\Action::make('Kembali')
+                        ->url(url()->previous())
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('secondary'),
+                ]),
                 Section::make('Judul')
                 ->schema([
                     TextEntry::make('judul')
@@ -116,7 +122,6 @@ class ModulResource extends Resource
             Pages\ManageKuis::class,
         ]);
     }
-
     public static function getPages(): array
     {
         return [

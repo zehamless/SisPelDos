@@ -142,7 +142,7 @@ class UserResource extends Resource
             ->schema([
                 Actions::make([
                    Actions\Action::make('Kembali')
-                    ->url(UserResource::getUrl('index'))
+                    ->url(url()->previous())
                     ->icon('heroicon-o-arrow-left')
                     ->color('secondary'),
                 ]),

@@ -36,6 +36,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ViewAction;
@@ -185,8 +186,6 @@ class PelatihanResource extends Resource
                     ->sortable()
                     ->date(),
 
-                TextColumn::make('jmlh_user')
-                    ->sortable(),
             ])
             ->filters([
                 TrashedFilter::make(),
@@ -195,6 +194,12 @@ class PelatihanResource extends Resource
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
+                    ReplicateAction::make()
+                        ->beforeReplicaSaved(function (Pelatihan $replica): void {
+                            $replica->slug = 'New-' . $replica->slug;
+                            $replica->judul = 'New-' . $replica->judul;
+                        })
+                    ->requiresConfirmation(),
                     DeleteAction::make(),
                     RestoreAction::make(),
                     ForceDeleteAction::make(),
