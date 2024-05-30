@@ -9,10 +9,13 @@ use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -23,6 +26,7 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $recordTitleAttribute = 'nama';
 
     public static function canCreate(): bool
     {
@@ -126,6 +130,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 ViewAction::make(),
+               DeleteAction::make(),
             ])
             ->bulkActions([
             ]);
@@ -135,6 +140,12 @@ class UserResource extends Resource
     {
         return $infolist
             ->schema([
+                Actions::make([
+                   Actions\Action::make('Kembali')
+                    ->url(UserResource::getUrl('index'))
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('secondary'),
+                ]),
                 \Filament\Infolists\Components\Section::make('Informasi Akun')
                     ->schema([
                         TextEntry::make('nama')
@@ -147,16 +158,9 @@ class UserResource extends Resource
                             ->label('No HP'),
                         TextEntry::make('jenis_kelamin')
                             ->label('Jenis Kelamin')
-                            ->tooltip(fn($record) => match ($record->jenis_kelamin) {
+                            ->formatStateUsing(fn($state) => match ($state) {
                                 'L' => 'Laki-laki',
                                 'P' => 'Perempuan',
-                            }),
-                        TextEntry::make('status_akun')
-                            ->label('Status Akun')
-                            ->badge()
-                            ->color(fn($record) => match ($record->status_akun) {
-                                'Aktif' => 'success',
-                                'Non-aktif' => 'danger',
                             }),
                     ])->columns(2),
                 \Filament\Infolists\Components\Section::make('Informasi Dosen')
@@ -190,9 +194,7 @@ class UserResource extends Resource
                                 'admin' => 'info',
                                 'Internal' => 'success',
                                 'External' => 'warning',
-                            }),
-                        ImageEntry::make('foto')
-                            ->label('Foto')
+                            })
                     ])->columns(2)->collapsible(),
             ]);
     }
@@ -204,7 +206,6 @@ class UserResource extends Resource
             RiwayatPelatihanRelationManager::make()
         ];
     }
-
     public static function getPages(): array
     {
         return [
