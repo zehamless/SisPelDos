@@ -30,7 +30,8 @@ class RiwayatPelatihanRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('judul')
             ->columns([
-                Tables\Columns\TextColumn::make('judul'),
+                Tables\Columns\TextColumn::make('judul')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Mendaftar pada')
                 ->date()
