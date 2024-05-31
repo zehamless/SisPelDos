@@ -79,6 +79,12 @@ class MateriTugasResource extends Resource
         $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi']);
         return $infolist
             ->schema([
+                Actions::make([
+                    \Filament\Infolists\Components\Actions\Action::make('Kembali')
+                        ->url(url()->previous())
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('secondary'),
+                ]),
                 Section::make('Modul')
                     ->schema([
                         TextEntry::make('judul')

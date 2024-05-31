@@ -33,11 +33,12 @@ class UserPanelProvider extends PanelProvider
 //            ->login()
             ->colors([
                 'primary' => Color::Emerald,
+                'secondary' => Color::Sky,
             ])
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+//                Pages\Dashboard::class,
             ])
             ->resources([
                 PelatihanResource::class,

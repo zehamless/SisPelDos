@@ -264,8 +264,8 @@ class PelatihanResource extends Resource
     {
         return [
             'index' => Pages\ListPelatihans::route('/'),
-            'create' => Pages\CreatePelatihan::route('/create'),
-            'edit' => Pages\EditPelatihan::route('/{record}/edit'),
+//            'create' => Pages\CreatePelatihan::route('/create'),
+//            'edit' => Pages\EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
 
         ];

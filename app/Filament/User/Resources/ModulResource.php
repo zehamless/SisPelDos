@@ -6,6 +6,8 @@ use App\Filament\User\Resources\ModulResource\Pages;
 use App\Filament\User\Resources\ModulResource\RelationManagers;
 use App\Models\Modul;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -83,6 +85,12 @@ class ModulResource extends Resource
     {
         return $infolist
             ->schema([
+                Actions::make([
+                    Action::make('Kembali')
+                        ->url(url()->previous())
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('secondary'),
+                ]),
                 Section::make('Deskripsi')
                     ->schema([
                         TextEntry::make('deskripsi')
