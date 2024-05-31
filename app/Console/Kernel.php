@@ -14,8 +14,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('delete:unused-file')->daily()->timezone('Asia/Jakarta');
+        $schedule->command('delete:unused-file')->daily()->timezone('Asia/Jakarta')->runInBackground();
         $schedule->job(new TerjadwalJob())->everyMinute()->timezone('Asia/Jakarta');
+        $schedule->command('unpublish:pelatihan')->daily()->timezone('Asia/Jakarta');
 
     }
 
