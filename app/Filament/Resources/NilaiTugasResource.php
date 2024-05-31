@@ -83,7 +83,8 @@ class NilaiTugasResource extends Resource
                     ->label('Peserta')
                     ->searchable(),
                 TextColumn::make('modul.judul')
-                    ->label('Tugas/Kuis'),
+                    ->label('Tugas/Kuis')
+                ->searchable(),
                 TextColumn::make('penilaian')
                     ->label('nilai')
                     ->badge()

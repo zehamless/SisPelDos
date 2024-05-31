@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\MateriTugas;
 use App\Models\Pelatihan;
 use App\Models\Pendaftaran;
+use App\Models\Periode;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -50,5 +51,16 @@ class QueryTryTest extends TestCase
                 Storage::disk('public')->delete($file); // Delete the file
             });
         self::assertIsNotArray($materiFiles);
+    }
+    public function testQuery()
+    {
+        $periode = Periode::all();
+        $data = [];
+        $labels = [];
+        foreach ($periode as $p) {
+            $data[] = $p->peserta()->count();
+            $labels[] = $p->tahun_ajar;
+        }
+        dump($labels);
     }
 }
