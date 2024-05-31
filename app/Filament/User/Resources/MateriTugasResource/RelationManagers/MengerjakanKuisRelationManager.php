@@ -7,10 +7,15 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class MengerjakanKuisRelationManager extends RelationManager
 {
     protected static string $relationship = 'mengerjakanKuis';
+public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+{
+    return $ownerRecord->jenis=='kuis';
+}
 
     public function form(Form $form): Form
     {

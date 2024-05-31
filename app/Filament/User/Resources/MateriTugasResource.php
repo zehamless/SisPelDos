@@ -77,6 +77,7 @@ class MateriTugasResource extends Resource
     {
         $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->count();
         $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi']);
+        $exist =auth()->user()->mengerjakan()->where('materi_tugas_id', $infolist->getRecord()->id)->exists();
         return $infolist
             ->schema([
                 Actions::make([
@@ -184,7 +185,7 @@ class MateriTugasResource extends Resource
                                         ->event('tugas')
                                         ->log('Mengerjakan tugas '.$record->judul);
                                 })
-                                ->visible(fn($record) => auth()->user()->mengerjakan()->where('materi_tugas_id', $record->id)->doesntExist())
+                                ->visible(!$exist)
                                 ->disabled(fn($record) => $record->tgl_selesai < now()),
                             Actions\Action::make('Cek Tugas')
                                 ->fillForm(function ($record) {
@@ -257,6 +258,7 @@ class MateriTugasResource extends Resource
                                         'status' => $status,
                                     ]);
                                 })
+                            ->visible($exist)
                         ])
 
                     ])
