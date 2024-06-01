@@ -39,9 +39,7 @@ class UserPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
+            ->pages(auth()->check() ? [Pages\Dashboard::class] : [])
             ->resources([
                 PelatihanResource::class,
             ])
