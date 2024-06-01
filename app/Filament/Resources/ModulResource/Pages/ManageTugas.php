@@ -125,6 +125,7 @@ class ManageTugas extends ManageRelatedRecords
                     ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
+                    ->markdown()
                     ->limit(50),
 
             ])

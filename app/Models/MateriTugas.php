@@ -89,4 +89,5 @@ class MateriTugas extends Model
     {
         return $query->where('terjadwal', true)->where('published', false)->whereTime('tgl_mulai', '<=', now())->whereTime('tgl_selesai', '>=', now());
     }
+
 }

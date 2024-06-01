@@ -55,7 +55,11 @@ class QueryTryTest extends TestCase
     }
     public function testQuery()
     {
-       $user = Pelatihan::find(1)->peserta()->get();
-        dump($user);
+       $user = User::admin()->first();
+       $query = MateriTugas::whereHas('modul.pelatihan.peserta', function ($query) use ($user) {
+            $query->where('users_id', $user->id);
+        })->get();
+
+        dump($query);
     }
 }

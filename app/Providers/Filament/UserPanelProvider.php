@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Resources\PelatihanResource;
+use App\Filament\User\Widgets\CalendarWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -19,6 +20,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class UserPanelProvider extends PanelProvider
 {
@@ -38,7 +40,7 @@ class UserPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->pages([
-//                Pages\Dashboard::class,
+                Pages\Dashboard::class,
             ])
             ->resources([
                 PelatihanResource::class,
@@ -46,7 +48,8 @@ class UserPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets([
 //                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+//                Widgets\FilamentInfoWidget::class,
+                CalendarWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -62,6 +65,19 @@ class UserPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
 //                Authenticate::class,
+            ])
+            ->plugins([
+                FilamentFullCalendarPlugin::make()
+//                    ->schedulerLicenseKey()
+                    ->selectable()
+                    ->editable(false)
+//                    ->timezone('Asia/Jakarta')
+//                    ->locale('id')
+//                    ->plugins()
+            ->config([
+                'displayEventTime' => false,
+                        'eventDisplay' => 'block',
+                    ])
             ]);
     }
 }
