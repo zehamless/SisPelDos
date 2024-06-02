@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ListPelatihans extends ListRecords
 {
-    Use NestedPage;
+    use NestedPage;
+
     protected static string $resource = PelatihanResource::class;
 
     protected function getHeaderActions(): array
@@ -20,15 +21,20 @@ class ListPelatihans extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
     public function getTabs(): array
     {
-        return [
-            'Semua' =>Tab::make()
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('published', true)),
-            'Pelatihanku' =>Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('id', auth()->user()->peserta()->get()->pluck('id'))),
-            'Daftar Tunggu' =>Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('id', auth()->user()->mendaftar()->get()->pluck('id'))),
-        ];
+        $tabs = [];
+        if (auth()->check()) {
+            $tabs = [
+                'Semua' => Tab::make()
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('published', true)),
+                'Pelatihanku' => Tab::make()
+                    ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('id', auth()->user()->peserta()->get()->pluck('id'))),
+                'Daftar Tunggu' => Tab::make()
+                    ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('id', auth()->user()->mendaftar()->get()->pluck('id'))),
+            ];
+        }
+        return $tabs;
     }
 }

@@ -4,6 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Resources\PelatihanResource;
+use App\Filament\User\Widgets\CalendarWidget;
+use App\Filament\User\Widgets\PengumumanWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -19,6 +21,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class UserPanelProvider extends PanelProvider
 {
@@ -29,23 +32,24 @@ class UserPanelProvider extends PanelProvider
             ->path('user')
             ->profile(EditProfile::class)
             ->passwordReset()
-//            ->registration()
-//            ->login()
+            ->registration()
+            ->login()
             ->colors([
                 'primary' => Color::Emerald,
+                'secondary' => Color::Sky,
             ])
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
+            ->pages([Pages\Dashboard::class] )
             ->resources([
                 PelatihanResource::class,
             ])
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets([
 //                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+//                Widgets\FilamentInfoWidget::class,
+                CalendarWidget::class,
+                PengumumanWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -61,6 +65,21 @@ class UserPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
 //                Authenticate::class,
-            ]);
+            ])
+            ->plugins([
+                FilamentFullCalendarPlugin::make()
+//                    ->schedulerLicenseKey()
+                    ->selectable()
+                    ->editable(false)
+//                    ->timezone('Asia/Jakarta')
+//                    ->locale('id')
+//                    ->plugins()
+            ->config([
+                'displayEventTime' => false,
+                        'eventDisplay' => 'block',
+                    ])
+            ])
+            ->brandName('Sistem Informasi Pelatihan Dosen UNILA')
+            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'));
     }
 }

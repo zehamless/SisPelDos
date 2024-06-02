@@ -60,7 +60,7 @@ class ManageModul extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('judul'),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
-                    ->limit(50),
+                    ->limit(100),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()

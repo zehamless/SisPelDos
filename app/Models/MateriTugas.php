@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -62,6 +63,31 @@ class MateriTugas extends Model
 
     public function mengerjakanKuis()
     {
-        return $this->peserta()->wherePivot('is_kuis', true)->withPivot('created_at');
+        return $this->peserta()->wherePivot('is_kuis', true)->withPivot('created_at','updated_at');
     }
+
+    public function mengerjakanTugas()
+    {
+        return $this->peserta()->wherePivot('is_kuis', false)->withPivot('created_at', 'files', 'file_name','updated_at');
+    }
+
+    public function scopePeserta(Builder $query): Builder
+    {
+        return $this->peserta()->where();
+    }
+
+    public function scopeMateri(Builder $query): Builder
+    {
+        return $this->where('jenis', 'materi');
+    }
+    public function scopeTugas(Builder $query): Builder
+    {
+        return $this->where('jenis', 'tugas');
+    }
+
+    public function scopeTerjadwal(Builder $query): Builder
+    {
+        return $query->where('terjadwal', true)->where('published', false)->whereTime('tgl_mulai', '<=', now())->whereTime('tgl_selesai', '>=', now());
+    }
+
 }

@@ -3,18 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\NilaiTugasResource\Pages;
-use App\Filament\Resources\NilaiTugasResource\RelationManagers\KuisRelationManager;
 use App\Models\Tugas;
-use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Set;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,9 +20,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class NilaiTugasResource extends Resource
 {
     protected static ?string $model = Tugas::class;
-    protected static ?string $slug = 'nilai-tugas';
-    protected static ?string $label = 'Nilai Tugas';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $slug = 'nilai-penugasan';
+    protected static ?string $label = 'Penilaian Tugas & Kuis';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     public static function canCreate(): bool
     {
@@ -76,22 +74,44 @@ class NilaiTugasResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('is_kuis')
+                    ->label('Jenis')
+                    ->badge()
+                    ->color('info')
+                    ->formatStateUsing(fn($state) => $state ? 'Kuis' : 'Tugas'),
                 TextColumn::make('user.nama')
-                    ->label('peserta'),
+                    ->label('Peserta')
+                    ->searchable(),
                 TextColumn::make('modul.judul')
-                    ->label('tugas'),
+                    ->label('Tugas/Kuis')
+                ->searchable(),
                 TextColumn::make('penilaian')
                     ->label('nilai')
                     ->badge()
-                ->color(fn($state) => $state === 'belum dinilai' ? 'primary' : 'success' )
-
+                    ->color(fn($state) => $state === 'belum dinilai' ? 'primary' : 'success'),
+                TextColumn::make('files')
+                    ->label('Benar/Total')
+                    ->badge()
+                    ->formatStateUsing(function ($record) {
+                        if (!$record->is_kuis) {
+                            return '-';
+                        }
+                        $data = json_decode($record->files, true);
+                        return $data['correct'] . '/' . $data['total'];
+                    })
             ])
             ->filters([
 //                TrashedFilter::make(),
+                TernaryFilter::make('is_kuis')
+                    ->placeholder('Semua'),
+                Filter::make('penilaian')
+                    ->label('Belum Dinilai')
+                    ->query(fn(Builder $query): Builder => $query->where('penilaian', 'belum dinilai'))
             ])
             ->actions([
                 EditAction::make()
-                    ->fillForm(function ($record){
+                    ->label('Beri Penilaian')
+                    ->fillForm(function ($record) {
 
                         return [
                             'user' => $record->user->nama,
@@ -100,27 +120,47 @@ class NilaiTugasResource extends Resource
                             'pesan_peserta' => $record->pesan_peserta,
                             'pesan_admin' => $record->pesan_admin,
                             'status' => $record->status,
+                            'files' => $record->files,
+                            'file_name' => $record->file_name,
                         ];
                     })
-                ->form([
-                    \Filament\Forms\Components\Section::make()
-                    ->schema([
-                        TextInput::make('user')
-                        ->label('Peserta')
-                        ->disabled(),
-                        TextInput::make('modul')
-                        ->label('Tugas')
-                        ->disabled(),
-                    ])->columns(2),
-                    \Filament\Forms\Components\Section::make()
-                    ->schema([
-                        Textarea::make('pesan_peserta')
-                        ->disabled(),
-                        Textarea::make('pesan_admin'),
-                        TextInput::make('penilaian')
-                        ->autofocus()
+                    ->form([
+                        \Filament\Forms\Components\Section::make()
+                            ->schema([
+                                TextInput::make('user')
+                                    ->label('Peserta')
+                                    ->disabled(),
+                                TextInput::make('modul')
+                                    ->label('Tugas/Kuis')
+                                    ->disabled(),
+                            ])->columns(2),
+                        \Filament\Forms\Components\Section::make()
+                            ->schema([
+                                Textarea::make('pesan_peserta')
+                                    ->visible(fn($record) => $record->is_kuis == false)
+                                    ->disabled(),
+                                Textarea::make('pesan_admin')
+                                    ->visible(fn($record) => $record->is_kuis == false),
+                                TextInput::make('penilaian')
+                                    ->autofocus(),
+                                FileUpload::make('files')
+                                    ->label('File Tugas')
+                                    ->disk('public')
+                                    ->directory('tugas')
+                                    ->downloadable()
+                                    ->disabled()
+                                    ->storeFileNamesIn('file_name')
+                                    ->visibility('public')
+                                    ->visible(fn($record) => $record->is_kuis == false),
+                                Actions::make([
+                                    Actions\Action::make('Review Kuis')
+                                        ->url(fn($record) => route('kuis.review', $record->id))
+                                        ->openUrlInNewTab()
+                                        ->color('info')
+
+                                ])->visible(fn($record) => $record->is_kuis == true),
+                            ])
                     ])
-                ])
 //                EditAction::make(),
 //                DeleteAction::make(),
 //                RestoreAction::make(),
@@ -136,13 +176,14 @@ class NilaiTugasResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 $query->with(['user', 'modul']);
             })
+            ->deferFilters()
             ->defaultSort('updated_at', 'desc');
     }
 
     public static function getRelations(): array
     {
         return [
-            KuisRelationManager::class,
+//            KuisRelationManager::class,
         ];
     }
 

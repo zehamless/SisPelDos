@@ -125,6 +125,7 @@ class ManageTugas extends ManageRelatedRecords
                     ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
+                    ->markdown()
                     ->limit(50),
 
             ])
@@ -132,13 +133,17 @@ class ManageTugas extends ManageRelatedRecords
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
+                Tables\Actions\Action::make('Kembali')
+                    ->url(url()->previous())
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('secondary'),
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data) {
                         $data['jenis'] = 'tugas';
                         return $data;
                     }),
 //                Tables\Actions\AssociateAction::make(),
-            ])
+            ])->headerActionsPosition(Tables\Actions\HeaderActionsPosition::Bottom)
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('view')

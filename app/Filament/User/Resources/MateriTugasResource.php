@@ -77,8 +77,15 @@ class MateriTugasResource extends Resource
     {
         $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->count();
         $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi']);
+        $exist =auth()->user()->mengerjakan()->where('materi_tugas_id', $infolist->getRecord()->id)->exists();
         return $infolist
             ->schema([
+                Actions::make([
+                    \Filament\Infolists\Components\Actions\Action::make('Kembali')
+                        ->url(url()->previous())
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('secondary'),
+                ]),
                 Section::make('Modul')
                     ->schema([
                         TextEntry::make('judul')
@@ -152,7 +159,6 @@ class MateriTugasResource extends Resource
                                         ->disk('public')
                                         ->directory('tugas')
                                         ->downloadable()
-                                        ->multiple()
                                         ->storeFileNamesIn('file_name')
                                         ->visibility('public'),
                                     Textarea::make('pesan_peserta')
@@ -168,13 +174,18 @@ class MateriTugasResource extends Resource
                                     auth()->user()->mengerjakan()->syncWithoutDetaching([
                                         $record->id => [
                                             'status' => $status,
-                                            'files' => json_encode($data['files']),
-                                            'file_name' => json_encode($data['file_name']),
+                                            'files' =>$data['files'],
+                                            'file_name' => $data['file_name'],
                                             'pesan_peserta' => $data['pesan_peserta'],
                                         ]
                                     ]);
+                                    activity('mengerjakan')
+                                        ->causedBy(auth()->user())
+                                        ->performedOn($record)
+                                        ->event('tugas')
+                                        ->log('Mengerjakan tugas '.$record->judul);
                                 })
-                                ->visible(fn($record) => auth()->user()->mengerjakan()->where('materi_tugas_id', $record->id)->doesntExist())
+                                ->visible(!$exist)
                                 ->disabled(fn($record) => $record->tgl_selesai < now()),
                             Actions\Action::make('Cek Tugas')
                                 ->fillForm(function ($record) {
@@ -183,8 +194,8 @@ class MateriTugasResource extends Resource
                                     return [
                                         'tgl_submit' => $mengerjakan->updated_at,
                                         'penilaian' => $mengerjakan->penilaian,
-                                        'files' => json_decode($mengerjakan->files, true),
-                                        'file_name' => json_decode($mengerjakan->file_name, true),
+                                        'files' => $mengerjakan->files,
+                                        'file_name' => $mengerjakan->file_name,
                                         'pesan_peserta' => $mengerjakan->pesan_peserta,
                                         'status' => $mengerjakan->status,
                                         'pesan_admin' => $mengerjakan->pesan_admin,
@@ -229,7 +240,6 @@ class MateriTugasResource extends Resource
                                         ->disk('public')
                                         ->directory('tugas')
                                         ->downloadable()
-                                        ->multiple()
                                         ->storeFileNamesIn('file_name')
                                         ->visibility('public'),
                                     Textarea::make('pesan_peserta')
@@ -248,6 +258,7 @@ class MateriTugasResource extends Resource
                                         'status' => $status,
                                     ]);
                                 })
+                            ->visible($exist)
                         ])
 
                     ])

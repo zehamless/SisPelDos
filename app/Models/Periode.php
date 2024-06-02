@@ -14,4 +14,9 @@ class Periode extends Model
     {
         return $this->hasMany(Pelatihan::class);
     }
+    public function peserta()
+    {
+        return $this->hasManyThrough(Pendaftaran::class, Pelatihan::class)
+            ->whereNotIn('status', ['ditolak', 'pending']);
+    }
 }

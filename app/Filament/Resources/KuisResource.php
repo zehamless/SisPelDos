@@ -214,7 +214,6 @@ class KuisResource extends Resource
     {
         return [
             RelationManagers\KuisRelationManager::class,
-            RelationManagers\PesertaRelationManager::class,
         ];
     }
 
@@ -225,6 +224,7 @@ class KuisResource extends Resource
             'create' => Pages\CreateKuis::route('/create'),
             'edit' => Pages\EditKuis::route('/{record}/edit'),
             'view' => Pages\ViewKuis::route('/{record}'),
+            'penilaian'=> Pages\ManagePengerjaanKuis::route('/{record}/penilaian')
         ];
     }
 
@@ -233,6 +233,8 @@ class KuisResource extends Resource
         return $page->generateNavigationItems([
             Pages\ViewKuis::class,
             Pages\EditKuis::class,
+            Pages\ManagePengerjaanKuis::class,
+
         ]);
     }
 }

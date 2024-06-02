@@ -105,9 +105,9 @@ class PelatihanResource extends Resource
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+//                Tables\Actions\BulkActionGroup::make([
+//                    Tables\Actions\DeleteBulkAction::make(),
+//                ]),
             ]);
     }
 
@@ -264,8 +264,8 @@ class PelatihanResource extends Resource
     {
         return [
             'index' => Pages\ListPelatihans::route('/'),
-            'create' => Pages\CreatePelatihan::route('/create'),
-            'edit' => Pages\EditPelatihan::route('/{record}/edit'),
+//            'create' => Pages\CreatePelatihan::route('/create'),
+//            'edit' => Pages\EditPelatihan::route('/{record}/edit'),
             'view' => Pages\ViewPelatihan::route('/{record}'),
 
         ];

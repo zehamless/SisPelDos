@@ -215,21 +215,19 @@ class TugasResource extends Resource
                             ->dateTime()
                             ->timezone('Asia/Jakarta'),
                     ])->columns(3),
-                Section::make()
+                Section::make('File Materi')
                     ->schema([
-                        TextEntry::make('judul')
-                            ->label('Judul'),
                         TextEntry::make('file_name')
-                            ->label('File Materi')
+                            ->hiddenLabel()
                             ->listWithLineBreaks(),
-                    ])->columns(2),
-                Section::make()
+                    ])->collapsible()->collapsed(),
+                Section::make('Deskripsi')
                     ->schema([
                         TextEntry::make('deskripsi')
-                            ->label('Deskripsi')
+                            ->hiddenLabel()
                             ->html()
 
-                    ])->columns(1),
+                    ])->collapsible()->collapsed(),
             ]);
     }
 
@@ -247,6 +245,7 @@ class TugasResource extends Resource
             'create' => Pages\CreateTugas::route('/create'),
             'edit' => Pages\EditTugas::route('/{record}/edit'),
             'view' => Pages\ViewTugas::route('/{record}'),
+            'penilaian' => Pages\ManagePengerjaanTugas::route('/{record}/penilaian'),
         ];
     }
 
@@ -255,6 +254,7 @@ class TugasResource extends Resource
         return $page->generateNavigationItems([
             Pages\ViewTugas::class,
             Pages\EditTugas::class,
+            Pages\ManagePengerjaanTugas::class,
         ]);
     }
 }

@@ -137,6 +137,10 @@ class ManageKuis extends ManageRelatedRecords
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
+                Tables\Actions\Action::make('Kembali')
+                    ->url(url()->previous())
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('secondary'),
                 Tables\Actions\CreateAction::make()
                     ->label(__('Create Kuis'))
                     ->mutateFormDataUsing(function (array $data) {
@@ -144,7 +148,7 @@ class ManageKuis extends ManageRelatedRecords
                         return $data;
                     }),
                 Tables\Actions\AssociateAction::make(),
-            ])
+            ])->headerActionsPosition(Tables\Actions\HeaderActionsPosition::Bottom)
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('view')
