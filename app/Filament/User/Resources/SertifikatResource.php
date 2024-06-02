@@ -22,6 +22,10 @@ public static function canCreate(): bool
 {
     return false;
 }
+public static function canAccess(): bool
+{
+    return auth()->check();
+}
 
     public static function form(Form $form): Form
     {
