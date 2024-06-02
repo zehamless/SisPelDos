@@ -113,14 +113,33 @@ class PelatihanResource extends Resource
                                     ]),
                                 Fieldset::make()
                                     ->schema([
+//                                        Select::make('periode_id')
+//                                            ->relationship('periode', 'tahun_ajar')
+//                                            ->label('Periode')
+//                                            ->required(),
                                         Select::make('periode_id')
-                                            ->relationship('periode', 'tahun_ajar')
                                             ->label('Periode')
+                                            ->relationship('periode', 'tahun_ajar')
+                                            ->createOptionForm([
+                                                TextInput::make('tahun_ajar')
+                                                    ->label('Tahun Ajar')
+                                                    ->placeholder('Contoh: 2021/2022')
+                                                    ->required(),
+                                                DatePicker::make('tahun')
+                                                    ->format('Y')
+                                                    ->label('Tahun')
+                                                    ->placeholder('Contoh: 2021')
+                                                    ->native(false)
+                                                    ->timezone('Asia/Jakarta')
+                                                    ->required(),
+                                            ])
+                                            ->preload()
+                                            ->searchable()
                                             ->required(),
                                         ToggleButtons::make('published')
                                             ->label('Status?')
                                             ->boolean('Published', 'Draft')
-                                            ->default('false')
+                                            ->default(false)
                                             ->grouped()
                                     ]),
 
