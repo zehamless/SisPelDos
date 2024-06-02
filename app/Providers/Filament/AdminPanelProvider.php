@@ -61,6 +61,8 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->brandName('Sistem Pelatihan Dosen Unila - Admin')
+            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'));
     }
 }

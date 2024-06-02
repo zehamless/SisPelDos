@@ -13,6 +13,7 @@ use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 class CalendarWidget extends FullCalendarWidget
 {
 //    protected static string $view = 'filament.user.widgets.calendar-widget';
+protected static ?int $sort = 2;
     public function fetchEvents(array $info): array
     {
         $mengerjakan = Mengerjakan::where('users_id', auth()->user()->id)->pluck('materi_tugas_id')->toArray();

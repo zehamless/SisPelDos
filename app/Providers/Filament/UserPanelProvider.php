@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Resources\PelatihanResource;
 use App\Filament\User\Widgets\CalendarWidget;
+use App\Filament\User\Widgets\PengumumanWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -39,7 +40,7 @@ class UserPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
-            ->pages(auth()->check() ? [Pages\Dashboard::class] : [])
+            ->pages([Pages\Dashboard::class] )
             ->resources([
                 PelatihanResource::class,
             ])
@@ -48,6 +49,7 @@ class UserPanelProvider extends PanelProvider
 //                Widgets\AccountWidget::class,
 //                Widgets\FilamentInfoWidget::class,
                 CalendarWidget::class,
+                PengumumanWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -76,6 +78,8 @@ class UserPanelProvider extends PanelProvider
                 'displayEventTime' => false,
                         'eventDisplay' => 'block',
                     ])
-            ]);
+            ])
+            ->brandName('Sistem Informasi Pelatihan Dosen UNILA')
+            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'));
     }
 }
