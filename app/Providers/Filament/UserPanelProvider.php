@@ -32,8 +32,8 @@ class UserPanelProvider extends PanelProvider
             ->path('user')
             ->profile(EditProfile::class)
             ->passwordReset()
-//            ->registration()
-//            ->login()
+            ->registration()
+            ->login()
             ->colors([
                 'primary' => Color::Emerald,
                 'secondary' => Color::Sky,

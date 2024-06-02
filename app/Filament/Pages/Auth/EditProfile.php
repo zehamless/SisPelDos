@@ -23,14 +23,20 @@ class EditProfile extends BaseEditProfile
             ->schema([
                 TextInput::make('link')
                     ->label('Link')
-                    ->hidden(),
+//                    ->hidden()
+                ,
                 Actions::make([
                     Action::make('Fetch Data')
+                        ->label('Sinkronisasi Data Dosen')
                         ->action(function (Get $get, Set $set) {
 //                           dump($get('link'));
-                            $data = $this->hitDosenApiController($get('link'));
+                            $id = preg_replace('/^\/data_dosen\//', '', $get('link'));
+//                            dump($id);
+                            $data = $this->hitDosenApiController($id);
 //                            dump($data);
                             if (is_array($data)) {
+                                $set('universitas', $data['namapt']);
+                                $set('prodi', $data['namaprodi']);
                                 $set('jenis_kelamin', $data['jk']);
                                 $set('jabatan_fungsional', $data['fungsional']);
                                 $set('pendidikan_tertinggi', $data['pend_tinggi']);
