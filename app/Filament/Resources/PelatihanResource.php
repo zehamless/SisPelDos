@@ -276,7 +276,8 @@ class PelatihanResource extends Resource
                                 ]),
                                 Group::make([
                                     ImageEntry::make('sampul')
-                                        ->label('Sampul'),
+                                        ->label('Sampul')
+                                    ->disk('public'),
                                 ])
                             ])
                     ]),

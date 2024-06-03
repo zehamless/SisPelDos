@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/user');
 });
 //Route::get('user-dashboard', [UserDashboardController::class, 'index'])->name('user-dashboard');
 //Route::get('pelatihan/{pelatihan:slug}', PelatihanController::class)->name('pelatihan.show');
