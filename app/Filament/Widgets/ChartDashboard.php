@@ -8,6 +8,7 @@ use Filament\Widgets\ChartWidget;
 class ChartDashboard extends ChartWidget
 {
     protected static ?string $heading = 'Periode';
+    protected int | string | array $columnSpan= 'full';
 
     protected function getData(): array
     {
