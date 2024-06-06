@@ -106,7 +106,7 @@ class ManagePendaftar extends ManageRelatedRecords
                     ->label('Lihat Pengguna')
                     ->url(fn($record) => route('filament.admin.resources.users.view', $record)),
                 Tables\Actions\EditAction::make()
-                    ->label('Kirim Pesan')
+                    ->label('Penentuan')
                     ->successNotification(function (array $data, $record) use ($pelatihan) {
 //                        dump($pelat)
                         $message = match ($data['status']) {

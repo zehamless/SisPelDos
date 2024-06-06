@@ -8,6 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('daftarPeserta', function (Blueprint $table) {
+            $table->id();
             $table->foreignUlid('users_id')->constrained()->onDelete('cascade');
             $table->foreignId('pelatihan_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['pending', 'diterima', 'ditolak', 'selesai', 'tidak_selesai'])->default('pending');
