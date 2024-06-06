@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -20,6 +21,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
@@ -33,7 +35,7 @@ class UserResource extends Resource
         return auth()->user()->role === 'admin';
     }
 
-    public static function canEdit(Model|\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return false;
     }
@@ -146,7 +148,7 @@ class UserResource extends Resource
                     ->icon('heroicon-o-arrow-left')
                     ->color('secondary'),
                 ]),
-                \Filament\Infolists\Components\Section::make('Informasi Akun')
+                Section::make('Informasi Akun')
                     ->schema([
                         TextEntry::make('nama')
                             ->label('Nama'),
@@ -163,7 +165,7 @@ class UserResource extends Resource
                                 'P' => 'Perempuan',
                             }),
                     ])->columns(2),
-                \Filament\Infolists\Components\Section::make('Informasi Dosen')
+                Section::make('Informasi Dosen')
                     ->schema([
                         TextEntry::make('universitas')
                             ->label('Universitas'),

@@ -122,7 +122,7 @@ class PelatihanResource extends Resource
         }
         return $infolist
             ->schema([
-                \Filament\Infolists\Components\Section::make()
+                Section::make()
                     ->schema([
                         Grid::make(2)
                             ->schema([
@@ -139,7 +139,7 @@ class PelatihanResource extends Resource
 
                             ])
                     ]),
-                \Filament\Infolists\Components\Section::make('Deskripsi')
+                Section::make('Deskripsi')
                     ->schema([
                         TextEntry::make('deskripsi')
                             ->hiddenLabel()

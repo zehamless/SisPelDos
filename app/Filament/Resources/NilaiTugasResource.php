@@ -6,6 +6,7 @@ use App\Filament\Resources\NilaiTugasResource\Pages;
 use App\Models\Tugas;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -125,7 +126,7 @@ class NilaiTugasResource extends Resource
                         ];
                     })
                     ->form([
-                        \Filament\Forms\Components\Section::make()
+                        Section::make()
                             ->schema([
                                 TextInput::make('user')
                                     ->label('Peserta')
@@ -134,7 +135,7 @@ class NilaiTugasResource extends Resource
                                     ->label('Tugas/Kuis')
                                     ->disabled(),
                             ])->columns(2),
-                        \Filament\Forms\Components\Section::make()
+                        Section::make()
                             ->schema([
                                 Textarea::make('pesan_peserta')
                                     ->visible(fn($record) => $record->is_kuis == false)

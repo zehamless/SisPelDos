@@ -41,7 +41,7 @@ class QueryTryTest extends TestCase
 
     public function testSchedule()
     {
-        $materiFiles = MateriTugas::materi()->pluck('files')->toArray();;
+        $materiFiles = MateriTugas::materi()->pluck('files')->toArray();
         $flattenedMateriFiles = collect($materiFiles)->flatten()->filter()->all();
         $po = collect(Storage::disk('public')->allFiles('materi'))
             ->reject(fn(string $file) => $file === '.gitignore') // Ignore .gitignore

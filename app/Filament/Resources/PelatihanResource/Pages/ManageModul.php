@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Str;
 
 class ManageModul extends ManageRelatedRecords
 {
@@ -68,7 +69,7 @@ class ManageModul extends ManageRelatedRecords
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function ($data) {
-                        $data['slug'] = \Str::slug($data['judul']);
+                        $data['slug'] = Str::slug($data['judul']);
                         return $data;
                     }),
 //                Tables\Actions\AssociateAction::make(),
