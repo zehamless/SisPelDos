@@ -195,8 +195,8 @@ class PelatihanResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('deskripsi')
+                    ->markdown()
                     ->limit(50),
-
                 TextColumn::make('tgl_mulai')
                     ->sortable()
                     ->date(),
