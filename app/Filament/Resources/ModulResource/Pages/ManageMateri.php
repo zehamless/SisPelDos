@@ -150,8 +150,7 @@ class ManageMateri extends ManageRelatedRecords
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
-            ->defaultSort('urutan')
-            ->reorderable('urutan');
+            ->defaultSort('urutan');
 
     }
 

@@ -42,6 +42,7 @@ use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
@@ -53,7 +54,8 @@ use Illuminate\Support\Str;
 
 class PelatihanResource extends Resource
 {
-    Use NestedResource;
+    use NestedResource;
+
     protected static ?string $model = Pelatihan::class;
 
     protected static ?string $slug = '';
@@ -168,13 +170,13 @@ class PelatihanResource extends Resource
 
                             ]),
                         Tab::make('Syarat Dan Ketentuan')
-                        ->schema([
-                            Repeater::make('syarat')
                             ->schema([
-                                TextInput::make('syaratKetentuan')
-                                ->label('Syarat dan Ketentuan'),
+                                Repeater::make('syarat')
+                                    ->schema([
+                                        TextInput::make('syaratKetentuan')
+                                            ->label('Syarat dan Ketentuan'),
+                                    ])
                             ])
-                        ])
                     ])->columnSpanFull()
 
             ]);
@@ -192,6 +194,7 @@ class PelatihanResource extends Resource
                     ->sortable(),
                 TextColumn::make('judul')
                     ->words(5)
+                    ->description(fn($record) => $record->periode->tahun_ajar)
                     ->searchable(),
 
                 TextColumn::make('deskripsi')
@@ -207,6 +210,8 @@ class PelatihanResource extends Resource
 
             ])
             ->filters([
+                SelectFilter::make('periode')
+                    ->relationship('periode', 'tahun_ajar'),
                 TrashedFilter::make(),
             ])->deferFilters()
             ->actions([
@@ -218,7 +223,7 @@ class PelatihanResource extends Resource
                             $replica->slug = 'New-' . $replica->slug;
                             $replica->judul = 'New-' . $replica->judul;
                         })
-                    ->requiresConfirmation(),
+                        ->requiresConfirmation(),
                     DeleteAction::make(),
                     RestoreAction::make(),
                     ForceDeleteAction::make(),
@@ -242,7 +247,10 @@ class PelatihanResource extends Resource
                         ->action(fn(Collection $records) => $records->each->update(['published' => false])),
                 ]),
 
-            ]);
+            ])
+            ->modifyQueryUsing(function (Builder $builder) {
+                $builder->with('periode');
+            });
     }
 
     public static function infolist(Infolist $infolist): Infolist
@@ -277,7 +285,7 @@ class PelatihanResource extends Resource
                                 Group::make([
                                     ImageEntry::make('sampul')
                                         ->label('Sampul')
-                                    ->disk('public'),
+                                        ->disk('public'),
                                 ])
                             ])
                     ]),

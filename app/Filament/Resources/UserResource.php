@@ -37,7 +37,7 @@ class UserResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return false;
+        return auth()->user()->role === 'admin';
     }
 
     public static function form(Form $form): Form

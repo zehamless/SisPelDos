@@ -17,6 +17,7 @@ class AllTugasRelationManager extends RelationManager
     protected static string $relationship = 'allTugas';
 
     protected static ?string $label = 'Semua Tugas';
+    protected static ?string $pluralLabel = 'Semua Tugas';
 
     protected function canEdit(Model $record): bool
     {

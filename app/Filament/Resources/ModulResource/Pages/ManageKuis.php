@@ -3,13 +3,11 @@
 namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Resources\ModulResource;
-use App\Filament\Resources\PelatihanResource;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
@@ -18,7 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageKuis extends ManageRelatedRecords
 {
-    Use NestedPage;
+    use NestedPage;
+
     protected static string $resource = ModulResource::class;
 
     protected static string $relationship = 'kuis';
@@ -37,27 +36,27 @@ class ManageKuis extends ManageRelatedRecords
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                    Forms\Components\Group::make([
-                        Toggle::make('published')
-                            ->label('Published')
-                            ->onIcon('heroicon-c-check')
-                            ->offIcon('heroicon-c-x-mark')
-                            ->onColor('success')
-                            ->default(false),
-                        Toggle::make('terjadwal')
-                            ->label('Terjadwal')
-                            ->onIcon('heroicon-c-check')
-                            ->offIcon('heroicon-c-x-mark')
-                            ->onColor('success')
-                            ->helperText('Apabila terjadwal, maka kuis akan diterbitkan pada tanggal mulai')
-                            ->default(false),
-                    ])->columns(2)->grow(false),
                         Forms\Components\Group::make([
-                        Forms\Components\TextInput::make('max_attempt')
-                            ->label(__('Max Attempt'))
-                            ->required()
-                            ->default(1)
-                            ->numeric(),
+                            Toggle::make('published')
+                                ->label('Published')
+                                ->onIcon('heroicon-c-check')
+                                ->offIcon('heroicon-c-x-mark')
+                                ->onColor('success')
+                                ->default(false),
+                            Toggle::make('terjadwal')
+                                ->label('Terjadwal')
+                                ->onIcon('heroicon-c-check')
+                                ->offIcon('heroicon-c-x-mark')
+                                ->onColor('success')
+                                ->helperText('Apabila terjadwal, maka kuis akan diterbitkan pada tanggal mulai')
+                                ->default(false),
+                        ])->columns(2)->grow(false),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('max_attempt')
+                                ->label(__('Max Attempt'))
+                                ->required()
+                                ->default(1)
+                                ->numeric(),
                             Forms\Components\TextInput::make('durasi')
                                 ->label('Durasi Pengerjaan')
                                 ->suffix(' menit')
@@ -71,7 +70,7 @@ class ManageKuis extends ManageRelatedRecords
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Textarea::make('deskripsi')
-                        ->label('Deskripsi Singkat'),
+                            ->label('Deskripsi Singkat'),
                         Forms\Components\Group::make([
                             Forms\Components\DateTimePicker::make('tgl_mulai')
                                 ->label('Tanggal Mulai')
@@ -116,7 +115,8 @@ class ManageKuis extends ManageRelatedRecords
                     ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
-                ->words(5),
+                    ->searchable()
+                    ->words(5),
                 Tables\Columns\TextColumn::make('tgl_mulai')
                     ->label('Tanggal Mulai')
                     ->dateTime()
@@ -131,7 +131,7 @@ class ManageKuis extends ManageRelatedRecords
                     ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('max_attempt')
                     ->label('Max Attempt')
-                ->numeric(),
+                    ->numeric(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
@@ -142,7 +142,6 @@ class ManageKuis extends ManageRelatedRecords
                     ->icon('heroicon-o-arrow-left')
                     ->color('secondary'),
                 Tables\Actions\CreateAction::make()
-                    ->label(__('Create Kuis'))
                     ->mutateFormDataUsing(function (array $data) {
                         $data['jenis'] = 'kuis';
                         return $data;
@@ -162,15 +161,15 @@ class ManageKuis extends ManageRelatedRecords
                     Tables\Actions\RestoreAction::make(),
                 ])
             ])
-        ->
-        bulkActions([
-            Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DissociateBulkAction::make(),
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-            ]),
-        ])
+            ->
+            bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DissociateBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                ]),
+            ])
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
