@@ -5,6 +5,7 @@ namespace App\Filament\User\Widgets;
 use App\Filament\User\Resources\MateriTugasResource;
 use App\Models\MateriTugas;
 use App\Models\Mengerjakan;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ViewAction;
 use Saade\FilamentFullCalendar\Data\EventData;
@@ -38,7 +39,7 @@ protected static ?int $sort = 2;
             )
             ->toArray();
     }
-    protected function viewAction(): \Filament\Actions\Action
+    protected function viewAction(): Action
     {
         return ViewAction::make();
     }

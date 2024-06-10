@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\Models\Activity;
 
 class User extends Authenticatable implements FilamentUser, HasName
 {
@@ -115,7 +116,7 @@ public function kelulusan()
 }
     public function activities()
     {
-        return $this->hasMany(\Spatie\Activitylog\Models\Activity::class, 'causer_id');
+        return $this->hasMany(Activity::class, 'causer_id');
     }
     public function sertifikat()
     {

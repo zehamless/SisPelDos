@@ -35,6 +35,7 @@ class PeriodeResource extends Resource
                     ->required(),
                 DatePicker::make('tahun')
                     ->format('Y')
+                    ->displayFormat('Y')
                     ->label('Tahun')
                     ->placeholder('Contoh: 2021')
                     ->native(false)

@@ -12,6 +12,7 @@ use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\DB;
 
@@ -34,7 +35,7 @@ class ViewStatUser extends ViewRecord
         $this->record = $data;
     }
 
-    public function infolist(Infolist|\Filament\Infolists\Infolist $infolist): \Filament\Infolists\Infolist
+    public function infolist(Infolist $infolist): Infolist
     {
         $pelatihan = $this->pelatihan;
 

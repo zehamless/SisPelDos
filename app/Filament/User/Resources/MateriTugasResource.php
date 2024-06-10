@@ -81,7 +81,7 @@ class MateriTugasResource extends Resource
         return $infolist
             ->schema([
                 Actions::make([
-                    \Filament\Infolists\Components\Actions\Action::make('Kembali')
+                    Actions\Action::make('Kembali')
                         ->url(url()->previous())
                         ->icon('heroicon-o-arrow-left')
                         ->color('secondary'),

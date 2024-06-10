@@ -61,6 +61,7 @@ class ManageMateri extends ManageRelatedRecords
                     ])
                 ->columns(3),
                 Forms\Components\RichEditor::make('deskripsi')
+                    ->required()
                     ->label('Deskripsi'),
                 Forms\Components\FileUpload::make('files')
                     ->label('File Materi')
@@ -150,8 +151,7 @@ class ManageMateri extends ManageRelatedRecords
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
-            ->defaultSort('urutan')
-            ->reorderable('urutan');
+            ->defaultSort('urutan');
 
     }
 
