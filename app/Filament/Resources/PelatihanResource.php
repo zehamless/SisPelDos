@@ -23,6 +23,7 @@ use Filament\Forms\Set;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\SubNavigationPosition;
@@ -97,6 +98,7 @@ class PelatihanResource extends Resource
 
                                 TextInput::make('slug')
                                     ->label('Slug')
+                                    ->required()
                                     ->unique('pelatihans', 'slug', ignoreRecord: true),
                                 Fieldset::make()
                                     ->schema([
@@ -147,6 +149,7 @@ class PelatihanResource extends Resource
 
                                 FileUpload::make('sampul')
                                     ->label('Sampul')
+                                    ->required()
                                     ->hint('Pastikan Ukuran gambar 16:9')
                                     ->image()
                                     ->imageEditor()
@@ -295,6 +298,14 @@ class PelatihanResource extends Resource
                             ->hiddenLabel()
                             ->html(),
                     ]),
+                \Filament\Infolists\Components\Section::make('Syarat')
+                    ->schema([
+                        RepeatableEntry::make('syarat')
+                            ->hiddenLabel()
+                            ->schema([
+                                TextEntry::make('')
+                            ]),
+                    ])
             ]);
     }
 

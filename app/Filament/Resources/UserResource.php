@@ -93,16 +93,6 @@ class UserResource extends Resource
                     ->label('Universitas')
                     ->searchable()
                     ->sortable(),
-
-                TextColumn::make('status_akun')
-                    ->label('Status Akun')
-                    ->badge()
-                    ->color(fn($record) => match ($record->status_akun) {
-                        'Aktif' => 'success',
-                        'Non-aktif' => 'danger',
-                    })
-                    ->searchable()
-                    ->sortable(),
                 TextColumn::make('role')
                     ->label('Role')
                     ->badge()

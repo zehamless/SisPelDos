@@ -17,13 +17,19 @@ use Illuminate\Support\Facades\Http;
 
 class EditProfile extends BaseEditProfile
 {
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['role'] = $data['universitas'] === 'Universitas Lampung' ? 'Internal' : 'External';
+        return $data;
+    }
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('link')
                     ->label('Link')
-//                    ->hidden()
+                    ->hidden()
                 ,
                 Actions::make([
                     Action::make('Fetch Data')
