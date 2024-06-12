@@ -115,7 +115,7 @@ class KuisRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
                 Tables\Actions\AttachAction::make()
-                    ->preloadRecordSelect(),
+                ->tooltip('Tambahkan Pertanyaan dari BankSoal')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

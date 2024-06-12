@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Bkwld\Cloner\Cloneable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class kuis extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes, HasFactory,Cloneable;
 
     protected $fillable = [
         'kategori_soal_id',

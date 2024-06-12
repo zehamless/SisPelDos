@@ -20,6 +20,7 @@ use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class KuisResource extends Resource
 {
@@ -36,6 +37,11 @@ class KuisResource extends Resource
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function canEdit(Model $record): bool
+    {
+        return !$record->peserta()->exists();
+    }
 
     public static function canCreate(): bool
     {
