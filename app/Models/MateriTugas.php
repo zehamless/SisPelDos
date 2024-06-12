@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Bkwld\Cloner\Cloneable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,8 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MateriTugas extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes, HasFactory, Cloneable;
 
+    protected $cloneable_relations = ['kuis'];
     protected $fillable = [
         'judul',
         'deskripsi',

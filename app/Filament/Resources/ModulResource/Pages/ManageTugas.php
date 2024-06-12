@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Resources\ModulResource;
-use App\Filament\Resources\PelatihanResource;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -19,7 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageTugas extends ManageRelatedRecords
 {
-    Use NestedPage;
+    use NestedPage;
+
     protected static string $resource = ModulResource::class;
     protected static string $relationship = 'tugas';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -151,6 +151,7 @@ class ManageTugas extends ManageRelatedRecords
                         ->action(fn($record) => $this->redirectRoute('filament.admin.resources.tugas.view', $record))
                         ->icon('heroicon-o-eye'),
                     Tables\Actions\EditAction::make(),
+                    Tables\Actions\ReplicateAction::make(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),

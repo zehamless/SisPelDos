@@ -4,12 +4,10 @@ namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Clusters\Pelatihan;
 use App\Filament\Resources\ModulResource;
-use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ToggleColumn;
@@ -21,7 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageMateri extends ManageRelatedRecords
 {
-    Use NestedPage;
+    use NestedPage;
+
     protected static string $resource = ModulResource::class;
 
     protected static ?string $cluster = Pelatihan::class;
@@ -59,7 +58,7 @@ class ManageMateri extends ManageRelatedRecords
                             ->helperText('Apabila terjadwal, maka materi akan diterbitkan pada tanggal mulai')
                             ->default(false),
                     ])
-                ->columns(3),
+                    ->columns(3),
                 Forms\Components\RichEditor::make('deskripsi')
                     ->required()
                     ->label('Deskripsi'),
@@ -123,6 +122,7 @@ class ManageMateri extends ManageRelatedRecords
                         ->action(fn($record) => $this->redirectRoute('filament.admin.resources.materis.view', $record))
                         ->icon('heroicon-o-eye'),
                     Tables\Actions\EditAction::make(),
+                    Tables\Actions\ReplicateAction::make(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
