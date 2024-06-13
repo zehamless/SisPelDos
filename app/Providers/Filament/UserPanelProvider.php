@@ -4,7 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Resources\PelatihanResource;
-use App\Filament\User\Widgets\PengumumanWidget;
+use App\Filament\Widgets\Pelatihan;
+use App\Filament\Widgets\RunningPengumuman;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
@@ -46,7 +47,9 @@ class UserPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
 //                Widgets\FilamentInfoWidget::class,
-                PengumumanWidget::class,
+                RunningPengumuman::class,
+//                Pelatihan::class
+
             ])
             ->middleware([
                 EncryptCookies::class,
