@@ -4,9 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Resources\PelatihanResource;
-use App\Filament\User\Widgets\CalendarWidget;
 use App\Filament\User\Widgets\PengumumanWidget;
-use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
@@ -46,9 +44,8 @@ class UserPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets([
-//                Widgets\AccountWidget::class,
+                Widgets\AccountWidget::class,
 //                Widgets\FilamentInfoWidget::class,
-                CalendarWidget::class,
                 PengumumanWidget::class,
             ])
             ->middleware([

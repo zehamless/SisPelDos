@@ -74,7 +74,7 @@ class ManageTugas extends ManageRelatedRecords
                 Forms\Components\FileUpload::make('files')
                     ->columnSpan(2)
                     ->deletable(true)
-                    ->minFiles(1)
+//                    ->maxFiles(1)
                     ->label('File Materi')
                     ->disk('public')
                     ->directory('materi')

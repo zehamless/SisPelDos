@@ -39,6 +39,7 @@ class PengumumanResource extends Resource
                     ->content(fn(?Pengumuman $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
 
                 Textarea::make('pengumuman')
+                    ->columnSpanFull()
                     ->required(),
             ]);
     }
@@ -47,7 +48,8 @@ class PengumumanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('pengumuman'),
+                TextColumn::make('pengumuman')
+                ->limit(50),
             ])
             ->filters([
                 //

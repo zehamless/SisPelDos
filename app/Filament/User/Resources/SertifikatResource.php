@@ -18,14 +18,16 @@ class SertifikatResource extends Resource
     protected static ?string $model = Sertifikat::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-public static function canCreate(): bool
-{
-    return false;
-}
-public static function canAccess(): bool
-{
-    return auth()->check();
-}
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->check();
+    }
 
     public static function form(Form $form): Form
     {
@@ -33,10 +35,10 @@ public static function canAccess(): bool
             ->schema([
                 Forms\Components\TextInput::make('created_at')
                     ->label('Lulus Pada')
-                ->formatStateUsing(function ($record) {
+                    ->formatStateUsing(function ($record) {
 //                    dd($record);
-return $record->created_at->format('d-m-Y');
-                }),
+                        return $record->created_at->format('d-m-Y');
+                    }),
                 Forms\Components\TextInput::make('judul')
                     ->formatStateUsing(function ($record) {
                         return $record->pelatihan->judul;
@@ -56,6 +58,7 @@ return $record->created_at->format('d-m-Y');
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('pelatihan.judul')
+                ->searchable()
 
             ])
             ->filters([
@@ -75,10 +78,11 @@ return $record->created_at->format('d-m-Y');
             })
             ->defaultSort('created_at', 'desc');
     }
-public static function canView(Model $record): bool
-{
-    return auth()->check();
-}
+
+    public static function canView(Model $record): bool
+    {
+        return auth()->check();
+    }
 
     public static function getRelations(): array
     {
