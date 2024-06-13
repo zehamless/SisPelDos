@@ -27,8 +27,8 @@ class ListPelatihans extends ListRecords
         $tabs = [];
         if (auth()->check()) {
             $tabs = [
-                'Semua' => Tab::make()
-                    ->modifyQueryUsing(fn(Builder $query) => $query->where('published', true)),
+//                'Semua' => Tab::make()
+//                    ->modifyQueryUsing(fn(Builder $query) => $query->where('published', true)),
                 'Pelatihanku' => Tab::make()
                     ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('id', auth()->user()->peserta()->get()->pluck('id'))),
                 'Daftar Tunggu' => Tab::make()
