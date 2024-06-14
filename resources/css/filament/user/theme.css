@@ -1,0 +1,21 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+.fi .fi-sidebar {
+    background-color: #ffffff;
+}
+.fi-sidebar-header{
+    background-color: #3046b5;
+    background-image: url('/public/assets/pat_04.png');
+}
+nav.h-16{
+    background-color: #3046b5;
+    background-image: url('/public/assets/pat_04.png');
+}
+.fi-simple-main-ctn{
+    background-image: url('/public/assets/pat_04.png');
+}
+button.text-custom-500{
+    background-color: #ffffff;
+    /*color: #000000;*/
+}

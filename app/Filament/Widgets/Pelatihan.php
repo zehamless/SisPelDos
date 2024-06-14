@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\User\Resources\PelatihanResource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -31,7 +32,7 @@ class Pelatihan extends BaseWidget
                             ->label('Tanggal Mulai')
                             ->badge()
                             ->date('d M Y', 'Asia/Jakarta')
-                            ->color('primary'),
+                            ->color('success'),
                         Tables\Columns\TextColumn::make('tgl_selesai')
                             ->label('Tanggal Selesai')
                             ->badge()
@@ -46,6 +47,10 @@ class Pelatihan extends BaseWidget
                             ->searchable(),
                     ])
 
-            ])->contentGrid(['md' => 2, 'lg' => 3, 'xl' => 4]);
+            ])->contentGrid(['md' => 2, 'lg' => 3, 'xl' => 4])
+            ->actions([
+                Tables\Actions\ViewAction::make()
+                ->url(fn($record) => PelatihanResource::getUrl('view', ['record' => $record])),
+            ]);
     }
 }
