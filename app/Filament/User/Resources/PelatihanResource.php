@@ -42,6 +42,11 @@ class PelatihanResource extends Resource
         return null;
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->check();
+    }
+
     public static function canCreate(): bool
     {
         return false;

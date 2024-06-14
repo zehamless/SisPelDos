@@ -19,7 +19,7 @@ class RunningPengumuman extends Widget
         return [
             'messages' => $pengumuman->count() <= 0 ? [
                 'Selamat datang!',
-                auth()->user()->nama,
+                'Tidak ada pengumuman untuk saat ini.',
             ] : $pengumuman,
         ];
     }

@@ -44,13 +44,14 @@ class UserPanelProvider extends PanelProvider
                 PelatihanResource::class,
             ])
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-//                Widgets\FilamentInfoWidget::class,
-                RunningPengumuman::class,
-//                Pelatihan::class
-
-            ])
+            ->widgets(array_merge(
+                auth()->check() ? [Widgets\AccountWidget::class] : [],
+                [
+                    // Widgets\FilamentInfoWidget::class,
+                    RunningPengumuman::class,
+                    // Pelatihan::class
+                ]
+            ))
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
