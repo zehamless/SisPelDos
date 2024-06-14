@@ -50,7 +50,7 @@ class Pelatihan extends BaseWidget
             ])->contentGrid(['md' => 2, 'lg' => 3, 'xl' => 4])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                ->url(fn($record) => PelatihanResource::getUrl('view', ['record' => $record])),
+                ->url(fn($record) => !auth()->check() ? route('filament.user.auth.login') :PelatihanResource::getUrl('view', ['record' => $record])),
             ]);
     }
 }

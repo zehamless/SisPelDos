@@ -17,10 +17,5 @@ darkMode: 'class',
         },
     },
 
-    plugins: [forms, require('daisyui')],
-    daisyui: {
-        themes: ["light",  "emerald"],
-        darkMode: 'false',
-
-    },
+    plugins: [forms,],
 };
