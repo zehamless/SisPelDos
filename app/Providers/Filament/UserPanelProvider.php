@@ -34,9 +34,11 @@ class UserPanelProvider extends PanelProvider
             ->registration()
             ->login()
             ->colors([
-                'primary' => Color::Emerald,
-                'secondary' => Color::Sky,
+                'primary' => '#3046b5',
+//                'success' => '#55AD9B',
+//                'danger' => '#EE4E4E',
             ])
+            ->viteTheme('resources/css/filament/user/theme.css')
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->pages([Pages\Dashboard::class] )
@@ -80,7 +82,9 @@ class UserPanelProvider extends PanelProvider
                         'eventDisplay' => 'block',
                     ])
             ])
+            ->darkMode(false)
             ->brandName('Sistem Informasi Pelatihan Dosen UNILA')
-            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'));
+            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'))
+            ->brandLogoHeight('4rem');
     }
 }
