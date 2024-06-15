@@ -111,7 +111,7 @@ class User extends Authenticatable implements FilamentUser, HasName
 public function kelulusan()
 {
     return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
-        ->wherePivotNotIn('status', ['pending', 'ditolak'])
+        ->wherePivotIn('status', ['selesai', 'tidak_selesai', 'diterima'])
         ->withPivot('status', 'files', 'file_name', 'pesan', 'created_at');
 }
     public function activities()

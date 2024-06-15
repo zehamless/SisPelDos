@@ -38,12 +38,36 @@ class ViewStatUser extends ViewRecord
     public function infolist(Infolist $infolist): Infolist
     {
         $pelatihan = $this->pelatihan;
-
+        $status = $this->getRecord()->kelulusan()->where('pelatihan_id', $pelatihan)->first()->pivot->status;
         return $infolist
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('nama'),
+                        TextEntry::make('nama')
+                            ->label('Nama'),
+                        TextEntry::make('id')
+                            ->label('Status Kelulusan')
+                            ->formatStateUsing(function () use ($status) {
+                                switch ($status) {
+                                    case 'selesai':
+                                        return 'Lulus';
+                                    case 'tidak_selesai':
+                                        return 'Tidak Lulus';
+                                    case 'diterima':
+                                        return 'Belum Diperiksa';
+                                }
+                            })
+                            ->badge()
+                            ->color(function () use ($status) {
+                                switch ($status) {
+                                    case 'selesai':
+                                        return 'success';
+                                    case 'tidak_selesai':
+                                        return 'danger';
+                                    case 'diterima':
+                                        return 'warning';
+                                }
+                            }),
                         TextEntry::make('id')
                             ->label('Pelatihan')
                             ->formatStateUsing(function ($record) use ($pelatihan) {
@@ -54,12 +78,12 @@ class ViewStatUser extends ViewRecord
                 Actions::make([
                     Action::make('Kelulusan')
                         ->requiresConfirmation()
-                        ->fillForm(function ($record) {
+                        ->fillForm(function ($record) use ($status) {
                             $sertifkat = $record->sertifikat()->where('pelatihan_id', $this->pelatihan)->first();
                             return [
-                                'status' => $peserta = $record->peserta()->where('pelatihan_id', $this->pelatihan)->first()->pivot->status,
-                                'files' => $sertifkat->files,
-                                'file_name' => $sertifkat->file_name
+                                'status' => $status,
+                                'files' => $sertifkat->files ?? null,
+                                'file_name' => $sertifkat->file_name ?? null
                             ];
                         })
                         ->form([
@@ -75,14 +99,14 @@ class ViewStatUser extends ViewRecord
                                     'tidak_selesai' => 'danger'
                                 ])->grouped(),
                             FileUpload::make('files')
-                                ->label('File')
+                                ->label('Upload Sertifikat')
                                 ->deletable()
                                 ->disk('public')
                                 ->directory('sertifikat')
                                 ->downloadable()
                                 ->storeFileNamesIn('file_name')
                                 ->visibility('public')
-                                ->acceptedFileTypes(['application/pdf'])
+                                ->acceptedFileTypes(['application/pdf', 'image/*'])
                         ])
                         ->action(function ($record, $data) {
 //                            dd($record->peserta()->where('pelatihan_id', $this->pelatihan)->first()->pivot->status);
