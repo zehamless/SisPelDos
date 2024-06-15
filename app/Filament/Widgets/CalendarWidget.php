@@ -20,6 +20,7 @@ class CalendarWidget extends FullCalendarWidget
         $mengerjakan = Mengerjakan::where('users_id', auth()->user()->id)->pluck('materi_tugas_id')->toArray();
         return MateriTugas::query()
             ->whereNot('jenis', 'materi')
+            ->where('published', true)
             ->whereHas('modul.pelatihan.peserta', function ($query) {
                 $query->where('users_id', auth()->user()->id);
             })

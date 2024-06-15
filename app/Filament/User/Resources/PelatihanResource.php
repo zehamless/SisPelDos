@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources;
 
 use App\Filament\User\Resources\PelatihanResource\Pages;
 use App\Filament\User\Resources\PelatihanResource\RelationManagers;
+use App\Filament\User\Resources\PelatihanResource\Widgets\StatPelatihan;
 use App\Models\Pelatihan;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
@@ -257,6 +258,13 @@ class PelatihanResource extends Resource
 
             ]);
     }
+
+//    public static function getWidgets(): array
+//    {
+//        return [
+//          StatPelatihan::class
+//        ];
+//    }
 
     public static function getRelations(): array
     {
