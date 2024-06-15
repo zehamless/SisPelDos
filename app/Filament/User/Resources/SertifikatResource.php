@@ -17,7 +17,7 @@ class SertifikatResource extends Resource
 {
     protected static ?string $model = Sertifikat::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-trophy';
 
     public static function canCreate(): bool
     {

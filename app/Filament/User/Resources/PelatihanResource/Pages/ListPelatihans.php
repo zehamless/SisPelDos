@@ -15,6 +15,13 @@ class ListPelatihans extends ListRecords
 
     protected static string $resource = PelatihanResource::class;
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+          PelatihanResource\Widgets\StatPelatihan::class
+        ];
+    }
+
     protected function getHeaderActions(): array
     {
         return [

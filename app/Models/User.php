@@ -123,6 +123,6 @@ public function kelulusan()
         return $this->hasMany(Sertifikat::class, 'users_id', 'id');
     }
     public function materiTugas(){
-        return $this->hasManyThrough(MateriTugas::class, Pelatihan::class, );
+        return $this->hasManyThrough(Modul::class, Pelatihan::class );
     }
 }
