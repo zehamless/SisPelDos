@@ -6,6 +6,8 @@ use Exception;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -14,6 +16,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\HtmlString;
 
 class EditProfile extends BaseEditProfile
 {
@@ -29,8 +32,7 @@ class EditProfile extends BaseEditProfile
             ->schema([
                 TextInput::make('link')
                     ->label('Link')
-                    ->hidden()
-                ,
+                    ->hidden(),
                 Actions::make([
                     Action::make('Fetch Data')
                         ->label('Sinkronisasi Data Dosen')
@@ -62,6 +64,35 @@ class EditProfile extends BaseEditProfile
                             }
                         })
                 ]),
+                Fieldset::make('profile')
+                    ->schema([
+                        Placeholder::make('picture')
+                            ->hiddenLabel()
+                            ->content(function ($record): HtmlString {
+                                $url = asset($record->picture ? 'storage/' . $record->picture : 'assets/defaultProfile.jpg');
+                                return new HtmlString("<img src= '" . $url . "' style='max-width: 250px; display: block; margin-left: auto; margin-right: auto;'>");
+                            }),
+                        FileUpload::make('picture')
+                            ->label('Upload Profil')
+                            ->required()
+                            ->hint('Pastikan Ukuran gambar 1:1')
+                            ->image()
+                            ->maxFiles(1)
+                            ->imageEditor()
+                            ->imageEditorAspectRatios([
+                                '1:1',
+                                '16:9',
+                            ])
+                            ->previewable()
+                            ->optimize('webp')
+                            ->resize(50)
+                            ->disk('public')
+                            ->directory('profil')
+                            ->visibility('public')
+                            ->maxSize(2048),
+
+                    ])
+                ->columns(1),
                 Fieldset::make('Data Dosen')
                     ->schema([
                         TextInput::make('no_induk')

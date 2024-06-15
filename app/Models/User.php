@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\Models\Activity;
 
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
 {
     use HasApiTokens, HasFactory, Notifiable, HasUlids;
 
@@ -39,6 +40,7 @@ class User extends Authenticatable implements FilamentUser, HasName
         'status_kerja',
         'status_dosen',
         'status_akun',
+        'picture',
         'pembayaran',
     ];
 
@@ -81,6 +83,12 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $this->nama;
     }
 
+    public function getFilamentAvatarUrl(): ?string
+    {
+        // TODO: Implement getFilamentAvatarUrl() method.
+        return asset($this->picture ? 'storage/' . $this->picture : 'assets/defaultProfile.jpg');
+    }
+
     public function mengerjakan()
     {
         return $this->belongsToMany(MateriTugas::class, 'mengerjakan', 'users_id', 'materi_tugas_id')
@@ -105,24 +113,29 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function peserta()
     {
         return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
-            ->wherePivotIn('status', ['diterima','selesai'])
+            ->wherePivotIn('status', ['diterima', 'selesai'])
             ->withPivot('status', 'files', 'file_name', 'pesan', 'created_at');
     }
-public function kelulusan()
-{
-    return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
-        ->wherePivotIn('status', ['selesai', 'tidak_selesai', 'diterima'])
-        ->withPivot('status', 'files', 'file_name', 'pesan', 'created_at');
-}
+
+    public function kelulusan()
+    {
+        return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
+            ->wherePivotIn('status', ['selesai', 'tidak_selesai', 'diterima'])
+            ->withPivot('status', 'files', 'file_name', 'pesan', 'created_at');
+    }
+
     public function activities()
     {
         return $this->hasMany(Activity::class, 'causer_id');
     }
+
     public function sertifikat()
     {
         return $this->hasMany(Sertifikat::class, 'users_id', 'id');
     }
-    public function materiTugas(){
-        return $this->hasManyThrough(Modul::class, Pelatihan::class );
+
+    public function materiTugas()
+    {
+        return $this->hasManyThrough(Modul::class, Pelatihan::class);
     }
 }
