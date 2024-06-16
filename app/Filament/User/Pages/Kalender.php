@@ -2,8 +2,8 @@
 
 namespace App\Filament\User\Pages;
 
-use App\Filament\User\Widgets\KalenderWidget;
 use App\Filament\Widgets\CalendarWidget;
+use App\Filament\Widgets\KalenderWidget;
 use Filament\Pages\Page;
 
 class Kalender extends Page
@@ -19,7 +19,7 @@ class Kalender extends Page
     protected function getHeaderWidgets(): array
     {
         return [
-          KalenderWidget::make()
+          \App\Livewire\KalenderWidget::make()
         ];
     }
 }

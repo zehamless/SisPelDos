@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\User\Widgets;
+namespace App\Livewire;
 
 use App\Filament\User\Resources\MateriTugasResource;
 use App\Models\MateriTugas;
@@ -13,7 +13,7 @@ use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class KalenderWidget extends FullCalendarWidget
 {
-//    protected static string $view = 'filament.user.widgets.kalender-widget';
+//    protected static string $view = 'livewire.kalender-widget';
     public function fetchEvents(array $info): array
     {
         $mengerjakan = Mengerjakan::where('users_id', auth()->user()->id)->pluck('materi_tugas_id')->toArray();
@@ -44,9 +44,4 @@ class KalenderWidget extends FullCalendarWidget
     {
         return ViewAction::make();
     }
-
-//    public static function canView(): bool
-//    {
-//        return auth()->check();
-//    }
 }
