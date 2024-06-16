@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Filament\Resources\PelatihanResource;
 use App\Filament\Widgets\RunningPengumuman;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,7 +29,7 @@ class UserPanelProvider extends PanelProvider
             ->id('user')
             ->path('user')
             ->profile(EditProfile::class)
-            ->passwordReset()
+            ->passwordReset(RequestPasswordReset::class)
             ->registration()
             ->login()
             ->colors([
