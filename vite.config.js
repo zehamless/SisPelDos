@@ -7,7 +7,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/css/filament/user/theme.css'
+                'resources/css/filament/user/theme.css',
+                'resources/css/filament/admin/theme.css'
             ],
             refresh: true,
         }),

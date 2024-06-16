@@ -4,7 +4,6 @@ namespace App\Filament\User\Resources;
 
 use App\Filament\User\Resources\PelatihanResource\Pages;
 use App\Filament\User\Resources\PelatihanResource\RelationManagers;
-use App\Filament\User\Resources\PelatihanResource\Widgets\StatPelatihan;
 use App\Models\Pelatihan;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
@@ -77,20 +76,34 @@ class PelatihanResource extends Resource
                 Tables\Columns\Layout\Grid::make()
                     ->columns(2)
                     ->schema([
+                        Tables\Columns\TextColumn::make('id')
+                            ->formatStateUsing(function ($record){
+                                if($record->peserta()->where('users_id', auth()->id())->exists() && $record->published == true){
+                                    return 'Aktif';
+                                }
+                                return 'Tidak Aktif';
+                            })
+                            ->badge()
+                            ->extraAttributes(['class' => 'absolute'])
+                            ->alignRight()
+                            ->columnSpanFull()
+                        ->color('info'),
                         Tables\Columns\ImageColumn::make('sampul')
                             ->label('Sampul')
                             ->width('100%')
                             ->height('100%')
-                            ->extraImgAttributes(['loading' => 'lazy'])
+                            ->extraImgAttributes(['loading' => 'lazy', 'class'=>'rounded'])
                             ->columnSpanFull()
                             ->alignCenter(),
                         Tables\Columns\TextColumn::make('tgl_mulai')
                             ->label('Tanggal Mulai')
                             ->badge()
+                            ->tooltip('Tanggal Pelatihan Dimulai')
                             ->date('d M Y', 'Asia/Jakarta')
-                            ->color('primary'),
+                            ->color('success'),
                         Tables\Columns\TextColumn::make('tgl_selesai')
                             ->label('Tanggal Selesai')
+                            ->tooltip('Tanggal Pelatihan Berakhir')
                             ->badge()
                             ->date('d M Y', 'Asia/Jakarta')
                             ->columnStart(2)
@@ -98,23 +111,23 @@ class PelatihanResource extends Resource
                             ->color('danger'),
                         Tables\Columns\TextColumn::make('judul')
                             ->label('Judul')
-                            ->limit(50)
+                            ->limit(75)
                             ->columnSpanFull()
                             ->searchable(),
                     ])
 
             ])->contentGrid(['md' => 2, 'lg' => 3, 'xl' => 4])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-            ])
-            ->bulkActions([
+        ->filters([
+            //
+        ])
+        ->actions([
+            Tables\Actions\ViewAction::make(),
+        ])
+        ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([
 //                    Tables\Actions\DeleteBulkAction::make(),
 //                ]),
-            ]);
+        ]);
     }
 
     public static function infolist(Infolist $infolist): Infolist

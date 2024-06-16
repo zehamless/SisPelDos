@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e98b07b1e538f990979aaade7763cebb",
+    "content-hash": "39b50f4954039cdea8c4e94a5eb2b185",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -5987,27 +5987,27 @@
         },
         {
             "name": "saade/filament-fullcalendar",
-            "version": "v3.0.0",
+            "version": "v3.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/saade/filament-fullcalendar.git",
-                "reference": "cd275468ab4f7a7b903d50bd3c45850cceb802ff"
+                "reference": "d40410e6bc46057628fb9fa8f62b6090452914d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/cd275468ab4f7a7b903d50bd3c45850cceb802ff",
-                "reference": "cd275468ab4f7a7b903d50bd3c45850cceb802ff",
+                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/d40410e6bc46057628fb9fa8f62b6090452914d3",
+                "reference": "d40410e6bc46057628fb9fa8f62b6090452914d3",
                 "shasum": ""
             },
             "require": {
                 "filament/filament": "^3.0",
-                "illuminate/contracts": "^9.0|^10.0",
-                "php": "^8.0",
+                "illuminate/contracts": "^10.0|^11.0",
+                "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.13.5"
             },
             "require-dev": {
-                "nunomaduro/collision": "^6.0|^7.0",
-                "nunomaduro/larastan": "^1.0|^2.0",
+                "nunomaduro/collision": "^7.0|^8.0",
+                "nunomaduro/larastan": "^2.0",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan-deprecation-rules": "^1.0",
                 "phpstan/phpstan-phpunit": "^1.0",
@@ -6022,6 +6022,9 @@
                 }
             },
             "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
                 "psr-4": {
                     "Saade\\FilamentFullCalendar\\": "src"
                 }
@@ -6046,7 +6049,7 @@
             ],
             "support": {
                 "issues": "https://github.com/saade/filament-fullcalendar/issues",
-                "source": "https://github.com/saade/filament-fullcalendar/tree/v3.0.0"
+                "source": "https://github.com/saade/filament-fullcalendar/tree/v3.2.2"
             },
             "funding": [
                 {
@@ -6054,7 +6057,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-26T22:01:14+00:00"
+            "time": "2024-05-02T13:04:39+00:00"
         },
         {
             "name": "spatie/color",

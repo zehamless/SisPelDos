@@ -30,10 +30,28 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
-                'secondary' => Color::Gray,
+                'primary' => '#3046b5',
+//                'secondary' => Color::Gray,
 
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->renderHook(
+                'panels::body.end',
+
+                fn() => view('footer'),
+            )
+            ->renderHook(
+                'panels::sidebar.nav.start',
+                fn() => view(auth()->check() ? 'profilComponent' : 'masukDisiniComponent')
+            )
+            ->renderHook(
+                'panels::auth.login.form.after',
+                fn()=>view('kembalikeDasborComponent')
+            )
+            ->renderHook(
+                'panels::auth.register.form.after',
+                fn()=>view('kembalikeDasborComponent')
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -62,7 +80,9 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->darkMode(false)
             ->brandName('Sistem Pelatihan Dosen Unila - Admin')
-            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'));
+            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'))
+            ->brandLogoHeight('4rem');
     }
 }

@@ -34,7 +34,7 @@ class SertifikatResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('created_at')
-                    ->label('Lulus Pada')
+                    ->label('Selesai Pada')
                     ->formatStateUsing(function ($record) {
 //                    dd($record);
                         return $record->created_at->format('d-m-Y');
@@ -44,7 +44,9 @@ class SertifikatResource extends Resource
                         return $record->pelatihan->judul;
                     }),
                 Forms\Components\FileUpload::make('files')
-                    ->label('File Materi')
+                    ->hint('Klik icon untuk mengunduh sertifikat.')
+                    ->hintIcon('heroicon-s-arrow-down-tray')
+                    ->label('Unduh Sertifikat')
                     ->disk('public')
                     ->directory('sertifikat')
                     ->downloadable()
@@ -58,8 +60,10 @@ class SertifikatResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('pelatihan.judul')
-                ->searchable()
-
+                ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                ->label('Selesai Pada')
+                ->date('d-m-Y', 'Asia/Jakarta')
             ])
             ->filters([
                 //

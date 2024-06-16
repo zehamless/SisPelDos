@@ -22,7 +22,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.4",
         "predis/predis": "2.0",
-        "saade/filament-fullcalendar": "3.0",
+        "saade/filament-fullcalendar": "^3.2",
         "spatie/laravel-activitylog": "^4.8",
         "yajra/laravel-datatables": "^10.1"
     },
