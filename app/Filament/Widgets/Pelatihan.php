@@ -30,11 +30,13 @@ class Pelatihan extends BaseWidget
                             ->alignCenter(),
                         Tables\Columns\TextColumn::make('tgl_mulai')
                             ->label('Tanggal Mulai')
+                            ->tooltip('Tanggal Pelatihan Dimulai')
                             ->badge()
                             ->date('d M Y', 'Asia/Jakarta')
                             ->color('success'),
                         Tables\Columns\TextColumn::make('tgl_selesai')
                             ->label('Tanggal Selesai')
+                            ->tooltip('Tanggal Pelatihan Berakhir')
                             ->badge()
                             ->date('d M Y', 'Asia/Jakarta')
                             ->columnStart(2)
@@ -42,7 +44,8 @@ class Pelatihan extends BaseWidget
                             ->color('danger'),
                         Tables\Columns\TextColumn::make('judul')
                             ->label('Judul')
-                            ->limit(50)
+//                            ->limit(75)
+                                ->wrap()
                             ->columnSpanFull()
                             ->searchable(),
                     ])
