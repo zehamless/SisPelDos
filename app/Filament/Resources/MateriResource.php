@@ -30,6 +30,7 @@ class MateriResource extends Resource
     protected static ?string $model = MateriTugas::class;
     protected static ?string $navigationLabel = 'Materi';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $pluralLabel = 'Materi';
     protected static ?string $recordTitleAttribute = 'judul';
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
@@ -40,6 +41,10 @@ class MateriResource extends Resource
     public static function canCreate(): bool
     {
         return false;
+    }
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('jenis', 'materi');
     }
 
     public static function form(Form $form): Form
@@ -190,7 +195,7 @@ class MateriResource extends Resource
     {
         return [
 //            'index' => Pages\ListMateris::route('/'),
-            'create' => Pages\CreateMateri::route('/create'),
+//            'create' => Pages\CreateMateri::route('/create'),
             'edit' => Pages\EditMateri::route('/{record}/edit'),
             'view' => Pages\ViewMateri::route('/{record}'),
         ];

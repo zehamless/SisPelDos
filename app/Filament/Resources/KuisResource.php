@@ -29,15 +29,18 @@ class KuisResource extends Resource
     protected static ?string $model = MateriTugas::class;
     protected static ?string $label = 'Kuis';
     protected static ?string $recordTitleAttribute = 'judul';
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getAncestor(): ?Ancestor
     {
         return Ancestor::make('kuis', 'modul');
     }
 
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('jenis', 'kuis');
+    }
     public static function canEdit(Model $record): bool
     {
         return !$record->peserta()->exists();
@@ -227,7 +230,7 @@ class KuisResource extends Resource
     {
         return [
 //            'index' => Pages\ListKuis::route('/'),
-            'create' => Pages\CreateKuis::route('/create'),
+//            'create' => Pages\CreateKuis::route('/create'),
             'edit' => Pages\EditKuis::route('/{record}/edit'),
             'view' => Pages\ViewKuis::route('/{record}'),
             'penilaian'=> Pages\ManagePengerjaanKuis::route('/{record}/penilaian')

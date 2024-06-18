@@ -90,7 +90,7 @@ class NilaiTugasResource extends Resource
                     ->label('nilai')
                     ->badge()
                     ->color(fn($state) => $state === 'belum dinilai' ? 'primary' : 'success'),
-                TextColumn::make('files')
+                TextColumn::make('id')
                     ->label('Benar/Total')
                     ->badge()
                     ->formatStateUsing(function ($record) {
@@ -143,6 +143,7 @@ class NilaiTugasResource extends Resource
                                 Textarea::make('pesan_admin')
                                     ->visible(fn($record) => $record->is_kuis == false),
                                 TextInput::make('penilaian')
+                                    ->required()
                                     ->autofocus(),
                                 FileUpload::make('files')
                                     ->label('File Tugas')

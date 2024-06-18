@@ -11,6 +11,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -34,6 +35,7 @@ class UserPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => '#3046b5',
+                'secondary' => Color::Gray,
 //                'success' => '#55AD9B',
 //                'danger' => '#EE4E4E',
             ])
@@ -59,7 +61,7 @@ class UserPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->pages([Pages\Dashboard::class])
             ->resources([
-                PelatihanResource::class,
+//                PelatihanResource::class,
             ])
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets(array_merge(
