@@ -129,6 +129,11 @@ class BankSoalResource extends Resource
             ->deferFilters()
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                Tables\Actions\DeleteAction::make()
+                ->disabled(fn ($record) => $record->materiTugas()->exists()),
+                 Tables\Actions\ReplicateAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
