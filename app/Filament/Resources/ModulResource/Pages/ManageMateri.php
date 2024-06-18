@@ -121,7 +121,6 @@ class ManageMateri extends ManageRelatedRecords
                         ->label('View')
                         ->action(fn($record) => $this->redirectRoute('filament.admin.resources.materis.view', $record))
                         ->icon('heroicon-o-eye'),
-                    Tables\Actions\EditAction::make(),
                     Tables\Actions\ReplicateAction::make(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),

@@ -2,19 +2,24 @@
 
 namespace App\Filament\Resources\KuisResource\RelationManagers;
 
+use App\Models\MateriTugas;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class KuisRelationManager extends RelationManager
 {
     protected static string $relationship = 'kuis';
     protected static ?string $title = 'Daftar Pertanyaan';
+
     public function isReadOnly(): bool
     {
-        return false;
+        $kuis = $this->getOwnerRecord();
+        $bool = $kuis->mengerjakanKuis()->count();
+        return $bool>0 ? true : false;
     }
 
     public function form(Form $form): Form
@@ -105,7 +110,7 @@ class KuisRelationManager extends RelationManager
                     ->html()
                     ->words(5),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created At')
+                    ->label('Dibuat pada')
                     ->searchable()
                     ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
             ])
@@ -113,7 +118,8 @@ class KuisRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                ->tooltip('Tambahkan Pertanyaan Baru'),
                 Tables\Actions\AttachAction::make()
                 ->tooltip('Tambahkan Pertanyaan dari BankSoal')
             ])

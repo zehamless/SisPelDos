@@ -22,6 +22,7 @@ use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TugasResource extends Resource
@@ -39,12 +40,17 @@ class TugasResource extends Resource
     }
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('jenis', 'tugas'); 
+        return parent::getEloquentQuery()->where('jenis', 'tugas');
     }
 
     public static function canCreate(): bool
     {
         return false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return !$record->mengerjakanTugas()->exists();
     }
 
     public static function form(Form $form): Form
