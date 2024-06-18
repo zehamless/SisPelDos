@@ -23,6 +23,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class MateriTugasResource extends Resource
@@ -39,7 +40,10 @@ class MateriTugasResource extends Resource
     {
         return Ancestor::make('allTugas', 'modul');
     }
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('published', true);
+    }
     public static function canEdit(Model $record): bool
     {
         return false;
@@ -222,7 +226,7 @@ class MateriTugasResource extends Resource
                                                 ->label('Tanggal Submit')
                                                 ->native(false)
                                                 ->timezone('Asia/Jakarta')
-                                                ->hint('Tanggal terakhir submit tugas akan berubah jika ada perubahan file')
+                                                ->hint('Tanggal terakhir submit tugas akan berubah jika ada perubahan file atau pesan')
                                                 ->hintColor('danger')
                                                 ->columnSpan(3)
                                                 ->disabled(),

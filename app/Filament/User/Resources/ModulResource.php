@@ -16,6 +16,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ModulResource extends Resource
@@ -37,7 +38,10 @@ class ModulResource extends Resource
     {
         return false;
     }
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('published', true);
+    }
     public static function canDelete(Model $record): bool
     {
         return false;

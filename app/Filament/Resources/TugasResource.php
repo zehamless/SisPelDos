@@ -22,6 +22,7 @@ use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TugasResource extends Resource
@@ -37,9 +38,19 @@ class TugasResource extends Resource
     {
         return Ancestor::make('tugas', 'modul');
     }
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('jenis', 'tugas');
+    }
+
     public static function canCreate(): bool
     {
         return false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return !$record->mengerjakanTugas()->exists();
     }
 
     public static function form(Form $form): Form
@@ -150,7 +161,8 @@ class TugasResource extends Resource
 //                        ->label('View Materi')
 //                        ->icon('heroicon-c-document-magnifying-glass')
 //                        ->url(fn($record): string => MateriTugasResource::getUrl('view', $record->id)),
-                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                    ->disabled(fn($record) => $record->peserta()->exists()),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                 ]),
@@ -242,7 +254,7 @@ class TugasResource extends Resource
     {
         return [
 //            'index' => Pages\ListTugas::route('/'),
-            'create' => Pages\CreateTugas::route('/create'),
+//            'create' => Pages\CreateTugas::route('/create'),
             'edit' => Pages\EditTugas::route('/{record}/edit'),
             'view' => Pages\ViewTugas::route('/{record}'),
             'penilaian' => Pages\ManagePengerjaanTugas::route('/{record}/penilaian'),

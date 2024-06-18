@@ -23,6 +23,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class PelatihanResource extends Resource
@@ -31,8 +32,8 @@ class PelatihanResource extends Resource
 
     protected static ?string $model = Pelatihan::class;
 
-    protected static ?string $label = 'PelatihanKu';
-    protected static ?string $pluralLabel = 'PelatihanKu';
+    protected static ?string $label = 'Pelatihan';
+    protected static ?string $pluralLabel = 'Pelatihan';
 
     protected static ?string $recordTitleAttribute = 'judul';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -41,7 +42,10 @@ class PelatihanResource extends Resource
     {
         return null;
     }
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('published', true);
+    }
     public static function canAccess(): bool
     {
         return auth()->check();

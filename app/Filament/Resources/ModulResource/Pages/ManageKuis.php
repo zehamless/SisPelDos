@@ -154,9 +154,6 @@ class ManageKuis extends ManageRelatedRecords
                         ->label('View')
                         ->action(fn($record) => $this->redirectRoute('filament.admin.resources.kuis.view', $record))
                         ->icon('heroicon-o-eye'),
-                    Tables\Actions\EditAction::make()
-                        ->disabled(fn($record) => $record->peserta()->exists()),
-
                     Tables\Actions\Action::make('replicate')
                         ->label('Duplikat Data')
                         ->icon('heroicon-m-square-2-stack')
