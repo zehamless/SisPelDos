@@ -90,7 +90,7 @@ class UserPanelProvider extends PanelProvider
             ->plugins([
                 FilamentFullCalendarPlugin::make()
 //                    ->schedulerLicenseKey()
-                    ->selectable()
+                    ->selectable(false)
                     ->editable(false)
 //                    ->timezone('Asia/Jakarta')
 //                    ->locale('id')
