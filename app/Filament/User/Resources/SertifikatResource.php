@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 class SertifikatResource extends Resource
 {
     protected static ?string $model = Sertifikat::class;
-
+    protected static string | array $routeMiddleware = 'auth';
     protected static ?string $navigationIcon = 'heroicon-o-trophy';
 
     public static function canCreate(): bool

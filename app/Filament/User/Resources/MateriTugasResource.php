@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Model;
 class MateriTugasResource extends Resource
 {
     use NestedResource;
-
+    protected static string | array $routeMiddleware = 'auth';
     protected static ?string $model = MateriTugas::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
