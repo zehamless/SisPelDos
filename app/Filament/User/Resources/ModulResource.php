@@ -24,7 +24,7 @@ class ModulResource extends Resource
     use NestedResource;
 
     protected static ?string $model = Modul::class;
-
+    protected static string | array $routeMiddleware = 'auth';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $recordTitleAttribute = 'judul';

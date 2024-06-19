@@ -9,7 +9,7 @@ use Filament\Pages\Page;
 class Kalender extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-s-calendar-days';
-
+    protected static string | array $routeMiddleware = 'auth';
     protected static string $view = 'filament.user.pages.kalender';
     public static function canAccess(): bool
     {

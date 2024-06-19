@@ -47,7 +47,6 @@ class TugasResource extends Resource
     {
         return false;
     }
-
     public static function canEdit(Model $record): bool
     {
         return !$record->mengerjakanTugas()->exists();
@@ -242,7 +241,6 @@ class TugasResource extends Resource
                     ])->collapsible()->collapsed(),
             ]);
     }
-
     public static function getRelations(): array
     {
         return [

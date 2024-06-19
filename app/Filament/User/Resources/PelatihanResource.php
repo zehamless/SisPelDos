@@ -31,7 +31,7 @@ class PelatihanResource extends Resource
     use NestedResource;
 
     protected static ?string $model = Pelatihan::class;
-
+    protected static string | array $routeMiddleware = 'auth';
     protected static ?string $label = 'Pelatihan';
     protected static ?string $pluralLabel = 'Pelatihan';
 
