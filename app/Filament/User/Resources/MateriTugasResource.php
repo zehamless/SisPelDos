@@ -284,7 +284,13 @@ class MateriTugasResource extends Resource
                                     })
                                     ->badge()
                                     ->color('warning'),
-                            ])->columns(2),
+                                TextEntry::make('durasi')
+                                    ->label('Durasi')
+                                    ->numeric()
+                                    ->badge()
+                                    ->suffix(' Menit')
+                                    ->color('info'),
+                            ])->columns(3),
 
 
                         Fieldset::make('Tanggal')

@@ -2,13 +2,12 @@
 
 namespace App\Filament\Resources\KuisResource\RelationManagers;
 
-use App\Models\MateriTugas;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class KuisRelationManager extends RelationManager
 {
@@ -19,7 +18,7 @@ class KuisRelationManager extends RelationManager
     {
         $kuis = $this->getOwnerRecord();
         $bool = $kuis->mengerjakanKuis()->count();
-        return $bool>0 ? true : false;
+        return $bool > 0 ? true : false;
     }
 
     public function form(Form $form): Form
@@ -119,9 +118,13 @@ class KuisRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->tooltip('Tambahkan Pertanyaan Baru'),
+                    ->tooltip('Tambahkan Pertanyaan Baru'),
                 Tables\Actions\AttachAction::make()
-                ->tooltip('Tambahkan Pertanyaan dari BankSoal')
+                    ->preloadRecordSelect()
+                    ->recordSelect(fn(Select $select) =>
+                    $select->multiple()->placeholder('Pilih Pertanyaan dari BankSoal'),
+                    )
+                    ->tooltip('Tambahkan Pertanyaan dari BankSoal')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -129,7 +132,7 @@ class KuisRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DetachBulkAction::make()
                 ]),
             ]);
     }

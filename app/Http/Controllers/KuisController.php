@@ -28,6 +28,7 @@ class KuisController extends Controller
         $corrects = 0;
         $totalQuestion = 0;
 
+
         function array_flatten($array)
         {
             $return = array();
@@ -56,8 +57,8 @@ class KuisController extends Controller
                     $numbers = array_filter($jawaban, 'is_numeric');
                     $realJawaban = array_intersect_key($jawaban, array_flip($numbers));
                     $totalQuestion += count($realJawaban);
-                    $arrayAnswer = array_flatten($arrayAnswer);
-                    $corrects += count(array_intersect($arrayAnswer, $realJawaban));
+//                    $arrayAnswer = array_flatten($arrayAnswer);
+                    $corrects += count(array_intersect($value, $realJawaban));
                 }
             }
         }
@@ -68,15 +69,20 @@ class KuisController extends Controller
             $status = $data['tgl_tenggat'] > now() ? 'selesai' : 'telat';
         }
 
+        if (empty($arrayAnswer) || !is_array($arrayAnswer)) {
+            $penilaian= 0;
+        }else{
+        $penilaian = $corrects / $totalQuestion * 100;
+        }
         if (auth()->user()->kuis()->where('materi_tugas_id', $request->kuis_id)->count() < $data['max_attempt']) {
-            auth()->user()->mengerjakan()->attach($request->kuis_id, ['files' => json_encode($arrData), 'penilaian' => $corrects / $totalQuestion * 100, 'status' => $status, 'is_kuis' => true]);
+            auth()->user()->mengerjakan()->attach($request->kuis_id, ['files' => json_encode($arrData), 'penilaian' => $penilaian, 'status' => $status, 'is_kuis' => true]);
             activity('mengerjakan')
                 ->performedOn($model)
                 ->event('kuis')
                 ->log('mengerjakan kuis ' . $data['judul']);
             return response()->json(['correct' => $corrects, 'total' => $arrData, 'data' => $data['kuis']]);
         }
-        return response()->json(['message' => 'anda sudah mencoba sebanyak ' . $data['max_attempt'] . ' kali'], 400);
+        return response()->json($data, 400);
     }
 
     public function review($kuis)

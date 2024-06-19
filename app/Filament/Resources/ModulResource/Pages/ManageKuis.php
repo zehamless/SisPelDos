@@ -146,7 +146,7 @@ class ManageKuis extends ManageRelatedRecords
                         $data['jenis'] = 'kuis';
                         return $data;
                     }),
-                Tables\Actions\AssociateAction::make(),
+//                Tables\Actions\AssociateAction::make(),
             ])->headerActionsPosition(Tables\Actions\HeaderActionsPosition::Bottom)
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -161,9 +161,9 @@ class ManageKuis extends ManageRelatedRecords
                             $record->duplicate();
                         })
                         ->successNotificationTitle('Duplikat data berhasil'),
-                    Tables\Actions\DissociateAction::make()
-                    ->label('Hapus'),
-//                    Tables\Actions\DeleteAction::make(),
+//                    Tables\Actions\DissociateAction::make()
+//                    ->label('Hapus'),
+                    Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                 ])
