@@ -14,13 +14,14 @@
             integrity="sha512-LhccdVNGe2QMEfI3x4DVV3ckMRe36TfydKss6mJpdHjNFiV07dFpS2xzeZedptKZrwxfICJpez09iNioiSZ3hA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div id="surveyContainer"></div>
 <script type="text/javascript">
 
     const jsonData = {!! $jsonData !!};
-    console.log(jsonData);
+    // console.log(jsonData);
 
     const kuisData = {
         completedHtml: "<h4>Terimakasih!</h4>",
@@ -33,7 +34,7 @@
         showTimerPanel: "bottom",
         startSurveyText: 'Mulai',
         showTimerPanelMode: "survey",
-        maxTimeToFinish: 100,
+        maxTimeToFinish: jsonData.durasi*60,
         pages: jsonData.kuis.map(function (kuisItem, index) {
             // console.log(kuisItem.id)
             return {
@@ -42,7 +43,7 @@
                 elements: [
                     {
                         type: kuisItem.jawaban[0].type.toLowerCase() == 'radio' ? 'radiogroup' : 'checkbox',
-                        name: String(kuisItem.id),
+                        name: String(index+1),
                         title: kuisItem.pertanyaan,
                         choicesOrder: 'random',
                         navigationTitle: 'Soal ' + (index + 1),
@@ -107,16 +108,30 @@
 
     survey.onComplete.add(function (sender, options) {
         options.showSaveInProgress()
-        console.log(JSON.stringify(sender.data));
+        // console.log('jsondata', sender.data);
         axios.post('{{route('kuis.store')}}', {
             data: sender.data,
             kuis_id: jsonData.id
         }).then(function (response) {
             window.sessionStorage.setItem(storageItemKey, "");
-            console.log(response);
-            window.location.href = document.referrer;
+            swal.fire({
+                icon: 'success',
+                title: 'Terimakasih!',
+                text: 'Data berhasil disimpan!',
+            });
+            setTimeout(function() {
+                window.location.href = document.referrer;
+            }, 1000);
         }).catch(function (error) {
-            console.log(error);
+            window.sessionStorage.setItem(storageItemKey, "");
+            swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Terjadi kesalahan saat menyimpan data!',
+            });
+            setTimeout(function() {
+                window.location.href = document.referrer;
+            }, 1000);
         });
     })
     // console.log(kuisData);
