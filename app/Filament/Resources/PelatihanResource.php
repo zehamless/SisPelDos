@@ -200,15 +200,20 @@ class PelatihanResource extends Resource
                     ->description(fn($record) => $record->periode->tahun_ajar)
                     ->searchable(),
 
-                TextColumn::make('deskripsi')
-                    ->markdown()
-                    ->limit(50),
+//                TextColumn::make('deskripsi')
+//                    ->markdown()
+//                    ->limit(50),
                 TextColumn::make('tgl_mulai')
                     ->sortable()
+                    ->badge()
+                    ->color('success')
+                    ->timezone('Asia/Jakarta')
                     ->date(),
-
                 TextColumn::make('tgl_selesai')
                     ->sortable()
+                    ->badge()
+                    ->color('danger')
+                    ->timezone('Asia/Jakarta')
                     ->date(),
 
             ])

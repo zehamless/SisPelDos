@@ -101,6 +101,7 @@ class ManageTugas extends ManageRelatedRecords
                     ->onIcon('heroicon-c-check')
                     ->offIcon('heroicon-c-x-mark')
                     ->onColor('success')
+                    ->tooltip('Apabila terjadwal, maka tugas akan diterbitkan pada tanggal mulai')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
@@ -123,10 +124,6 @@ class ManageTugas extends ManageRelatedRecords
                     ->color('danger')
                     ->dateTime()
                     ->timezone('Asia/Jakarta'),
-                Tables\Columns\TextColumn::make('deskripsi')
-                    ->label('Deskripsi')
-                    ->markdown()
-                    ->limit(50),
 
             ])
             ->filters([
@@ -152,7 +149,7 @@ class ManageTugas extends ManageRelatedRecords
                         ->icon('heroicon-o-eye'),
                     Tables\Actions\ReplicateAction::make(),
 //                    Tables\Actions\DissociateAction::make(),
-                    Tables\Actions\DeleteAction::make(),
+//                    Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                 ]),
@@ -161,7 +158,7 @@ class ManageTugas extends ManageRelatedRecords
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
 //                    Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     BulkAction::make('publish')

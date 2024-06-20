@@ -11,4 +11,11 @@ class ViewKuis extends ViewRecord
 {
     Use NestedPage;
     protected static string $resource = KuisResource::class;
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make()
+                ->disabled(fn($record) => $record->mengerjakanKuis()->exists())
+        ];
+    }
 }
