@@ -15,9 +15,10 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create()
     {
-        return view('auth.login');
+//        return view('auth.login');
+        return redirect()->route('filament.user.auth.login');
     }
 
     /**

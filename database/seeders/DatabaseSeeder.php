@@ -26,20 +26,26 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         //delete all users
-//        User::truncate();
-//        Periode::truncate();
-//        \Storage::deleteDirectory('pelatihan-sampul');
-//        User::factory()->count(10)->create();
-//        //make 1 user with admin role
-//        User::factory()->admin()->create();
-//        Periode::factory()->count(2)->create();
-//        Pelatihan::factory()->count(10)->create();
-//        Modul::factory()->count(10)->create();
-//        MateriTugas::factory()->count(10)->create();
+        User::truncate();
+        Periode::truncate();
+        \Storage::deleteDirectory('pelatihan-sampul');
+        User::factory()->count(10)->create();
+        //make 1 user with admin role
+        User::factory()->admin()->create();
+        Periode::factory()->count(2)->create();
+        Pelatihan::factory()->count(10)->create();
+        Modul::factory()->count(10)->create();
+        MateriTugas::factory()->count(10)->create();
         User::create([
             'nama' => 'Admin',
             'email' => 'mahez@gmail.com',
             'password' => Hash::make('password'),
+            'role' => 'admin',
+        ]);
+        User::create([
+            'nama' => 'Admin',
+            'email' => 'batubattery25@gmail.com',
+            'password' => Hash::make('password25'),
             'role' => 'admin',
         ]);
     }

@@ -14,9 +14,10 @@ class PasswordResetLinkController extends Controller
     /**
      * Display the password reset link request view.
      */
-    public function create(): View
+    public function create()
     {
-        return view('auth.forgot-password');
+//        return view('auth.forgot-password');
+        return redirect()->route('filament.user.auth.password-reset.request');
     }
 
     /**
