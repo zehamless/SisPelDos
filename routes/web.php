@@ -28,14 +28,15 @@ Route::get('/', function () {
 //Route::get('pelatihan/{pelatihan:slug}/materi/{materi}', ViewMateriController::class)->name('materi.show');
 //Route::get('pelatihan/{pelatihan:slug}/tugas/{materi}/', [TugasController::class, 'index'])->name('tugas.show');
 //Route::post('mengerjakan/{materi}', [TugasController::class, 'mengerjakan'])->name('tugas.mengerjakan');
-
-Route::get('download/{file}', downloadFileController::class)->name('download');
-Route::get('kuis/{kuis}', [KuisController::class, 'show'])->name('kuis.show');
-Route::post('kuis', [KuisController::class, 'store'])->name('kuis.store');
-Route::get('reviewKuis/{kuis}', [KuisController::class, 'review'])->name('kuis.review');
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('download/{file}', downloadFileController::class)->name('download');
+    Route::get('kuis/{kuis}', [KuisController::class, 'show'])->name('kuis.show');
+    Route::post('kuis', [KuisController::class, 'store'])->name('kuis.store');
+    Route::get('reviewKuis/{kuis}', [KuisController::class, 'review'])->name('kuis.review');
+});
+//Route::get('/dashboard', function () {
+//    return view('dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
 
 //Route::middleware('auth')->group(function () {
 //    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

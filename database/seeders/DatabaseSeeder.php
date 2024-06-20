@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         //delete all users
-//        User::truncate();
+        User::truncate();
 //        Periode::truncate();
 //        \Storage::deleteDirectory('pelatihan-sampul');
 //        User::factory()->count(10)->create();
@@ -40,6 +40,12 @@ class DatabaseSeeder extends Seeder
             'nama' => 'Admin',
             'email' => 'mahez@gmail.com',
             'password' => Hash::make('password'),
+            'role' => 'admin',
+        ]);
+        User::create([
+            'nama' => 'Admin',
+            'email' => 'batubattery25@gmail.com',
+            'password' => Hash::make('password25'),
             'role' => 'admin',
         ]);
     }
