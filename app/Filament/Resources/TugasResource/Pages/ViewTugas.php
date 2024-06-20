@@ -11,4 +11,11 @@ class ViewTugas extends ViewRecord
 {
     Use NestedPage;
     protected static string $resource = TugasResource::class;
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make()
+            ->disabled(fn($record) => $record->mengerjakanTugas()->exists())
+        ];
+    }
 }

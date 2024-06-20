@@ -8,10 +8,12 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageKuis extends ManageRelatedRecords
@@ -112,6 +114,7 @@ class ManageKuis extends ManageRelatedRecords
                     ->onIcon('heroicon-c-check')
                     ->offIcon('heroicon-c-x-mark')
                     ->onColor('success')
+                    ->tooltip('Apabila terjadwal, maka kuis akan diterbitkan pada tanggal mulai')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Judul')
@@ -163,7 +166,7 @@ class ManageKuis extends ManageRelatedRecords
                         ->successNotificationTitle('Duplikat data berhasil'),
 //                    Tables\Actions\DissociateAction::make()
 //                    ->label('Hapus'),
-                    Tables\Actions\DeleteAction::make(),
+//                    Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                 ])
@@ -171,8 +174,19 @@ class ManageKuis extends ManageRelatedRecords
             ->
             bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DissociateBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
+                    BulkAction::make('publish')
+                        ->label('Publish')
+                        ->icon('heroicon-c-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => true])),
+                    BulkAction::make('draft')
+                        ->label('Draft')
+                        ->icon('heroicon-c-x-circle')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => false])),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
