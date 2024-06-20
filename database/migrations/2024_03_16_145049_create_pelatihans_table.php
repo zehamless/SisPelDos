@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('pelatihans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('periode_id')->constrained('periodes');
+            $table->foreignId('periode_id')->constrained('periodes')->cascadeOnDelete();
             $table->string('judul');
             $table->boolean('published')->default(false);
             $table->string('sampul')->nullable();
