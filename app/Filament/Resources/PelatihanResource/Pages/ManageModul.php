@@ -109,6 +109,7 @@ class ManageModul extends ManageRelatedRecords
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
+            ->deferFilters()
             ->defaultSort('urutan')
             ->reorderable('urutan');
     }
