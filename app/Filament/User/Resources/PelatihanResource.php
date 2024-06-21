@@ -209,7 +209,7 @@ class PelatihanResource extends Resource
                         })
                         ->visible(fn($record) => !auth()->check() || !in_array($record->id, $userPelatihanIds) && !in_array($record->id, $userTerimaPelatihanIds)),
                     Action::make('Status Pendaftaran')
-//                        ->icon('heroicon-s-clipboard-check')
+                        ->icon('heroicon-s-document-magnifying-glass')
                         ->modalDescription('Lihat Status Pendaftaran')
                         ->fillForm(function (Pelatihan $record) {
 //                            dump($record);

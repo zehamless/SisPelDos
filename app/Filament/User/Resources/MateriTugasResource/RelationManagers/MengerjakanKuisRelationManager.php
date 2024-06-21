@@ -49,7 +49,7 @@ public static function canViewForRecord(Model $ownerRecord, string $pageClass): 
                 Tables\Actions\Action::make('Preview')
                 ->icon('heroicon-o-eye')
                 ->url(fn ($record) => route('kuis.review', $record->pivot->id))
-                ->shouldOpenUrlInNewTab()
+                ->openUrlInNewTab()
 //                Tables\Actions\EditAction::make(),
 //                Tables\Actions\DeleteAction::make(),
             ])
