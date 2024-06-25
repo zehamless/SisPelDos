@@ -70,7 +70,6 @@ class PelatihanResource extends Resource
     {
         return null;
     }
-
     public static function form(Form $form): Form
     {
         return $form

@@ -145,6 +145,7 @@ class ManageKuis extends ManageRelatedRecords
                     ->icon('heroicon-o-arrow-left')
                     ->color('secondary'),
                 Tables\Actions\CreateAction::make()
+                    ->label('Tambah Kuis')
                     ->mutateFormDataUsing(function (array $data) {
                         $data['jenis'] = 'kuis';
                         return $data;

@@ -62,6 +62,7 @@ class ManageModul extends ManageRelatedRecords
                 ->searchable(),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
+                    ->markdown()
                     ->limit(100),
             ])
             ->filters([
@@ -69,6 +70,7 @@ class ManageModul extends ManageRelatedRecords
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->label('Tambah Modul')
                     ->mutateFormDataUsing(function ($data) {
                         $data['slug'] = Str::slug($data['judul']);
                         return $data;

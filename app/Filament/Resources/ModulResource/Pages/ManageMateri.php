@@ -109,6 +109,7 @@ class ManageMateri extends ManageRelatedRecords
                     ->icon('heroicon-o-arrow-left')
                     ->color('secondary'),
                 Tables\Actions\CreateAction::make()
+                    ->label('Tambah Materi')
                     ->mutateFormDataUsing(function (array $data) {
                         $data['jenis'] = 'materi';
                         return $data;
