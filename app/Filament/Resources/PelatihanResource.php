@@ -60,10 +60,11 @@ class PelatihanResource extends Resource
     protected static ?string $model = Pelatihan::class;
 
     protected static ?string $slug = '';
-    protected static ?string $cluster = \App\Filament\Clusters\Pelatihan::class;
+//    protected static ?string $cluster = \App\Filament\Clusters\Pelatihan::class;
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $recordTitleAttribute = 'judul';
+    protected static ?int $navigationSort = 1;
 
     public static function getAncestor(): ?Ancestor
     {

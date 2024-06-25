@@ -24,6 +24,7 @@ class NilaiTugasResource extends Resource
     protected static ?string $slug = 'nilai-penugasan';
     protected static ?string $label = 'Penilaian Tugas & Kuis';
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?int $navigationSort = 4;
 
     public static function canCreate(): bool
     {
@@ -85,7 +86,7 @@ class NilaiTugasResource extends Resource
                     ->searchable(),
                 TextColumn::make('modul.judul')
                     ->label('Tugas/Kuis')
-                ->searchable(),
+                    ->searchable(),
                 TextColumn::make('penilaian')
                     ->label('nilai')
                     ->badge()

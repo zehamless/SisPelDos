@@ -82,7 +82,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->darkMode(false)
             ->brandName('Sistem Pelatihan Dosen Unila - Admin')
-            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'))
-            ->brandLogoHeight('4rem');
+            ->brandLogo(asset('assets/Logo-Be-Strong-Unila-2023.png'))
+            ->brandLogoHeight('50px');
     }
 }
