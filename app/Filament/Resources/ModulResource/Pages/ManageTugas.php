@@ -148,7 +148,8 @@ class ManageTugas extends ManageRelatedRecords
                         ->label('View')
                         ->action(fn($record) => $this->redirectRoute('filament.admin.resources.tugas.view', $record))
                         ->icon('heroicon-o-eye'),
-                    Tables\Actions\ReplicateAction::make(),
+                    Tables\Actions\ReplicateAction::make()
+                    ->requiresConfirmation(),
 //                    Tables\Actions\DissociateAction::make(),
 //                    Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),

@@ -6,7 +6,6 @@ use App\Filament\Resources\MateriResource\Pages;
 use App\Filament\Resources\MateriResource\RelationManagers;
 use App\Models\Materi;
 use App\Models\MateriTugas;
-use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -26,7 +25,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MateriResource extends Resource
 {
-    Use NestedResource;
+    use NestedResource;
+
     protected static ?string $model = MateriTugas::class;
     protected static ?string $navigationLabel = 'Materi';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -36,12 +36,14 @@ class MateriResource extends Resource
 
     public static function getAncestor(): ?Ancestor
     {
-        return  Ancestor::make('materi', 'modul');
+        return Ancestor::make('materi', 'modul');
     }
+
     public static function canCreate(): bool
     {
         return false;
     }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('jenis', 'materi');
@@ -150,21 +152,25 @@ class MateriResource extends Resource
                 Section::make('Status')
                     ->schema([
                         TextEntry::make('published')
-                            ->label('Published')
+                            ->label('Status')
                             ->badge()
-                            ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                            ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
                             ->color(fn($state) => $state ? 'success' : 'danger'),
                         TextEntry::make('terjadwal')
                             ->label('Terjadwal')
                             ->badge()
-                            ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                            ->formatStateUsing(fn($state) => $state ? 'Ya' : 'Tidak')
                             ->color(fn($state) => $state ? 'success' : 'danger'),
                         TextEntry::make('created_at')
-                            ->label('Created At')
-                            ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
+                            ->label('Dibuat pada')
+                            ->badge()
+                            ->dateTime()
+                            ->timezone('Asia/Jakarta'),
                         TextEntry::make('updated_at')
-                            ->label('Updated At')
-                            ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
+                            ->label('Terakhir diubah pada')
+                            ->badge()
+                            ->dateTime()
+                            ->timezone('Asia/Jakarta'),
                     ])->columns(2),
                 Section::make()
                     ->schema([

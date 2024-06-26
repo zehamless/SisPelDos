@@ -189,9 +189,9 @@ class TugasResource extends Resource
                 Section::make('Status')
                     ->schema([
                         TextEntry::make('published')
-                            ->label('Published')
+                            ->label('Status')
                             ->badge()
-                            ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                            ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
                             ->color(fn($state) => $state ? 'success' : 'danger'),
                         TextEntry::make('terjadwal')
                             ->label('Terjadwal')
@@ -199,11 +199,15 @@ class TugasResource extends Resource
                             ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
                             ->color(fn($state) => $state ? 'success' : 'danger'),
                         TextEntry::make('created_at')
-                            ->label('Created At')
-                            ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
+                            ->label('Dibuat pada')
+                            ->badge()
+                            ->dateTime()
+                            ->timezone('Asia/Jakarta'),
                         TextEntry::make('updated_at')
-                            ->label('Updated At')
-                            ->date('Y-m-d H:i:s', 'Asia/Jakarta'),
+                            ->label('Terakhir diubah pada')
+                            ->badge()
+                            ->dateTime()
+                            ->timezone('Asia/Jakarta'),
                     ])->columns(2),
                 Section::make('Tanggal')
                     ->schema([

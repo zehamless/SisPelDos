@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PelatihanResource\Pages;
 use App\Filament\Resources\PelatihanResource\Pages\EditPelatihan;
 use App\Filament\Resources\PelatihanResource\RelationManagers\MateriRelationManager;
+use App\Jobs\clonePelatihanJob;
 use App\Models\Pelatihan;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
@@ -29,6 +30,7 @@ use Filament\Infolists\Infolist;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -37,7 +39,6 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ViewAction;
@@ -70,6 +71,7 @@ class PelatihanResource extends Resource
     {
         return null;
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -196,7 +198,7 @@ class PelatihanResource extends Resource
                     ->onColor('success')
                     ->sortable(),
                 TextColumn::make('judul')
-                    ->words(5)
+                    ->limit(80)
                     ->description(fn($record) => $record->periode->tahun_ajar)
                     ->searchable(),
 
@@ -226,12 +228,20 @@ class PelatihanResource extends Resource
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
-                    ReplicateAction::make()
-                        ->beforeReplicaSaved(function (Pelatihan $replica): void {
-                            $replica->slug = 'New-' . $replica->slug;
-                            $replica->judul = 'New-' . $replica->judul;
-                        })
-                        ->requiresConfirmation(),
+//                    ReplicateAction::make()
+//                        ->beforeReplicaSaved(function (Pelatihan $replica): void {
+//                            $replica->slug = 'New-' . $replica->slug;
+//                            $replica->judul = 'New-' . $replica->judul;
+//                        })
+//                        ->requiresConfirmation(),
+                    Action::make('duplikat')
+                        ->label('Duplikat Data')
+//                        ->color('secondary')
+                        ->icon('heroicon-m-square-2-stack')
+                        ->action(fn(Pelatihan $pelatihan) => clonePelatihanJob::dispatch($pelatihan))
+                        ->requiresConfirmation()
+                        ->modalHeading(fn(Pelatihan $pelatihan) => 'Duplikat  ' . $pelatihan->judul)
+                        ->modalDescription('Apakah anda yakin ingin menduplikat data ini? Data yang diduplikat adalah data pelatihan, modul, materi, tugas, dan kuis yang terkait dengan pelatihan ini. Proses ini membutuhkan waktu yang cukup lama, harap bersabar.'),
                     DeleteAction::make(),
                     RestoreAction::make(),
                     ForceDeleteAction::make(),
@@ -258,7 +268,9 @@ class PelatihanResource extends Resource
             ])
             ->modifyQueryUsing(function (Builder $builder) {
                 $builder->with('periode');
-            });
+            })
+            ->deferFilters()
+            ->defaultSort('updated_at', 'desc');
     }
 
     public static function infolist(Infolist $infolist): Infolist
@@ -273,10 +285,15 @@ class PelatihanResource extends Resource
                                     TextEntry::make('judul')
                                         ->label('Judul'),
                                     TextEntry::make('published')
-                                        ->label('Published')
+                                        ->label('Status')
                                         ->badge()
-                                        ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                                        ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
                                         ->color(fn($state) => $state ? 'success' : 'danger'),
+                                    TextEntry::make('created_at')
+                                        ->label('Dibuat pada')
+                                        ->badge()
+                                        ->dateTime()
+                                        ->timezone('Asia/Jakarta'),
                                 ]),
                                 Group::make([
                                     TextEntry::make('tgl_mulai')
@@ -289,6 +306,12 @@ class PelatihanResource extends Resource
                                         ->dateTime('d M Y')
                                         ->badge()
                                         ->color('danger'),
+
+                                    TextEntry::make('updated_at')
+                                        ->label('Terakhir diubah pada')
+                                        ->badge()
+                                        ->dateTime()
+                                        ->timezone('Asia/Jakarta'),
                                 ]),
                                 Group::make([
                                     ImageEntry::make('sampul')

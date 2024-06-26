@@ -164,6 +164,7 @@ class ManageKuis extends ManageRelatedRecords
                         ->action(function ($record) {
                             $record->duplicate();
                         })
+                        ->requiresConfirmation()
                         ->successNotificationTitle('Duplikat data berhasil'),
 //                    Tables\Actions\DissociateAction::make()
 //                    ->label('Hapus'),

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PelatihanResource\Pages;
 
 use App\Filament\Resources\PelatihanResource;
+use App\Models\Modul;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -59,7 +60,7 @@ class ManageModul extends ManageRelatedRecords
                     ->onColor('success')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
-                ->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
                     ->markdown()
@@ -79,11 +80,17 @@ class ManageModul extends ManageRelatedRecords
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                            Tables\Actions\Action::make('view')
-                                ->label('View')
-                                ->action(fn($record) => $this->redirectRoute('filament.admin.resources.moduls.view', $record))
-                                ->icon('heroicon-o-eye'),
+                    Tables\Actions\Action::make('view')
+                        ->label('View')
+                        ->action(fn($record) => $this->redirectRoute('filament.admin.resources.moduls.view', $record))
+                        ->icon('heroicon-o-eye'),
                     Tables\Actions\EditAction::make(),
+                    Tables\Actions\ReplicateAction::make()
+                        ->beforeReplicaSaved(function (Modul $replica): void {
+                            $replica->slug = 'New-' . $replica->slug . '-' .now()->timestamp;
+                            $replica->judul = 'New-' . $replica->judul.'-'.now()->timestamp;
+                        })
+                    ->requiresConfirmation(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
