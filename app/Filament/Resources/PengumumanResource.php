@@ -22,6 +22,7 @@ class PengumumanResource extends Resource
 
     protected static ?string $slug = 'pengumuman';
     protected static ?string $pluralLabel = 'Pengumuman';
+    protected static ?int $navigationSort = 4;
 
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';

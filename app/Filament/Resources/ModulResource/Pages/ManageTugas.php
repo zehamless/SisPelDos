@@ -135,6 +135,7 @@ class ManageTugas extends ManageRelatedRecords
                     ->icon('heroicon-o-arrow-left')
                     ->color('secondary'),
                 Tables\Actions\CreateAction::make()
+                    ->label('Tambah Tugas')
                     ->mutateFormDataUsing(function (array $data) {
                         $data['jenis'] = 'tugas';
                         return $data;

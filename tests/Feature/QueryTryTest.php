@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\kuis;
 use App\Models\MateriTugas;
 use App\Models\Pelatihan;
 use App\Models\Pendaftaran;
@@ -61,5 +62,11 @@ class QueryTryTest extends TestCase
         })->get();
 
         dump($query);
+    }
+
+    public function testQuery1()
+    {
+        $kuis=kuis::with('kategories')->get();
+        dd($kuis);
     }
 }

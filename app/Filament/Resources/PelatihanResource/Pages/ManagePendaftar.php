@@ -96,10 +96,9 @@ class ManagePendaftar extends ManageRelatedRecords
 //                Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make(),
+//                Tables\Actions\AttachAction::make(),
             ])
             ->actions([
-
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('lihatPengguna')
                     ->icon('heroicon-o-user')

@@ -19,7 +19,15 @@ class Modul extends Model
         'published',
         'deskripsi',
     ];
+    protected static function boot(): void
+    {
+        parent::boot();
 
+        static::creating(function ($modul) {
+            $maxUrutan = self::max('urutan');
+            $modul->urutan = $maxUrutan ? $maxUrutan + 1 : 1;
+        });
+    }
     public function getRouteKeyName()
     {
         return 'slug';

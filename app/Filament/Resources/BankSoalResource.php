@@ -17,7 +17,8 @@ class BankSoalResource extends Resource
     protected static ?string $model = kuis::class;
     protected static ?string $label = 'Bank Soal';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

@@ -9,13 +9,17 @@ use Guava\FilamentNestedResources\Concerns\NestedPage;
 
 class ViewKuis extends ViewRecord
 {
-    Use NestedPage;
+    use NestedPage;
+
     protected static string $resource = KuisResource::class;
+
     protected function getHeaderActions(): array
     {
+        $kuis = $this->getRecord()->mengerjakanKuis()->exists();
         return [
             Actions\DeleteAction::make()
-                ->disabled(fn($record) => $record->mengerjakanKuis()->exists())
+                ->label(fn() => $kuis? 'Kuis sudah dikerjakan, tidak dapat dihapus' : 'Hapus')
+                ->disabled(fn() => $kuis)
         ];
     }
 }

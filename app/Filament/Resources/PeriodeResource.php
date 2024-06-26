@@ -22,7 +22,7 @@ class PeriodeResource extends Resource
     protected static ?string $model = Periode::class;
 
     protected static ?string $slug = 'periodes';
-
+    protected static ?int $navigationSort = 5;
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
     public static function form(Form $form): Form
