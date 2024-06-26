@@ -111,7 +111,8 @@
         // console.log('jsondata', sender.data);
         axios.post('{{route('kuis.store')}}', {
             data: sender.data,
-            kuis_id: jsonData.id
+            kuis_id: jsonData.id,
+            pertanyaan: jsonData.kuis,
         }).then(function (response) {
             window.sessionStorage.setItem(storageItemKey, "");
             swal.fire({
@@ -130,7 +131,7 @@
                 text: 'Terjadi kesalahan saat menyimpan data!',
             });
             setTimeout(function() {
-                window.location.href = document.referrer;
+                // window.location.href = document.referrer;
             }, 1000);
         });
     })

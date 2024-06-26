@@ -13,4 +13,9 @@ class kategoriSoal extends Model
     protected $fillable = [
         'kategori',
     ];
+
+    public function kuis()
+    {
+        return $this->hasMany(kuis::class);
+    }
 }

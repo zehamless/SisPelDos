@@ -19,12 +19,13 @@
 <div id="surveyContainer"></div>
 <script type="text/javascript">
 
-    const jsonData = {!! $jsonData !!};
+    {{--const jsonData = {!! $jsonData !!};--}}
     const jsonJawaban = {!! $jsonJawaban !!};
     const files = JSON.parse(jsonJawaban.pivot.files);
 
     // Now you can access the jawaban object
     const jawaban = files.jawaban;
+    const jsonData = files.pertanyaan;
 
     // console.log(jsonJawaban); // Outputs: {"1":"vv","2":["gg"]};
 
@@ -36,11 +37,11 @@
         // progressBarType: "questions",
         // progressBarShowPageNumbers: true,
         // progressBarShowPageTitles: true,
-        showTimerPanel: "bottom",
-        startSurveyText: 'Mulai',
+        // showTimerPanel: "bottom",
+        // startSurveyText: 'Mulai',
         showTimerPanelMode: "survey",
-        maxTimeToFinish: jsonData.durasi * 60,
-        pages: jsonData.kuis.map(function (kuisItem, index) {
+        // maxTimeToFinish: jsonData.durasi * 60,
+        pages: jsonData.map(function (kuisItem, index) {
             let answer;
             let options;
             let jawabanBenar = kuisItem.jawaban[0].data.jawaban_benar;
@@ -84,11 +85,11 @@
     // console.log(kuisData);
     const survey = new Survey.Model(kuisData);
 
-    let surveyData = jsonData.kuis.reduce((acc, kuisItem, index) => {
+    let surveyData = jsonData.reduce((acc, kuisItem, index) => {
         acc[kuisItem.id] = jawaban[index + 1];
         return acc;
     }, {});
-    jsonData.kuis.map(function (kuisItem, index) {
+    jsonData.map(function (kuisItem, index) {
         let answer;
         let options;
         let jawabanBenar = kuisItem.jawaban[0].data.jawaban_benar;

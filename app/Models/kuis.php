@@ -35,7 +35,12 @@ class kuis extends Model
 
     public function kategori()
     {
-        return $this->belongsTo(kategoriSoal::class, 'kategori_soal_id');
+        return $this->belongsTo(kategoriSoal::class);
+    }
+
+    public function kategories()
+    {
+        return $this->belongsTo(kategoriSoal::class,'kategori_soal_id');
     }
 
 }

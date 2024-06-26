@@ -63,7 +63,7 @@ class KuisController extends Controller
             }
         }
 
-        $arrData = ['jawaban' => $request->data, 'correct' => $corrects, 'total' => $totalQuestion];
+        $arrData = ['pertanyaan'=>$request->pertanyaan,'jawaban' => $request->data, 'correct' => $corrects, 'total' => $totalQuestion];
         $status = 'belum';
         if ($data['tgl_selesai'] > now()) {
             $status = $data['tgl_tenggat'] > now() ? 'selesai' : 'telat';
@@ -91,7 +91,7 @@ class KuisController extends Controller
         $jsonData = MateriTugas::with('kuis')->where('id', $jawaban->pivot->materi_tugas_id)->first()->toJson();
         $jsonJawaban = $jawaban->toJson();
 //        return response()->json($data);
-        return view('kuis.reviewKuis', compact('jsonData', 'jsonJawaban'));
+        return view('kuis.reviewKuis', compact( 'jsonJawaban'));
     }
 
 }
