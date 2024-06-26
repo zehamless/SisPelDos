@@ -2,11 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\clonePelatihanJob;
 use App\Models\kuis;
 use App\Models\MateriTugas;
 use App\Models\Pelatihan;
-use App\Models\Pendaftaran;
-use App\Models\Periode;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -15,7 +14,7 @@ class QueryTryTest extends TestCase
 {
     public function testBasic()
     {
-        $userId ='01hy27vmpgjyap0ewt2fxppckw'; // Replace with the actual user ID
+        $userId = '01hy27vmpgjyap0ewt2fxppckw'; // Replace with the actual user ID
         $pelatihanId = 1; // Replace with the actual Pelatihan ID
         $completedTugasCount = MateriTugas::whereHas('modul.pelatihan', function ($query) use ($pelatihanId) {
             $query->where('pelatihan_id', $pelatihanId);
@@ -26,9 +25,10 @@ class QueryTryTest extends TestCase
         self::assertIsNotObject($completedTugasCount);
         dump($completedTugasCount);
     }
+
     public function testSudahDikerjakan()
     {
-        $userId ='01hy27vmpgjyap0ewt2fxppckw'; // Replace with the actual user ID
+        $userId = '01hy27vmpgjyap0ewt2fxppckw'; // Replace with the actual user ID
         $pelatihanId = 1; // Replace with the actual Pelatihan ID
 
         $completedTugasCount = MateriTugas::whereHas('modul.pelatihan', function ($query) use ($pelatihanId) {
@@ -54,10 +54,11 @@ class QueryTryTest extends TestCase
             });
         self::assertIsNotArray($materiFiles);
     }
+
     public function testQuery()
     {
-       $user = User::admin()->first();
-       $query = MateriTugas::whereHas('modul.pelatihan.peserta', function ($query) use ($user) {
+        $user = User::admin()->first();
+        $query = MateriTugas::whereHas('modul.pelatihan.peserta', function ($query) use ($user) {
             $query->where('users_id', $user->id);
         })->get();
 
@@ -66,7 +67,15 @@ class QueryTryTest extends TestCase
 
     public function testQuery1()
     {
-        $kuis=kuis::with('kategories')->get();
+        $kuis = kuis::with('kategories')->get();
         dd($kuis);
+    }
+
+    public function testJob()
+    {
+        $pelatihan = Pelatihan::find(1);
+        $err = clonePelatihanJob::dispatch($pelatihan);
+//        self::assertNull($err);
+
     }
 }

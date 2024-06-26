@@ -93,8 +93,10 @@ class ManageMateri extends ManageRelatedRecords
                     ->label('Deskripsi')
                     ->limit(50),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created At')
-                    ->date('Y-m-d H:i:s', 'Asia/Jakarta')
+                    ->label('Dibuat pada')
+                    ->dateTime()
+                    ->timezone('Asia/Jakarta')
+                    ->badge()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('file_name')
                     ->label('File Materi')
@@ -122,7 +124,8 @@ class ManageMateri extends ManageRelatedRecords
                         ->label('View')
                         ->action(fn($record) => $this->redirectRoute('filament.admin.resources.materis.view', $record))
                         ->icon('heroicon-o-eye'),
-                    Tables\Actions\ReplicateAction::make(),
+                    Tables\Actions\ReplicateAction::make()
+                    ->requiresConfirmation(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),

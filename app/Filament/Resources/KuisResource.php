@@ -213,8 +213,18 @@ class KuisResource extends Resource
                                 ->color('danger')
                                 ->dateTime()
                                 ->timezone('Asia/Jakarta'),
-                        ])->columns(3),
 
+                        ])->columns(3),
+                        TextEntry::make('created_at')
+                            ->label('Dibuat pada')
+                            ->badge()
+                            ->dateTime()
+                            ->timezone('Asia/Jakarta'),
+                        TextEntry::make('updated_at')
+                            ->label('Terakhir diubah pada')
+                            ->badge()
+                            ->dateTime()
+                            ->timezone('Asia/Jakarta'),
                     ])->columns(2),
             ]);
     }

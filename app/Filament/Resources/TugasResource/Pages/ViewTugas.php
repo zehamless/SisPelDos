@@ -13,9 +13,11 @@ class ViewTugas extends ViewRecord
     protected static string $resource = TugasResource::class;
     protected function getHeaderActions(): array
     {
+        $tugas = $this->getRecord()->mengerjakanTugas()->exists();
         return [
             Actions\DeleteAction::make()
-            ->disabled(fn($record) => $record->mengerjakanTugas()->exists())
+                ->label(fn() => $tugas? 'Kuis sudah dikerjakan, tidak dapat dihapus' : 'Hapus')
+                ->disabled(fn() => $tugas)
         ];
     }
 }

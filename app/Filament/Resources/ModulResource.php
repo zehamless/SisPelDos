@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ModulResource\Pages;
 use App\Filament\Resources\ModulResource\RelationManagers;
-use App\Filament\Resources\TugasResource\Pages\CreateTugas;
 use App\Models\Modul;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
@@ -24,12 +23,14 @@ use Guava\FilamentNestedResources\Concerns\NestedResource;
 
 class ModulResource extends Resource
 {
-    Use NestedResource;
+    use NestedResource;
+
     protected static ?string $model = Modul::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $recordTitleAttribute = 'judul';
+
     public static function getAncestor(): ?Ancestor
     {
         return Ancestor::make('modul', 'pelatihan');
@@ -91,11 +92,28 @@ class ModulResource extends Resource
                         ->icon('heroicon-o-arrow-left')
                         ->color('secondary'),
                 ]),
-                Section::make('Judul')
-                ->schema([
-                    TextEntry::make('judul')
-                    ->hiddenLabel(),
-                ]),
+                Section::make()
+                    ->schema([
+                        TextEntry::make('judul')
+                            ->label('Judul')
+                        ->columnSpanFull(),
+                        TextEntry::make('published')
+                            ->label('Status')
+                            ->badge()
+                            ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
+                            ->color(fn($state) => $state ? 'success' : 'danger'),
+                        TextEntry::make('created_at')
+                            ->label('Dibuat pada')
+                            ->badge()
+                            ->dateTime()
+                            ->timezone('Asia/Jakarta'),
+                        TextEntry::make('updated_at')
+                            ->label('Terakhir diubah pada')
+                            ->badge()
+                            ->dateTime()
+                            ->timezone('Asia/Jakarta'),
+                    ])
+                    ->columns(3),
                 Section::make('Deskripsi')
                     ->schema([
                         TextEntry::make('deskripsi')
@@ -122,6 +140,7 @@ class ModulResource extends Resource
             Pages\ManageKuis::class,
         ]);
     }
+
     public static function getPages(): array
     {
         return [
