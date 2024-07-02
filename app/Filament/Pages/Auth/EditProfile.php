@@ -22,7 +22,7 @@ class EditProfile extends BaseEditProfile
 {
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['role'] = $data['universitas'] === 'Universitas Lampung' ? 'Internal' : 'External';
+        $data['role'] = $data['universitas'] === 'Universitas Lampung' ? 'internal' : 'external';
         return $data;
     }
 

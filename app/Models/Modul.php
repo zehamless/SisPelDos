@@ -32,7 +32,6 @@ class Modul extends Model
     {
         return 'slug';
     }
-
     public function pelatihan(): BelongsTo
     {
         return $this->belongsTo(Pelatihan::class);
@@ -62,4 +61,10 @@ class Modul extends Model
         return $this->hasMany(MateriTugas::class);
     }
 
+    public function pengajar()
+    {
+        return $this->belongsToMany(User::class, 'pengajar_modul', 'modul_id', 'user_id')
+            ->withTimestamps();
+
+    }
 }

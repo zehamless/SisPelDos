@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('pendidikan_tertinggi')->nullable();
             $table->string('status_kerja')->nullable();
             $table->string('status_dosen')->nullable();
-            $table->enum('role', ['admin', 'Internal', 'External'])->default('External');
+            $table->string('role')->default('external')->index();
             $table->rememberToken();
             $table->timestamps();
         });

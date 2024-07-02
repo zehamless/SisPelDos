@@ -24,7 +24,10 @@ class PeriodeResource extends Resource
     protected static ?string $slug = 'periodes';
     protected static ?int $navigationSort = 5;
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
     public static function form(Form $form): Form
     {
         return $form

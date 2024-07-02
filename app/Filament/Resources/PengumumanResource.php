@@ -6,7 +6,6 @@ use App\Filament\Resources\PengumumanResource\Pages;
 use App\Models\Pengumuman;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -23,9 +22,12 @@ class PengumumanResource extends Resource
     protected static ?string $slug = 'pengumuman';
     protected static ?string $pluralLabel = 'Pengumuman';
     protected static ?int $navigationSort = 4;
-
-
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
 
     public static function form(Form $form): Form
     {
@@ -50,7 +52,7 @@ class PengumumanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('pengumuman')
-                ->limit(50),
+                    ->limit(50),
             ])
             ->filters([
                 //

@@ -32,7 +32,17 @@ class ManageMateri extends ManageRelatedRecords
     {
         return 'Materi';
     }
-
+    public static function canAccess(array $parameters = []): bool
+    {
+        $id = $parameters['record']['id'];
+        if (auth()->user()->role === 'admin') {
+            return true;
+        }
+        if (auth()->user()->role === 'pengajar' && auth()->user()->moduls()->where('modul_id', $id)->exists()) {
+            return true;
+        }
+        return false;
+    }
     public function form(Form $form): Form
     {
         return $form

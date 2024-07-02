@@ -11,4 +11,15 @@ class ViewModul extends ViewRecord
 {
     Use NestedPage;
     protected static string $resource = ModulResource::class;
+    public static function canAccess(array $parameters = []): bool
+    {
+        $id = $parameters['record']['id'];
+        if (auth()->user()->role === 'admin') {
+            return true;
+        }
+        if (auth()->user()->role === 'pengajar' && auth()->user()->moduls()->where('modul_id', $id)->exists()) {
+            return true;
+        }
+        return false;
+    }
 }

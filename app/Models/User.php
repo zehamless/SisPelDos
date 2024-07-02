@@ -39,9 +39,8 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
         'pendidikan_tertinggi',
         'status_kerja',
         'status_dosen',
-        'status_akun',
+        'role',
         'picture',
-        'pembayaran',
     ];
 
     /**
@@ -72,9 +71,9 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'admin') {
-            return $this->role === 'admin';
+            return $this->role === 'pengajar' || $this->role === 'admin';
         }
-        return $this->role === 'Internal' || $this->role === 'External' || $this->role === 'admin';
+        return $this->role === 'internal' || $this->role === 'external' || $this->role === 'admin' || $this->role === 'pengajar';
     }
 
     public function getFilamentName(): string
@@ -137,5 +136,11 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
     public function materiTugas()
     {
         return $this->hasManyThrough(Modul::class, Pelatihan::class);
+    }
+
+    public function moduls()
+    {
+        return $this->belongsToMany(Modul::class, 'pengajar_modul', 'user_id', 'modul_id')
+            ->withTimestamps();
     }
 }

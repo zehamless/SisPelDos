@@ -12,6 +12,7 @@
         "bezhansalleh/filament-panel-switch": "^1.0",
         "bkwld/cloner": "^3.12",
         "diglactic/laravel-breadcrumbs": "^9.0",
+        "doctrine/dbal": "^3.8",
         "filament/filament": "3.2",
         "guava/filament-nested-resources": "^1.0",
         "guzzlehttp/guzzle": "^7.2",

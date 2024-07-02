@@ -19,7 +19,10 @@ class BankSoalResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
     protected static ?int $navigationSort = 3;
-
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
     public static function form(Form $form): Form
     {
         return $form
