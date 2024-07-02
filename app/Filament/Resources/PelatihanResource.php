@@ -51,6 +51,7 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
@@ -71,6 +72,11 @@ class PelatihanResource extends Resource
     {
         return null;
     }
+    public static function getBreadcrumbRecordLabel(Model $record)
+    {
+        return $record->judul.' - '.$record->periode->tahun;
+    }
+
     public static function canAccess(): bool
     {
         return auth()->user()->role === 'admin';
