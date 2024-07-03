@@ -72,9 +72,10 @@ class PelatihanResource extends Resource
     {
         return null;
     }
+
     public static function getBreadcrumbRecordLabel(Model $record)
     {
-        return $record->judul.' - '.$record->periode->tahun;
+        return $record->judul . ' - ' . $record->periode->tahun;
     }
 
     public static function canAccess(): bool
@@ -89,11 +90,11 @@ class PelatihanResource extends Resource
                 Section::make('Riwayat Pelatihan')
                     ->schema([
                         Placeholder::make('created_at')
-                            ->label('Created Date')
+                            ->label('Tanggal Dibuat')
                             ->content(fn(?Pelatihan $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
                         Placeholder::make('updated_at')
-                            ->label('Last Modified Date')
+                            ->label('Terakhir Diubah')
                             ->content(fn(?Pelatihan $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
                     ])->columns(2),
                 Tabs::make('Tab')
@@ -107,11 +108,24 @@ class PelatihanResource extends Resource
                                     ->afterStateUpdated(function (Set $set, $state) {
                                         $set('slug', Str::slug($state));
                                     }),
-
                                 TextInput::make('slug')
                                     ->label('Slug')
                                     ->required()
                                     ->unique('pelatihans', 'slug', ignoreRecord: true),
+                                \Filament\Forms\Components\Group::make()
+                                    ->schema([
+                                        TextInput::make('no_sertifikat')
+                                            ->label('No Sertifikat')
+                                            ->prefix('/')
+                                            ->placeholder('Contoh: PPAI-IP-05/LP3M-UNILA/2023')
+                                            ->required(),
+                                        TextInput::make('jam_pelatihan')
+                                            ->label('Jam Pelatihan')
+                                            ->numeric()
+                                            ->suffix('Jam')
+                                            ->placeholder('Contoh: 40')
+                                            ->required(),
+                                    ])->columns(2),
                                 Fieldset::make()
                                     ->schema([
                                         DatePicker::make('tgl_mulai')
@@ -135,19 +149,26 @@ class PelatihanResource extends Resource
 //                                            ->required(),
                                         Select::make('periode_id')
                                             ->label('Periode')
-                                            ->relationship('periode', 'tahun_ajar')
+                                            ->relationship('periode', 'tahun')
                                             ->createOptionForm([
-                                                TextInput::make('tahun_ajar')
-                                                    ->label('Tahun Ajar')
-                                                    ->placeholder('Contoh: 2021/2022')
-                                                    ->required(),
-                                                DatePicker::make('tahun')
-                                                    ->format('Y')
+                                                TextInput::make('tahun')
                                                     ->label('Tahun')
+                                                    ->numeric()
+                                                    ->minValue(1900)
+                                                    ->maxValue(2099)
                                                     ->placeholder('Contoh: 2021')
-                                                    ->native(false)
-                                                    ->timezone('Asia/Jakarta')
-                                                    ->required(),
+                                                    ->required()
+                                            ])
+                                            ->preload()
+                                            ->searchable()
+                                            ->required(),
+                                        Select::make('kategori_pelatihan_id')
+                                            ->label('Kategori Pelatihan')
+                                            ->relationship('kategori', 'nama')
+                                            ->createOptionForm([
+                                                TextInput::make('nama')
+                                                    ->label('Nama')
+                                                    ->required()
                                             ])
                                             ->preload()
                                             ->searchable()
@@ -209,19 +230,21 @@ class PelatihanResource extends Resource
                     ->sortable(),
                 TextColumn::make('judul')
                     ->limit(80)
-                    ->description(fn($record) => $record->periode->tahun_ajar)
+                    ->description(fn($record) => "Periode: {$record->periode->tahun}, Kategori: {$record->kategori->nama}", position: 'above')
                     ->searchable(),
 
 //                TextColumn::make('deskripsi')
 //                    ->markdown()
 //                    ->limit(50),
                 TextColumn::make('tgl_mulai')
+                    ->label('Tanggal Mulai')
                     ->sortable()
                     ->badge()
                     ->color('success')
                     ->timezone('Asia/Jakarta')
                     ->date(),
                 TextColumn::make('tgl_selesai')
+                    ->label('Tanggal Selesai')
                     ->sortable()
                     ->badge()
                     ->color('danger')
@@ -231,7 +254,9 @@ class PelatihanResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('periode')
-                    ->relationship('periode', 'tahun_ajar'),
+                    ->relationship('periode', 'tahun'),
+                SelectFilter::make('kategori')
+                    ->relationship('kategori', 'nama'),
                 TrashedFilter::make(),
             ])->deferFilters()
             ->actions([
@@ -357,6 +382,7 @@ class PelatihanResource extends Resource
             'modul' => Pages\ManageModul::route('/{record}/modul'),
             'pendaftar' => Pages\ManagePendaftar::route('/{record}/pendaftar'),
             'peserta' => Pages\ManagePeserta::route('/{record}/peserta'),
+            'rekap-nilai' => Pages\ManageRekapNilai::route('/{record}/rekap-nilai'),
         ];
     }
 
@@ -365,7 +391,8 @@ class PelatihanResource extends Resource
         return parent::getEloquentQuery()
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ]);
+            ])
+            ->with(['periode', 'kategori']);
     }
 
     public static function getGloballySearchableAttributes(): array
@@ -381,6 +408,7 @@ class PelatihanResource extends Resource
             Pages\ManageModul::class,
             Pages\ManagePendaftar::class,
             Pages\ManagePeserta::class,
+            Pages\ManageRekapNilai::class
         ]);
     }
 

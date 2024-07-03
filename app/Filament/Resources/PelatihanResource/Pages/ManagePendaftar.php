@@ -3,11 +3,12 @@
 namespace App\Filament\Resources\PelatihanResource\Pages;
 
 use App\Filament\Resources\PelatihanResource;
-use App\Models\Pelatihan;
+use App\Jobs\AttachTugasKuisJob;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
@@ -15,7 +16,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Notifications\Actions\Action;
 
 class ManagePendaftar extends ManageRelatedRecords
 {
@@ -44,6 +44,7 @@ class ManagePendaftar extends ManageRelatedRecords
     {
         return $form
             ->schema([
+                Forms\Components\Hidden::make('users_id'),
                 Forms\Components\TextInput::make('nama')
                     ->disabled()
                     ->maxLength(255),
@@ -106,6 +107,13 @@ class ManagePendaftar extends ManageRelatedRecords
                     ->url(fn($record) => route('filament.admin.resources.users.view', $record)),
                 Tables\Actions\EditAction::make()
                     ->label('Penentuan')
+                    ->mutateFormDataUsing(function (array $data) {
+                        $tugass = $this->getRecord()->allTugas;
+                        if ($data['status'] === 'diterima') {
+                            dispatch(new AttachTugasKuisJob($data['users_id'], $tugass));
+                        }
+                        return $data;
+                    })
                     ->successNotification(function (array $data, $record) use ($pelatihan) {
 //                        dump($pelat)
                         $message = match ($data['status']) {
@@ -116,7 +124,7 @@ class ManagePendaftar extends ManageRelatedRecords
                         };
 
                         Notification::make()
-                            ->title('Pelatihan '.$pelatihan->judul.' - Status Pendaftaran')
+                            ->title('Pelatihan ' . $pelatihan->judul . ' - Status Pendaftaran')
                             ->status(
                                 match ($data['status']) {
                                     'pending' => 'warning',

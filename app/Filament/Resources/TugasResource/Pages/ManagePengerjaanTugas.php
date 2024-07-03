@@ -3,12 +3,10 @@
 namespace App\Filament\Resources\TugasResource\Pages;
 
 use App\Filament\Resources\TugasResource;
-use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\Pages\ManageRecords;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -19,18 +17,21 @@ use Guava\FilamentNestedResources\Concerns\NestedPage;
 class ManagePengerjaanTugas extends ManageRelatedRecords
 {
     use NestedPage;
+
     protected static string $resource = TugasResource::class;
     protected static string $relationship = 'mengerjakanTugas';
+
     public static function getNavigationLabel(): string
     {
         return 'Pengerjaan Tugas';
     }
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-          TextInput::make('nama')
-                ->disabled(),
+                TextInput::make('nama')
+                    ->disabled(),
                 TextInput::make('penilaian')
                     ->autofocus(),
                 Textarea::make('pesan_peserta')
@@ -53,21 +54,24 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-             TextColumn::make('status')
+                TextColumn::make('status')
+                    ->label('Status Pengerjaan')
                     ->badge()
                     ->color(fn($state) => match ($state) {
                         'selesai' => 'success',
                         'belum' => 'danger',
                         'telat' => 'warning',
-                    }),
+                    })
+                    ->sortable(),
                 TextColumn::make('nama')
-                ->searchable(),
+                    ->searchable(),
                 TextColumn::make('penilaian')
-//                    ->formatStateUsing(fn ($record) => dd($record))
+//                    ->formatStateUsing(fn($state) => $state ?? '-')
                     ->label('Nilai')
                     ->badge()
+                    ->default('-')
                     ->color('success'),
-                TextColumn::make('pivot.created_at')
+                TextColumn::make('tgl_submit')
                     ->label('Waktu Mengerjakan')
                     ->dateTime()
                     ->timezone('Asia/Jakarta'),
@@ -85,8 +89,9 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
 //                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-               EditAction::make()
-                ->label('Review Tugas'),
+                EditAction::make()
+                    ->label('Beri Penilaian')
+                    ->hidden(fn($record) => $record->status !== 'selesai'),
             ])
             ->bulkActions([
                 //

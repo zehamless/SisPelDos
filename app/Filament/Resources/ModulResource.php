@@ -155,6 +155,7 @@ class ModulResource extends Resource
             Pages\ManageMateri::class,
             Pages\ManageTugas::class,
             Pages\ManageKuis::class,
+            Pages\ManagePenugasanKuis::class,
             Pages\ManagePengajar::class,
         ]);
     }
@@ -169,6 +170,7 @@ class ModulResource extends Resource
             'materi' => Pages\ManageMateri::route('/{record}/materi'),
             'tugas' => Pages\ManageTugas::route('/{record}/tugas'),
             'kuis' => Pages\ManageKuis::route('/{record}/kuis'),
+            'penugasan-kuis' => Pages\ManagePenugasanKuis::route('/{record}/penugasan-kuis'),
             'pengajar' => Pages\ManagePengajar::route('/{record}/pengajar'),
         ];
     }

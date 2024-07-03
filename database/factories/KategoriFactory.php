@@ -2,21 +2,20 @@
 
 namespace Database\Factories;
 
-use App\Models\Periode;
+use App\Models\Kategori;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class PeriodeFactory extends Factory
+class KategoriFactory extends Factory
 {
-    protected $model = Periode::class;
+    protected $model = Kategori::class;
 
     public function definition(): array
     {
         return [
-            'tahun' => $this->faker->randomNumber(),
-            'deleted_at' => Carbon::now(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
+            'nama' => $this->faker->word(),
         ];
     }
 }

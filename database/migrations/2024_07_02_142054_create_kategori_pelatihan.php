@@ -7,16 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('periodes', function (Blueprint $table) {
+        Schema::create('kategori_pelatihan', function (Blueprint $table) {
             $table->id();
-            $table->year('tahun');
-            $table->softDeletes();
+            $table->string('nama');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('periodes');
+        Schema::dropIfExists('kategori_pelatihan');
     }
 };

@@ -100,6 +100,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
     {
         return $this->mengerjakan()->wherePivot('is_kuis', true);
     }
+    public function tugas()
+    {
+        return $this->mengerjakan()->wherePivot('is_kuis', false);
+    }
 
     public function mendaftar()
     {

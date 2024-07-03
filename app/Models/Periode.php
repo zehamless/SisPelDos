@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Periode extends Model
 {
     use hasFactory;
-    protected $fillable = ['tahun_ajar', 'tahun'];
+    protected $fillable = ['tahun'];
 
     public function pelatihan()
     {

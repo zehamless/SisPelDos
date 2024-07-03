@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Kategori;
 use App\Models\Pelatihan;
 use App\Models\Periode;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,6 +18,7 @@ class PelatihanFactory extends Factory
 
         return [
             'periode_id' => Periode::get('id')->random(),
+            'kategori_pelatihan_id' => Kategori::get('id')->random(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'judul' => $this->faker->words(7, true),

@@ -24,23 +24,25 @@ class PeriodeResource extends Resource
     protected static ?string $slug = 'periodes';
     protected static ?int $navigationSort = 5;
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('tahun_ajar')
-                    ->label('Tahun Ajar')
-                    ->placeholder('Contoh: 2021/2022')
-                    ->required(),
-                DatePicker::make('tahun')
-                    ->format('Y')
-                    ->displayFormat('Y')
+//                DatePicker::make('tahun')
+//                    ->format('Y')
+//                    ->displayFormat('Y')
+//                    ->label('Tahun')
+//                    ->placeholder('Contoh: 2021')
+//                    ->native(false)
+//                    ->timezone('Asia/Jakarta')
+//                    ->required(),
+                TextInput::make('tahun')
                     ->label('Tahun')
+                    ->numeric()
+                    ->minValue(1900)
+                    ->maxValue(2099)
                     ->placeholder('Contoh: 2021')
-                    ->native(false)
-                    ->timezone('Asia/Jakarta')
-                    ->required(),
+                    ->required()
             ]);
 
     }
@@ -49,10 +51,6 @@ class PeriodeResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('tahun_ajar')
-                    ->label('Tahun Ajar')
-                    ->searchable()
-                    ->sortable(),
                 TextColumn::make('tahun')
                     ->label('Tahun')
                     ->searchable()
@@ -63,10 +61,10 @@ class PeriodeResource extends Resource
             ])
             ->actions([
                 EditAction::make(),
-                ReplicateAction::make()
-                    ->beforeReplicaSaved(function (Periode $replica): void {
-                        $replica->tahun_ajar = 'New ' . $replica->tahun_ajar;
-                    }),
+//                ReplicateAction::make()
+//                    ->beforeReplicaSaved(function (Periode $replica): void {
+//                        $replica->tahun_ajar = 'New ' . $replica->tahun_ajar;
+//                    }),
                 DeleteAction::make(),
             ])
             ->bulkActions([
