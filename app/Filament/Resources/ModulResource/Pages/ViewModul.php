@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Resources\ModulResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ViewRecord;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
 
@@ -21,5 +22,12 @@ class ViewModul extends ViewRecord
             return true;
         }
         return false;
+    }
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('Rekap Nilai')
+                ->url(route('rekap.modul', $this->getRecord()))
+        ];
     }
 }

@@ -25,7 +25,8 @@
         "predis/predis": "2.0",
         "saade/filament-fullcalendar": "^3.2",
         "spatie/laravel-activitylog": "^4.8",
-        "yajra/laravel-datatables": "^10.1"
+        "yajra/laravel-datatables": "^10.1",
+        "yajra/laravel-datatables-oracle": "^10.11"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.12",

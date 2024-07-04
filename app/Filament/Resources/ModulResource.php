@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ModulResource\Pages;
 use App\Filament\Resources\ModulResource\RelationManagers;
 use App\Models\Modul;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -155,7 +156,6 @@ class ModulResource extends Resource
             Pages\ManageMateri::class,
             Pages\ManageTugas::class,
             Pages\ManageKuis::class,
-            Pages\ManagePenugasanKuis::class,
             Pages\ManagePengajar::class,
         ]);
     }
@@ -170,7 +170,6 @@ class ModulResource extends Resource
             'materi' => Pages\ManageMateri::route('/{record}/materi'),
             'tugas' => Pages\ManageTugas::route('/{record}/tugas'),
             'kuis' => Pages\ManageKuis::route('/{record}/kuis'),
-            'penugasan-kuis' => Pages\ManagePenugasanKuis::route('/{record}/penugasan-kuis'),
             'pengajar' => Pages\ManagePengajar::route('/{record}/pengajar'),
         ];
     }

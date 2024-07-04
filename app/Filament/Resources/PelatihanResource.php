@@ -382,7 +382,6 @@ class PelatihanResource extends Resource
             'modul' => Pages\ManageModul::route('/{record}/modul'),
             'pendaftar' => Pages\ManagePendaftar::route('/{record}/pendaftar'),
             'peserta' => Pages\ManagePeserta::route('/{record}/peserta'),
-            'rekap-nilai' => Pages\ManageRekapNilai::route('/{record}/rekap-nilai'),
         ];
     }
 
@@ -408,7 +407,6 @@ class PelatihanResource extends Resource
             Pages\ManageModul::class,
             Pages\ManagePendaftar::class,
             Pages\ManagePeserta::class,
-            Pages\ManageRekapNilai::class
         ]);
     }
 

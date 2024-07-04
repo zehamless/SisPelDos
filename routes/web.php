@@ -4,6 +4,7 @@ use App\Http\Controllers\downloadFileController;
 use App\Http\Controllers\KuisController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RekapController;
 use App\Http\Controllers\TugasController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\ViewMateriController;
@@ -33,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('kuis/{kuis}', [KuisController::class, 'show'])->name('kuis.show');
     Route::post('kuis', [KuisController::class, 'store'])->name('kuis.store');
     Route::get('reviewKuis/{kuis}', [KuisController::class, 'review'])->name('kuis.review');
+    Route::get('rekapModul/{modul}',[RekapController::class, 'indexModul'])->name('rekap.modul')->middleware(\App\Http\Middleware\AdminMiddleware::class);
 });
 //Route::get('/dashboard', function () {
 //    return view('dashboard');

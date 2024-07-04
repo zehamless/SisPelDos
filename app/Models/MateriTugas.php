@@ -74,7 +74,7 @@ class MateriTugas extends Model
     public function peserta()
     {
         return $this->belongsToMany(User::class, 'mengerjakan', 'materi_tugas_id', 'users_id')
-            ->withPivot('penilaian', 'is_kuis', 'created_at', 'updated_at', 'id')
+            ->withPivot('penilaian', 'is_kuis', 'created_at', 'updated_at', 'id', 'status')
             ->withTimestamps();
     }
 
