@@ -13,6 +13,7 @@ class CreateBankSoal extends CreateRecord
 {
     foreach ($data['jawaban'] ?? [] as $key => $jawaban) {
         $data['tipe'] = $jawaban['type'] ?? null;
+        unset($data['tipe']);
     }
 //    dd($data);
     return $data;

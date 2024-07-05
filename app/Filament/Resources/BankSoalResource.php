@@ -29,7 +29,7 @@ class BankSoalResource extends Resource
             ->schema([
                 Forms\Components\Select::make('kategori_soal_id')
                     ->label('Kategori Soal')
-                    ->relationship('kategori', 'kategori')
+                    ->relationship('kategories', 'kategori')
                     ->createOptionForm([
                         Forms\Components\TextInput::make('kategori')
                             ->label('Kategori')
@@ -49,6 +49,7 @@ class BankSoalResource extends Resource
                             ->schema([
                                 Forms\Components\TagsInput::make('jawaban_option')
                                     ->label('Pilihan')
+                                    ->placeholder('Buat pilihan')
                                     ->hint("Gunakan petik satu (') untuk pilihan berupa angka atau numeric. Contoh: '1', '2', '3', '4', '5")
                                     ->hintColor('warning')
                                     ->required()
@@ -111,7 +112,7 @@ class BankSoalResource extends Resource
                     ->html()
                     ->searchable()
                     ->words(5),
-                Tables\Columns\TextColumn::make('kategori.kategori')
+                Tables\Columns\TextColumn::make('kategories.kategori')
                     ->label('Kategori'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')
@@ -122,7 +123,7 @@ class BankSoalResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('Kategori')
-                    ->relationship('kategori', 'kategori'),
+                    ->relationship('kategories', 'kategori'),
                 Tables\Filters\SelectFilter::make('tipe')
                     ->label('Tipe Soal')
                     ->options([
