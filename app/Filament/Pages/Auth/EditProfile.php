@@ -9,6 +9,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -30,114 +31,126 @@ class EditProfile extends BaseEditProfile
     {
         return $form
             ->schema([
-                TextInput::make('link')
-                    ->label('Link')
-                    ->hidden(),
-                Actions::make([
-                    Action::make('Fetch Data')
-                        ->label('Sinkronisasi Data Dosen')
-                        ->action(function (Get $get, Set $set) {
-//                           dump($get('link'));
-                            $id = preg_replace('/^\/data_dosen\//', '', $get('link'));
-//                            dump($id);
-                            $data = $this->hitDosenApiController($id);
-//                            dump($data);
-                            if (is_array($data)) {
-                                $set('universitas', $data['namapt']);
-                                $set('prodi', $data['namaprodi']);
-                                $set('jenis_kelamin', $data['jk']);
-                                $set('jabatan_fungsional', $data['fungsional']);
-                                $set('pendidikan_tertinggi', $data['pend_tinggi']);
-                                $set('status_kerja', $data['ikatankerja']);
-                                $set('status_dosen', $data['statuskeaktifan']);
-                                Notification::make()
-                                    ->title('Success')
-                                    ->success()
-                                    ->body('Data Dosen Berhasil Diambil.')
-                                    ->send();
-                            } else {
-                                Notification::make()
-                                    ->title('Error')
-                                    ->warning()
-                                    ->body('PDDikti Service Error, coba lagi nanti.')
-                                    ->send();
-                            }
-                        })
-                ]),
-                Fieldset::make('profile')
-                    ->schema([
-                        Placeholder::make('picture')
-                            ->hiddenLabel()
-                            ->content(function ($record): HtmlString {
-                                $url = asset($record->picture ? 'storage/' . $record->picture : 'assets/defaultProfile.jpg');
-                                return new HtmlString("<img src= '" . $url . "' style='max-width: 250px; display: block; margin-left: auto; margin-right: auto;'>");
-                            }),
-                        FileUpload::make('picture')
-                            ->label('Upload Profil')
-                            ->required()
-                            ->hint('Pastikan Ukuran gambar 1:1')
-                            ->image()
-                            ->maxFiles(1)
-                            ->imageEditor()
-                            ->imageEditorAspectRatios([
-                                '1:1',
-                                '16:9',
-                            ])
-                            ->previewable()
-                            ->optimize('webp')
-                            ->resize(50)
-                            ->disk('public')
-                            ->directory('profil')
-                            ->visibility('public')
-                            ->maxSize(2048),
+                Tabs::make()
+                    ->tabs([
+                        Tabs\Tab::make('profile')
+                            ->label('Foto Profil')
+                            ->schema([
+                                TextInput::make('link')
+                                    ->label('Link')
+                                    ->hidden(),
+                                Actions::make([
+                                    Action::make('Fetch Data')
+                                        ->label('Sinkronisasi Data Dosen')
+                                        ->action(function (Get $get, Set $set) {
+                                            $id = preg_replace('/^\/data_dosen\//', '', $get('link'));
+                                            $data = $this->hitDosenApiController($id);
+                                            if (is_array($data)) {
+                                                $set('universitas', $data['namapt']);
+                                                $set('prodi', $data['namaprodi']);
+                                                $set('jenis_kelamin', $data['jk']);
+                                                $set('jabatan_fungsional', $data['fungsional']);
+                                                $set('pendidikan_tertinggi', $data['pend_tinggi']);
+                                                $set('status_kerja', $data['ikatankerja']);
+                                                $set('status_dosen', $data['statuskeaktifan']);
+                                                Notification::make()
+                                                    ->title('Success')
+                                                    ->success()
+                                                    ->body('Data Dosen Berhasil Diambil.')
+                                                    ->send();
+                                            } else {
+                                                Notification::make()
+                                                    ->title('Error')
+                                                    ->warning()
+                                                    ->body('PDDikti Service Error, coba lagi nanti.')
+                                                    ->send();
+                                            }
+                                        })
+                                ]),
+                                Fieldset::make('foto profile')
+                                    ->schema([
+                                        Placeholder::make('picture')
+                                            ->hiddenLabel()
+                                            ->content(function ($record): HtmlString {
+                                                $url = asset($record->picture ? 'storage/' . $record->picture : 'assets/defaultProfile.jpg');
+                                                return new HtmlString("<img src= '" . $url . "' style='max-width: 250px; display: block; margin-left: auto; margin-right: auto;'>");
+                                            }),
+                                        FileUpload::make('picture')
+                                            ->label('Upload Foto Profil')
+                                            ->required()
+                                            ->hint('Pastikan Ukuran gambar 1:1')
+                                            ->hintColor('warning')
+                                            ->image()
+                                            ->maxFiles(1)
+                                            ->imageEditor()
+                                            ->imageEditorMode(1)
+//                                    ->imageResizeMode('cover')
+                                            ->imageCropAspectRatio('1:1')
+                                            ->previewable()
+                                            ->optimize('webp')
+                                            ->resize(50)
+                                            ->disk('public')
+                                            ->directory('profil')
+                                            ->visibility('public')
+                                            ->maxSize(2048),
 
-                    ])
-                ->columns(1),
-                Fieldset::make('Data Dosen')
-                    ->schema([
-                        TextInput::make('no_induk')
-                            ->label('NIDN/NIDK')
-                            ->readOnly()
-                            ->maxLength(255),
-                        TextInput::make('no_hp')
-                            ->label('No. HP')
-                            ->numeric()
-                            ->maxLength(255),
-                        Select::make('jenis_kelamin')
-                            ->label('Jenis Kelamin')
-                            ->options([
-                                'L' => 'Laki-laki',
-                                'P' => 'Perempuan',
+                                    ])
+                                    ->columns(1),
                             ]),
-                        TextInput::make('universitas')
-                            ->label('Universitas')
-                            ->maxLength(255),
-                        TextInput::make('prodi')
-                            ->label('Program Studi')
-                            ->maxLength(255),
-                        TextInput::make('jabatan_fungsional')
-                            ->label('Jabatan Fungsional')
-                            ->maxLength(255),
-                        TextInput::make('pendidikan_tertinggi')
-                            ->label('Pendidikan Tertinggi')
-                            ->maxLength(255),
-                        TextInput::make('status_kerja')
-                            ->label('Status Kerja')
-                            ->maxLength(255),
-                        TextInput::make('status_dosen')
-                            ->label('Status Dosen')
-                            ->maxLength(255),
+                        Tabs\Tab::make('data')
+                            ->label('Data Lengkap')
+                            ->schema([
+                                Fieldset::make('Data Dosen')
+                                    ->schema([
+                                        TextInput::make('no_induk')
+                                            ->label('NIDN/NIDK')
+                                            ->readOnly()
+                                            ->maxLength(255),
+                                        TextInput::make('no_hp')
+                                            ->label('No. HP')
+                                            ->numeric()
+                                            ->maxLength(255),
+                                        Select::make('jenis_kelamin')
+                                            ->label('Jenis Kelamin')
+                                            ->options([
+                                                'L' => 'Laki-laki',
+                                                'P' => 'Perempuan',
+                                            ]),
+                                        TextInput::make('universitas')
+                                            ->label('Universitas')
+                                            ->maxLength(255),
+                                        TextInput::make('prodi')
+                                            ->label('Program Studi')
+                                            ->maxLength(255),
+                                        TextInput::make('jabatan_fungsional')
+                                            ->label('Jabatan Fungsional')
+                                            ->maxLength(255),
+                                        TextInput::make('pendidikan_tertinggi')
+                                            ->label('Pendidikan Tertinggi')
+                                            ->maxLength(255),
+                                        TextInput::make('status_kerja')
+                                            ->label('Status Kerja')
+                                            ->maxLength(255),
+                                        TextInput::make('status_dosen')
+                                            ->label('Status Dosen')
+                                            ->maxLength(255),
 
-                    ])->columns(1),
-                Fieldset::make('Data Login')
-                    ->schema([
-                        TextInput::make('nama')
-                            ->label('Nama')
-                            ->maxLength(255),
-                        $this->getEmailFormComponent(),
-                        $this->getPasswordFormComponent(),
-                        $this->getPasswordConfirmationFormComponent(),
-                    ])->columns(1),
+                                    ])->columns(1),
+                            ]),
+                        Tabs\Tab::make('login')
+                            ->label('Data Login')
+                            ->schema([
+                                Fieldset::make('Data Login')
+                                    ->schema([
+                                        TextInput::make('nama')
+                                            ->label('Nama')
+                                            ->maxLength(255),
+                                        $this->getEmailFormComponent(),
+                                        $this->getPasswordFormComponent(),
+                                        $this->getPasswordConfirmationFormComponent(),
+                                    ])->columns(1),
+                            ]),
+                    ])
             ]);
     }
 
