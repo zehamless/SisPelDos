@@ -14,11 +14,13 @@ class Sertifikat extends Model
         'pelatihan_id',
         'files',
         'file_name',
+        'no_sertifikat',
+        'tgl_sertifikat',
     ];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'users_id');
     }
 
     public function pelatihan(): BelongsTo

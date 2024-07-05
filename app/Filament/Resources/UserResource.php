@@ -6,6 +6,8 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\User\Resources\UserResource\RelationManagers\RiwayatPelatihanRelationManager;
 use App\Models\User;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\ExportColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -41,6 +43,9 @@ public static function canAccess(): bool
             ->schema([
                 TextInput::make('nama')
                     ->label('Nama')
+                    ->required(),
+                TextInput::make('nama_gelar')
+                    ->label('Nama Gelar')
                     ->required(),
                 TextInput::make('email')
                     ->label('Email')
@@ -132,6 +137,8 @@ public static function canAccess(): bool
                     ->schema([
                         TextEntry::make('nama')
                             ->label('Nama'),
+                        TextEntry::make('nama_gelar')
+                            ->label('Nama Gelar'),
                         TextEntry::make('email')
                             ->label('Email'),
                         TextEntry::make('no_induk')
@@ -182,7 +189,7 @@ public static function canAccess(): bool
         return [
             RelationManagers\ActivityRelationManager::make(),
             RiwayatPelatihanRelationManager::make(),
-            RelationManagers\ModulsRelationManager::make()
+//            RelationManagers\ModulsRelationManager::make()
         ];
     }
 

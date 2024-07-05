@@ -184,13 +184,12 @@ class PelatihanResource extends Resource
                                     ->label('Sampul')
                                     ->required()
                                     ->hint('Pastikan Ukuran gambar 16:9')
+                                    ->hintColor('warning')
                                     ->image()
                                     ->imageEditor()
-                                    ->imageEditorAspectRatios([
-                                        '16:9',
-                                        '4:3',
-                                        '1:1',
-                                    ])
+                                    ->imageEditorMode(1)
+//                                    ->imageResizeMode('cover')
+                                    ->imageCropAspectRatio('16:9')
                                     ->previewable()
                                     ->disk('public')
                                     ->directory('pelatihan-sampul')

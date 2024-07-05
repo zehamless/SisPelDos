@@ -1,3 +1,3 @@
 <x-filament::link href="{{ route('filament.user.auth.login') }}">
-    Masuk Disini
+    Login
 </x-filament::link>

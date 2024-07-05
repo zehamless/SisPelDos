@@ -23,7 +23,8 @@ class Pelatihan extends Model
         'tgl_selesai',
         'jmlh_user',
         'syarat',
-        'no_sertifikat'
+        'no_sertifikat',
+        'jam_pelatihan',
     ];
 
     protected $casts = [

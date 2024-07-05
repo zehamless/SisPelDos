@@ -45,6 +45,10 @@ class AdminPanelProvider extends PanelProvider
                 fn() => view(auth()->check() ? 'profilComponent' : 'masukDisiniComponent')
             )
             ->renderHook(
+                'panels::user-menu.after',
+                fn()=> view('LogoutButtonComponent')
+            )
+            ->renderHook(
                 'panels::auth.login.form.after',
                 fn()=>view('kembalikeDasborComponent')
             )

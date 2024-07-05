@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('status_kerja')->nullable();
             $table->string('status_dosen')->nullable();
             $table->string('role')->default('external')->index();
+            $table->string('nama_gelar');
             $table->rememberToken();
             $table->timestamps();
         });

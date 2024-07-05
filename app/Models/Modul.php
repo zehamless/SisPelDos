@@ -58,7 +58,7 @@ class Modul extends Model
     }
     public function noMateri()
     {
-        return $this->allTugas()->whereNot('jenis', 'materi');
+        return $this->allTugas()->whereNot('jenis', 'materi')->where('published', true);
     }
     public function pengajar()
     {

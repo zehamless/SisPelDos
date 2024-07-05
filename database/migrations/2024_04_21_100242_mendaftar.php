@@ -15,6 +15,9 @@ return new class extends Migration {
             $table->string('files')->nullable();
             $table->string('file_name')->nullable();
             $table->text('pesan')->nullable();
+            $table->date('tgl_sertifikat')->nullable();
+            $table->string('no_sertifikat')->nullable();
+            $table->boolean('exported')->default(false);
             $table->timestamps();
         });
     }
