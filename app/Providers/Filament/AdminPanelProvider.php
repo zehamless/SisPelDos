@@ -42,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 'panels::sidebar.nav.start',
-                fn() => view(auth()->check() ? 'profilComponent' : 'masukDisiniComponent')
+                fn() => view('profilComponent' )
             )
             ->renderHook(
                 'panels::user-menu.after',

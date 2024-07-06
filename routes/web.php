@@ -30,8 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::get('kuis/{kuis}', [KuisController::class, 'show'])->name('kuis.show');
     Route::post('kuis', [KuisController::class, 'store'])->name('kuis.store');
     Route::get('reviewKuis/{kuis}', [KuisController::class, 'review'])->name('kuis.review');
+        Route::get('rekapModul/{modul}', [RekapController::class, 'indexModul'])->name('rekap.modul')->middleware(\App\Http\Middleware\PengajarMiddleware::class);
     Route::middleware(AdminMiddleware::class)->group(function () {
-        Route::get('rekapModul/{modul}', [RekapController::class, 'indexModul'])->name('rekap.modul');
         Route::get('previewKuis/{kuis}', [KuisController::class, 'adminPreview'])->name('kuis.preview');
     });
 
