@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\AttachTugasKuisJob;
 use App\Jobs\clonePelatihanJob;
 use App\Models\kuis;
 use App\Models\MateriTugas;
@@ -73,9 +74,10 @@ class QueryTryTest extends TestCase
 
     public function testJob()
     {
-        $pelatihan = Pelatihan::find(1);
-        $err = clonePelatihanJob::dispatch($pelatihan);
-//        self::assertNull($err);
-
+        $modul = Pelatihan::find(1)->allTugas;
+        $user = User::first();
+        $err = dispatch(new AttachTugasKuisJob($user, $modul));
+        dd($err);
+//        $modul = Pelatihan::find(1)->peserta()->syncWithPivotValues();
     }
 }

@@ -81,7 +81,7 @@ class MateriTugasResource extends Resource
     {
         $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->count();
         $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi']);
-        $exist =auth()->user()->mengerjakan()->where('materi_tugas_id', $infolist->getRecord()->id)->exists();
+        $exist =auth()->user()->mengerjakan()->where('materi_tugas_id', $infolist->getRecord()->id)->where('status', 'belum')->exists();
         return $infolist
             ->schema([
                 Actions::make([
@@ -175,13 +175,12 @@ class MateriTugasResource extends Resource
                                         $status = $record->tgl_tenggat > now() ? 'selesai' : 'telat';
                                     }
 
-                                    auth()->user()->mengerjakan()->syncWithoutDetaching([
-                                        $record->id => [
-                                            'status' => $status,
-                                            'files' =>$data['files'],
-                                            'file_name' => $data['file_name'],
-                                            'pesan_peserta' => $data['pesan_peserta'],
-                                        ]
+                                    auth()->user()->mengerjakan()->updateExistingPivot($record->id, [
+                                        'files' => json_encode($data['files']),
+                                        'file_name' => json_encode($data['file_name']),
+                                        'pesan_peserta' => $data['pesan_peserta'],
+                                        'tgl_submit' => now(),
+                                        'status' => $status,
                                     ]);
                                     activity('mengerjakan')
                                         ->causedBy(auth()->user())
@@ -189,7 +188,7 @@ class MateriTugasResource extends Resource
                                         ->event('tugas')
                                         ->log('Mengerjakan tugas '.$record->judul);
                                 })
-                                ->visible(!$exist)
+                                ->visible($exist)
                                 ->disabled(fn($record) => $record->tgl_selesai < now()),
                             Actions\Action::make('Cek Tugas')
                                 ->fillForm(function ($record) {
@@ -262,7 +261,7 @@ class MateriTugasResource extends Resource
                                         'status' => $status,
                                     ]);
                                 })
-                            ->visible($exist)
+                            ->visible(!$exist)
                         ])
 
                     ])

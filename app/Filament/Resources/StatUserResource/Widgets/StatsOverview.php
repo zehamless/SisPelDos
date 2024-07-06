@@ -17,7 +17,7 @@ class StatsOverview extends BaseWidget
         $completedTugasCount = MateriTugas::whereHas('modul.pelatihan', function ($query) use ($pelatihanId) {
             $query->where('pelatihan_id', $pelatihanId);
         })->whereHas('peserta', function ($query) use ($userId) {
-            $query->where('users_id', $userId);
+            $query->where('users_id', $userId)->where('status', 'selesai');
         })->whereNot('jenis', 'materi')->count();
         $allTugas = MateriTugas::whereHas('modul', function ($query) use ($pelatihanId) {
             $query->where('pelatihan_id', $pelatihanId)->where('published', true);

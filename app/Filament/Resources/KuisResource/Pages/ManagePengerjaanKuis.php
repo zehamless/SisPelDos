@@ -3,30 +3,33 @@
 namespace App\Filament\Resources\KuisResource\Pages;
 
 use App\Filament\Resources\KuisResource;
-use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManagePengerjaanKuis extends ManageRelatedRecords
 {
     use NestedPage;
+
     protected static string $resource = KuisResource::class;
 
     protected static string $relationship = 'mengerjakanKuis';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationBadge(): ?string
+    {
+        return ( self::getResource()::getModel()::findOrFail(request()->route()->parameter('record'))->mengerjakanKuis()->wherePivotNotIn('status', ['belum'])->count());
+    }
 
     public static function getNavigationLabel(): string
     {
-        return 'Mengerjakan Kuis';
+        return 'Pengerjakan Kuis';
     }
 
     public function form(Form $form): Form
@@ -45,6 +48,7 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
             ->recordTitleAttribute('id')
             ->columns([
                 Tables\Columns\TextColumn::make('status')
+                    ->label('Status Pengerjaan')
                     ->badge()
                     ->color(fn($state) => match ($state) {
                         'selesai' => 'success',
@@ -56,8 +60,9 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('penilaian')
                     ->label('Nilai')
                     ->badge()
+                    ->default('-')
                     ->color('success'),
-                Tables\Columns\TextColumn::make('pivot.created_at')
+                TextColumn::make('tgl_submit')
                     ->label('Waktu Mengerjakan')
                     ->dateTime()
                     ->timezone('Asia/Jakarta'),
@@ -65,10 +70,16 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
                     ->label('Benar/Total')
                     ->badge()
                     ->formatStateUsing(function ($record) {
-                        $jsonString = $record->files; // Replace this with the actual way you're getting the JSON string
-                        $data = json_decode($jsonString, true);
-                        return $data['correct'].'/'.$data['total'];
+                        if (!is_null($record->files) && is_string($record->files)) {
+                            $data = json_decode($record->files, true);
+                            if (is_array($data) && isset($data['correct']) && isset($data['total'])) {
+                                return $data['correct'] . '/' . $data['total'];
+                            }
+                        }
+                        return '-';
                     })
+                ->default('-')
+                ->color('info')
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -83,11 +94,14 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
             ])
             ->actions([
                 EditAction::make()
-                    ->label('Beri Penilaian'),
+                    ->label('Beri Penilaian')
+                ->hidden(fn($record) => $record->status !== 'selesai'),
                 Tables\Actions\Action::make('Review Kuis')
+                    ->icon('heroicon-c-document-magnifying-glass')
                     ->url(fn($record) => route('kuis.review', $record->pivot->id))
                     ->openUrlInNewTab()
-                    ->color('info'),
+                    ->color('info')
+                ->hidden(fn($record) => $record->status !== 'selesai'),
             ])
             ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([

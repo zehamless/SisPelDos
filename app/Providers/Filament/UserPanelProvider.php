@@ -4,7 +4,6 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\RequestPasswordReset;
-use App\Filament\Resources\PelatihanResource;
 use App\Filament\Widgets\RunningPengumuman;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -50,12 +49,16 @@ class UserPanelProvider extends PanelProvider
                 fn() => view(auth()->check() ? 'profilComponent' : 'masukDisiniComponent')
             )
             ->renderHook(
+                'panels::user-menu.after',
+                fn() => view(auth()->check() ? 'LogoutButtonComponent' : null)
+            )
+            ->renderHook(
                 'panels::auth.login.form.after',
-                fn()=>view('kembalikeDasborComponent')
+                fn() => view('kembalikeDasborComponent')
             )
             ->renderHook(
                 'panels::auth.register.form.after',
-                fn()=>view('kembalikeDasborComponent')
+                fn() => view('kembalikeDasborComponent')
             )
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')

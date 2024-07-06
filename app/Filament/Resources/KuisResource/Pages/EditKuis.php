@@ -12,6 +12,10 @@ class EditKuis extends EditRecord
     Use NestedPage;
     protected static string $resource = KuisResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('view', ['record' => $this->record]);
+    }
     protected function getHeaderActions(): array
     {
         return [

@@ -32,7 +32,6 @@ class Modul extends Model
     {
         return 'slug';
     }
-
     public function pelatihan(): BelongsTo
     {
         return $this->belongsTo(Pelatihan::class);
@@ -45,21 +44,26 @@ class Modul extends Model
 
     public function tugas(): HasMany
     {
-        return $this->hasMany(MateriTugas::class)->where([
-            ['jenis', '=', 'tugas'],
-        ]);
+        return $this->hasMany(MateriTugas::class)->where('jenis', 'tugas');
     }
 
     public function kuis(): HasMany
     {
-        return $this->hasMany(MateriTugas::class)->where([
-            ['jenis', '=', 'kuis'],
-        ]);
+        return $this->hasMany(MateriTugas::class)->where('jenis', 'kuis');
     }
 
     public function allTugas(): HasMany
     {
         return $this->hasMany(MateriTugas::class);
     }
+    public function noMateri()
+    {
+        return $this->allTugas()->whereNot('jenis', 'materi')->where('published', true);
+    }
+    public function pengajar()
+    {
+        return $this->belongsToMany(User::class, 'pengajar_modul', 'modul_id', 'user_id')
+            ->withTimestamps();
 
+    }
 }

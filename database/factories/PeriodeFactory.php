@@ -13,7 +13,6 @@ class PeriodeFactory extends Factory
     public function definition(): array
     {
         return [
-            'tahun_ajar' => $this->faker->word(),
             'tahun' => $this->faker->randomNumber(),
             'deleted_at' => Carbon::now(),
             'created_at' => Carbon::now(),

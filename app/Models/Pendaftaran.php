@@ -15,7 +15,7 @@ class Pendaftaran extends Pivot
 
     public function scopeMendaftar(Builder $query): Builder
     {
-        return $query->whereIn('status', ['pending', 'diterima', 'ditolak']);
+        return $query->whereIn('status', ['pending',  'ditolak']);
     }
     public function user()
     {

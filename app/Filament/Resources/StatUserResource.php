@@ -20,6 +20,7 @@ class StatUserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $recordTitleAttribute = 'nama';
+    protected static bool $shouldRegisterNavigation = false;
     public static function getBreadcrumbs(): string
     {
         return '';

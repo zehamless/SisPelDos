@@ -10,11 +10,17 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedRelationManager;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ModulRelationManager extends RelationManager
 {
     Use NestedRelationManager;
     protected static string $relationship = 'modul';
+public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+{
+//    dd(auth()->user()->peserta()->where('pelatihan_id', $ownerRecord->id)->exists());
+    return auth()->user()->peserta()->where('pelatihan_id', $ownerRecord->id)->exists();
+}
 
     public function form(Form $form): Form
     {

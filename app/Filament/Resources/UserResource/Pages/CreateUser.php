@@ -14,8 +14,6 @@ class CreateUser extends CreateRecord
     {
         $data['status_kerja'] = 'Aktif';
         $data['status_dosen']= 'Aktif';
-        $data['status_akun'] = 'Aktif';
-        $data['pembayaran'] = 'Lunas';
 
         return $data;
     }

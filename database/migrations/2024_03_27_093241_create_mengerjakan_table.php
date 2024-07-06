@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('file_name')->nullable();
             $table->text('pesan_peserta')->nullable();
             $table->text('pesan_admin')->nullable();
-            $table->string('penilaian')->default('belum dinilai');
+            $table->string('penilaian')->nullable();
+            $table->timestamp('tgl_submit')->nullable();
             $table->timestamps();
         });
     }

@@ -93,5 +93,11 @@ class KuisController extends Controller
 //        return response()->json($data);
         return view('kuis.reviewKuis', compact( 'jsonJawaban'));
     }
+    public function adminPreview($kuis)
+    {
+        $data = MateriTugas::with('kuis')->where('id', $kuis)->first();
+        $jsonData = $data->toJson();
+        return view('kuis.adminPreviewKuis', compact('jsonData'));
+    }
 
 }

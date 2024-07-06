@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ModulResource\Pages;
 use App\Filament\Resources\ModulResource\RelationManagers;
 use App\Models\Modul;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -20,6 +21,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
+use Illuminate\Database\Eloquent\Model;
 
 class ModulResource extends Resource
 {
@@ -34,6 +36,22 @@ class ModulResource extends Resource
     public static function getAncestor(): ?Ancestor
     {
         return Ancestor::make('modul', 'pelatihan');
+    }
+//    public static function canAccess(): bool
+//    {
+//        if (auth()->user()->role === 'admin') {
+//            return true;
+//        }
+//        if (auth()->user()->role === 'pengajar' && auth()->user()->moduls()->exists()) {
+//            return true;
+//        }
+//        return false;
+//    }
+
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->role === 'admin';
     }
 
     public static function form(Form $form): Form
@@ -95,8 +113,7 @@ class ModulResource extends Resource
                 Section::make()
                     ->schema([
                         TextEntry::make('judul')
-                            ->label('Judul')
-                        ->columnSpanFull(),
+                            ->label('Judul'),
                         TextEntry::make('published')
                             ->label('Status')
                             ->badge()
@@ -113,12 +130,12 @@ class ModulResource extends Resource
                             ->dateTime()
                             ->timezone('Asia/Jakarta'),
                     ])
-                    ->columns(3),
+                    ->columns(2),
                 Section::make('Deskripsi')
                     ->schema([
                         TextEntry::make('deskripsi')
                             ->hiddenLabel()
-                            ->html(),
+                            ->markdown(),
                     ])->collapsible(),
             ]);
     }
@@ -138,6 +155,7 @@ class ModulResource extends Resource
             Pages\ManageMateri::class,
             Pages\ManageTugas::class,
             Pages\ManageKuis::class,
+            Pages\ManagePengajar::class,
         ]);
     }
 
@@ -151,6 +169,7 @@ class ModulResource extends Resource
             'materi' => Pages\ManageMateri::route('/{record}/materi'),
             'tugas' => Pages\ManageTugas::route('/{record}/tugas'),
             'kuis' => Pages\ManageKuis::route('/{record}/kuis'),
+            'pengajar' => Pages\ManagePengajar::route('/{record}/pengajar'),
         ];
     }
 

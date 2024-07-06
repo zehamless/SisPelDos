@@ -33,14 +33,14 @@ class kuis extends Model
         return $this->belongsToMany(MateriTugas::class, 'kuis_pertanyaan', 'kuis_id', 'materi_tugas_id');
     }
 
-    public function kategori()
-    {
-        return $this->belongsTo(kategoriSoal::class);
-    }
+//    public function kategori()
+//    {
+//        return $this->belongsTo(kategoriSoal::class);
+//    }
 
     public function kategories()
     {
-        return $this->belongsTo(kategoriSoal::class,'kategori_soal_id');
+        return $this->belongsTo(kategoriSoal::class,'kategori_soal_id', 'id');
     }
 
 }

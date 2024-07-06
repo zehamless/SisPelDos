@@ -25,13 +25,14 @@ public function handle(): void
     try {
         $newPelatihan = $this->pelatihan->replicate();
         $newPelatihan->slug = $this->pelatihan->slug . '-copy'. '-' . now()->timestamp;
+        $newPelatihan->published = false;
         $newPelatihan->save();
 
         $moduls = $this->pelatihan->modul;
 
         foreach ($moduls as $modul) {
             $newModulArray = collect($modul->toArray())->forget('id')->all();
-            $newModulArray['slug'] = $newModulArray['slug'] . '-' . now()->timestamp;
+            $newModulArray['slug'] = $newModulArray['slug'] . '-' . $this->pelatihan->id;
             $newModul = $newPelatihan->modul()->create($newModulArray);
 
             $materiTugass = $modul->allTugas;

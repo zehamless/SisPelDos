@@ -42,7 +42,11 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 'panels::sidebar.nav.start',
-                fn() => view(auth()->check() ? 'profilComponent' : 'masukDisiniComponent')
+                fn() => view('profilComponent' )
+            )
+            ->renderHook(
+                'panels::user-menu.after',
+                fn()=> view('LogoutButtonComponent')
             )
             ->renderHook(
                 'panels::auth.login.form.after',

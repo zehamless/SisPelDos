@@ -5,7 +5,6 @@ namespace App\Filament\Resources\StatUserResource\RelationManagers;
 use App\Filament\Resources\KuisResource;
 use App\Filament\Resources\TugasResource;
 use App\Models\MateriTugas;
-use App\Models\Mengerjakan;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -46,7 +45,7 @@ class AllTugasRelationManager extends RelationManager
         $completedTugas = MateriTugas::whereHas('modul.pelatihan', function ($query) use ($pelatihanId) {
             $query->where('pelatihan_id', $pelatihanId);
         })->whereHas('peserta', function ($query) use ($userId) {
-            $query->where('users_id', $userId);
+            $query->where('users_id', $userId)->where('status', 'selesai');
         })->whereNot('jenis', 'materi')->pluck('id')->toArray();
         return $table
             ->query(MateriTugas::whereHas('modul', function ($query) use ($pelatihanId) {
@@ -64,17 +63,22 @@ class AllTugasRelationManager extends RelationManager
 //                        }
 //                    }),
                 Tables\Columns\TextColumn::make('judul')
+                    ->searchable()
                     ->limit(20),
                 Tables\Columns\TextColumn::make('jenis')
+                    ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('terjadwal')
                     ->label('Nilai')
                     ->badge()
                     ->color('info')
-                    ->formatStateUsing(function ($record) {
+                    ->formatStateUsing(function ($record) use ($completedTugas) {
                         $data = $record->peserta()->where('users_id', $this->user)->orderBy('mengerjakan.created_at', 'desc')->pluck('penilaian')->first();
-                        if ($data) {
-                            return  $data;
+//                        dd($record->id);
+                        if (in_array($record->id, $completedTugas) && $data) {
+                            return $data;
+                        } elseif (in_array($record->id, $completedTugas) && !$data) {
+                            return 'Belum Dinilai';
                         } else {
                             return 'Belum Dikerjakan';
                         }
@@ -88,6 +92,7 @@ class AllTugasRelationManager extends RelationManager
                             return 'heroicon-s-x-circle';
                         }
                     })
+                    ->sortable()
                     ->color(function ($record) use ($completedTugas) {
                         if (in_array($record->id, $completedTugas)) {
                             return 'success';
@@ -117,8 +122,9 @@ class AllTugasRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultGroup('modul.judul');
     }
 }

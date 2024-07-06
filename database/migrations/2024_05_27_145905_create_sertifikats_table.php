@@ -10,7 +10,9 @@ return new class extends Migration {
         Schema::create('sertifikats', function (Blueprint $table) {
             $table->id();
             $table->foreignUlid('users_id')->constrained()->onDelete('cascade');
-            $table->foreignId('pelatihan_id');
+            $table->foreignId('pelatihan_id')->constrained();
+            $table->string('no_sertifikat')->nullable();
+            $table->date('tgl_sertifikat')->nullable();
             $table->string('files')->nullable();
             $table->string('file_name')->nullable();
             $table->timestamps();

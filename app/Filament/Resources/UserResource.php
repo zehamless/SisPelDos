@@ -6,11 +6,12 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\User\Resources\UserResource\RelationManagers\RiwayatPelatihanRelationManager;
 use App\Models\User;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\ExportColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions;
-use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -28,18 +29,13 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?int $navigationSort= 99;
+    protected static ?int $navigationSort = 99;
     protected static ?string $recordTitleAttribute = 'nama';
 
-    public static function canCreate(): bool
-    {
-        return auth()->user()->role === 'admin';
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return auth()->user()->role === 'admin';
-    }
+public static function canAccess(): bool
+{
+    return auth()->user()->role === 'admin';
+}
 
     public static function form(Form $form): Form
     {
@@ -48,6 +44,9 @@ class UserResource extends Resource
                 TextInput::make('nama')
                     ->label('Nama')
                     ->required(),
+                TextInput::make('nama_gelar')
+                    ->label('Nama Gelar')
+                    ->required(),
                 TextInput::make('email')
                     ->label('Email')
                     ->type('email')
@@ -55,13 +54,16 @@ class UserResource extends Resource
                 TextInput::make('password')
                     ->label('Password')
                     ->type('password')
+                    ->hiddenOn('edit')
+                    ->disabledOn('edit')
                     ->required(),
                 Select::make('role')
                     ->label('Role')
                     ->options([
                         'admin' => 'Admin',
-                        'External' => 'Dosen External',
-                        'Internal' => 'Dosen Internal',
+                        'external' => 'Dosen External',
+                        'internal' => 'Dosen UNILA',
+                        'pengajar' => 'Pengajar',
                     ])
                     ->required(),
                 Select::make('jenis_kelamin')
@@ -97,36 +99,28 @@ class UserResource extends Resource
                 TextColumn::make('role')
                     ->label('Role')
                     ->badge()
-                    ->color(fn($record) => match ($record->role) {
-                        'admin' => 'info',
-                        'Internal' => 'success',
-                        'External' => 'warning',
-                        default => 'danger',
-                    })
+                    ->color('info')
                     ->searchable()
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('status_akun')
-                    ->options([
-                        'Aktif' => 'Aktif',
-                        'Non-aktif' => 'Non-aktif',
-                    ])
-                    ->label('Status Akun'),
                 SelectFilter::make('role')
                     ->options([
                         'admin' => 'Admin',
-                        'External' => 'Dosen External',
-                        'Internal' => 'Dosen Internal',
+                        'external' => 'Dosen External',
+                        'internal' => 'Dosen UNILA',
+                        'pengajar' => 'Pengajar',
                     ])
                     ->label('Role'),
             ])
             ->actions([
                 ViewAction::make(),
-               DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-            ]);
+            ])
+            ->defaultSort('updated_at', 'desc');
     }
 
     public static function infolist(Infolist $infolist): Infolist
@@ -134,15 +128,17 @@ class UserResource extends Resource
         return $infolist
             ->schema([
                 Actions::make([
-                   Actions\Action::make('Kembali')
-                    ->url(url()->previous())
-                    ->icon('heroicon-o-arrow-left')
-                    ->color('secondary'),
+                    Actions\Action::make('Kembali')
+                        ->url(url()->previous())
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('secondary'),
                 ]),
                 Section::make('Informasi Akun')
                     ->schema([
                         TextEntry::make('nama')
                             ->label('Nama'),
+                        TextEntry::make('nama_gelar')
+                            ->label('Nama Gelar'),
                         TextEntry::make('email')
                             ->label('Email'),
                         TextEntry::make('no_induk')
@@ -183,11 +179,7 @@ class UserResource extends Resource
                         TextEntry::make('role')
                             ->label('Role')
                             ->badge()
-                            ->color(fn($record) => match ($record->role) {
-                                'admin' => 'info',
-                                'Internal' => 'success',
-                                'External' => 'warning',
-                            })
+                            ->color('info')
                     ])->columns(2)->collapsible(),
             ]);
     }
@@ -196,9 +188,11 @@ class UserResource extends Resource
     {
         return [
             RelationManagers\ActivityRelationManager::make(),
-            RiwayatPelatihanRelationManager::make()
+            RiwayatPelatihanRelationManager::make(),
+//            RelationManagers\ModulsRelationManager::make()
         ];
     }
+
     public static function getPages(): array
     {
         return [

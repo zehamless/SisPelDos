@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PendaftaranResource\Pages;
 use App\Filament\Resources\PendaftaranResource\RelationManagers;
+use App\Jobs\AttachTugasKuisJob;
+use App\Models\Pelatihan;
 use App\Models\Pendaftaran;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
@@ -27,10 +29,20 @@ class PendaftaranResource extends Resource
     {
         return false;
     }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::mendaftar()->count();
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Hidden::make('users_id'),
                 Forms\Components\TextInput::make('nama')
                     ->formatStateUsing(function ($record) {
                         return $record->user->nama;
@@ -96,8 +108,12 @@ class PendaftaranResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->label('Penentuan')
-                    ->mutateFormDataUsing( function ($data, $record) {
-                        $data['users_id'] = $record->user->id;
+                    ->mutateFormDataUsing(function (array $data, $record) {
+//                        dd($record);
+                        $tugass = Pelatihan::find($record->pelatihan_id)->allTugas;
+                        if ($data['status'] === 'diterima') {
+                            dispatch(new AttachTugasKuisJob($data['users_id'], $tugass));
+                        }
                         return $data;
                     })
                     ->successNotification(function (array $data, $record) {
@@ -143,7 +159,7 @@ class PendaftaranResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 $query->with(['user', 'pelatihan'])->mendaftar();
             })
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('updated_at', 'desc')
             ->deferFilters();
     }
 

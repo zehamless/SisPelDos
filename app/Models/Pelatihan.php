@@ -22,7 +22,9 @@ class Pelatihan extends Model
         'tgl_mulai',
         'tgl_selesai',
         'jmlh_user',
-        'syarat'
+        'syarat',
+        'no_sertifikat',
+        'jam_pelatihan',
     ];
 
     protected $casts = [
@@ -41,7 +43,10 @@ class Pelatihan extends Model
     {
         return $this->belongsTo(Periode::class);
     }
-
+    public function kategori(): BelongsTo
+    {
+        return $this->belongsTo(Kategori::class, 'kategori_pelatihan_id');
+    }
     public function modul(): HasMany
     {
         return $this->hasMany(Modul::class);
@@ -62,5 +67,8 @@ class Pelatihan extends Model
             ->withPivot('status', 'pesan', 'files', 'file_name')
             ->withTimestamps();
     }
-
+    public function allTugas()
+    {
+        return $this->hasManyThrough(MateriTugas::class, Modul::class)->whereIn('jenis', ['tugas','kuis']);
+    }
 }
