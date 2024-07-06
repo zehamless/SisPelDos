@@ -7,6 +7,7 @@ use App\Filament\Resources\PelatihanResource\Pages\EditPelatihan;
 use App\Filament\Resources\PelatihanResource\RelationManagers\MateriRelationManager;
 use App\Jobs\clonePelatihanJob;
 use App\Models\Pelatihan;
+use Faker\Provider\Text;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -21,10 +22,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\SubNavigationPosition;
@@ -73,14 +76,18 @@ class PelatihanResource extends Resource
         return null;
     }
 
-    public static function getBreadcrumbRecordLabel(Model $record)
-    {
-        return $record->judul . ' - ' . $record->periode->tahun;
-    }
+//    public static function getBreadcrumbRecordLabel(Model $record)
+//    {
+//        return $record->judul . ' - ' . $record->periode->tahun;
+//    }
 
     public static function canAccess(): bool
     {
         return auth()->user()->role === 'admin';
+    }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 
     public static function form(Form $form): Form
@@ -101,6 +108,44 @@ class PelatihanResource extends Resource
                     ->tabs([
                         Tab::make('Detail Pelatihan')
                             ->schema([
+                                Fieldset::make()
+                                ->schema([
+//                                        Select::make('periode_id')
+//                                            ->relationship('periode', 'tahun_ajar')
+//                                            ->label('Periode')
+//                                            ->required(),
+                                    Select::make('periode_id')
+                                        ->label('Periode')
+                                        ->relationship('periode', 'tahun')
+                                        ->createOptionForm([
+                                            TextInput::make('tahun')
+                                                ->label('Tahun')
+                                                ->numeric()
+                                                ->minValue(1900)
+                                                ->maxValue(2099)
+                                                ->placeholder('Contoh: 2021')
+                                                ->required()
+                                        ])
+                                        ->preload()
+                                        ->searchable()
+                                        ->required(),
+                                    Select::make('kategori_pelatihan_id')
+                                        ->label('Kategori Pelatihan')
+                                        ->relationship('kategori', 'nama')
+                                        ->createOptionForm([
+                                            TextInput::make('nama')
+                                                ->label('Nama')
+                                                ->required()
+                                        ])
+                                        ->preload()
+                                        ->searchable()
+                                        ->required(),
+                                    ToggleButtons::make('published')
+                                        ->label('Status?')
+                                        ->boolean('Published', 'Draft')
+                                        ->default(false)
+                                        ->grouped()
+                                ]),
                                 TextInput::make('judul')
                                     ->label('Judul')
                                     ->required()
@@ -141,44 +186,7 @@ class PelatihanResource extends Resource
                                             ->rule('after:tgl_mulai')
                                             ->required(),
                                     ]),
-                                Fieldset::make()
-                                    ->schema([
-//                                        Select::make('periode_id')
-//                                            ->relationship('periode', 'tahun_ajar')
-//                                            ->label('Periode')
-//                                            ->required(),
-                                        Select::make('periode_id')
-                                            ->label('Periode')
-                                            ->relationship('periode', 'tahun')
-                                            ->createOptionForm([
-                                                TextInput::make('tahun')
-                                                    ->label('Tahun')
-                                                    ->numeric()
-                                                    ->minValue(1900)
-                                                    ->maxValue(2099)
-                                                    ->placeholder('Contoh: 2021')
-                                                    ->required()
-                                            ])
-                                            ->preload()
-                                            ->searchable()
-                                            ->required(),
-                                        Select::make('kategori_pelatihan_id')
-                                            ->label('Kategori Pelatihan')
-                                            ->relationship('kategori', 'nama')
-                                            ->createOptionForm([
-                                                TextInput::make('nama')
-                                                    ->label('Nama')
-                                                    ->required()
-                                            ])
-                                            ->preload()
-                                            ->searchable()
-                                            ->required(),
-                                        ToggleButtons::make('published')
-                                            ->label('Status?')
-                                            ->boolean('Published', 'Draft')
-                                            ->default(false)
-                                            ->grouped()
-                                    ]),
+
 
                                 FileUpload::make('sampul')
                                     ->label('Sampul')
@@ -313,44 +321,60 @@ class PelatihanResource extends Resource
             ->schema([
                 \Filament\Infolists\Components\Section::make()
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(4)
                             ->schema([
                                 Group::make([
+                                    ImageEntry::make('sampul')
+                                        ->label('Sampul')
+                                        ->disk('public'),
                                     TextEntry::make('judul')
                                         ->label('Judul'),
-                                    TextEntry::make('published')
-                                        ->label('Status')
-                                        ->badge()
-                                        ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
-                                        ->color(fn($state) => $state ? 'success' : 'danger'),
+                                ]),
+                                Group::make([
+                                    TextEntry::make('periode.tahun')
+                                        ->label("Periode"),
                                     TextEntry::make('created_at')
                                         ->label('Dibuat pada')
                                         ->badge()
                                         ->dateTime()
                                         ->timezone('Asia/Jakarta'),
-                                ]),
-                                Group::make([
                                     TextEntry::make('tgl_mulai')
                                         ->label('Tanggal Mulai')
-                                        ->dateTime('d M Y')
+                                        ->date()
                                         ->badge()
                                         ->color('success'),
-                                    TextEntry::make('tgl_selesai')
-                                        ->label('Tanggal Selesai')
-                                        ->dateTime('d M Y')
-                                        ->badge()
-                                        ->color('danger'),
+                                ]),
+                                Group::make([
 
+                                    TextEntry::make('kategori.nama')
+                                    ->label('Kategori'),
                                     TextEntry::make('updated_at')
                                         ->label('Terakhir diubah pada')
                                         ->badge()
                                         ->dateTime()
                                         ->timezone('Asia/Jakarta'),
+                                    TextEntry::make('tgl_selesai')
+                                        ->label('Tanggal Selesai')
+                                        ->date()
+                                        ->badge()
+                                        ->color('danger'),
+
+
                                 ]),
                                 Group::make([
-                                    ImageEntry::make('sampul')
-                                        ->label('Sampul')
-                                        ->disk('public'),
+                                    TextEntry::make('published')
+                                        ->label('Status')
+                                        ->badge()
+                                        ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
+                                        ->color(fn($state) => $state ? 'success' : 'danger'),
+
+                                    TextEntry::make('no_sertifikat')
+                                        ->label('No. Sertifikat')
+                                    ->badge(),
+                                    TextEntry::make('jam_pelatihan')
+                                        ->label('Jam pelatihan')
+                                        ->badge()
+                                        ->suffix(' Jam')
                                 ])
                             ])
                     ]),
@@ -358,7 +382,8 @@ class PelatihanResource extends Resource
                     ->schema([
                         TextEntry::make('deskripsi')
                             ->hiddenLabel()
-                            ->html(),
+                            ->prose()
+                            ->markdown(),
                     ]),
                 \Filament\Infolists\Components\Section::make('Syarat')
                     ->schema([

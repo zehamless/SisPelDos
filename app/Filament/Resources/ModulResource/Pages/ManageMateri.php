@@ -32,6 +32,10 @@ class ManageMateri extends ManageRelatedRecords
     {
         return 'Materi';
     }
+    public static function getNavigationBadge(): ?string
+    {
+        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->materi->count());
+    }
     public static function canAccess(array $parameters = []): bool
     {
         $id = $parameters['record']['id'];

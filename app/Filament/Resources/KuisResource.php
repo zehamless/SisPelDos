@@ -8,6 +8,7 @@ use App\Models\MateriTugas;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -21,7 +22,6 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use PhpParser\Node\Expr\AssignOp\Mod;
 
 class KuisResource extends Resource
 {
@@ -32,6 +32,7 @@ class KuisResource extends Resource
     protected static ?string $recordTitleAttribute = 'judul';
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     public static function getAncestor(): ?Ancestor
     {
         return Ancestor::make('kuis', 'modul');
@@ -44,8 +45,9 @@ class KuisResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return !$record->mengerjakanKuis()->exists();
+        return $record->mengerjakanKuis()->wherePivot('status', 'belum')->exists();
     }
+
     public static function canCreate(): bool
     {
         return false;
@@ -177,23 +179,20 @@ class KuisResource extends Resource
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('published')
-                            ->label('Status')
-                            ->badge()
-                            ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
-                            ->color(fn($state) => $state ? 'success' : 'danger'),
-                        TextEntry::make('terjadwal')
-                            ->label('Terjadwal')
-                            ->badge()
-                            ->formatStateUsing(fn($state) => $state ? 'Ya' : 'Tidak')
-                            ->color('info'),
-                        TextEntry::make('max_attempt')
-                            ->label(__('Max Attempt')),
-                        TextEntry::make('durasi')
-                            ->label('Durasi Pengerjaan')
-                            ->suffix(' menit'),
-                        TextEntry::make('judul')
-                            ->label('Judul'),
+                        Group::make([
+                            TextEntry::make('judul')
+                                ->label('Judul'),
+                            TextEntry::make('max_attempt')
+                                ->label(__('Max Attempt')),
+                            TextEntry::make('durasi')
+                                ->label('Durasi Pengerjaan')
+                                ->suffix(' menit'),
+                            TextEntry::make('created_at')
+                                ->label('Dibuat pada')
+                                ->badge()
+                                ->dateTime()
+                                ->timezone('Asia/Jakarta'),
+                        ]),
                         Group::make([
                             TextEntry::make('tgl_mulai')
                                 ->label('Tanggal Mulai')
@@ -213,19 +212,31 @@ class KuisResource extends Resource
                                 ->color('danger')
                                 ->dateTime()
                                 ->timezone('Asia/Jakarta'),
+                            TextEntry::make('updated_at')
+                                ->label('Terakhir diubah pada')
+                                ->badge()
+                                ->dateTime()
+                                ->timezone('Asia/Jakarta'),
+                        ]),
+                        Group::make([
+                            TextEntry::make('published')
+                                ->label('Status')
+                                ->badge()
+                                ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
+                                ->color(fn($state) => $state ? 'success' : 'danger'),
+                            TextEntry::make('terjadwal')
+                                ->label('Terjadwal')
+                                ->badge()
+                                ->formatStateUsing(fn($state) => $state ? 'Ya' : 'Tidak')
+                                ->color('info'),
+                            Actions::make([
+                                Actions\Action::make('preview')
+                                    ->openUrlInNewTab()
+                                    ->url(fn($record) => route('kuis.preview', $record))
+                            ])
+                        ]),
 
-                        ])->columns(3),
-                        TextEntry::make('created_at')
-                            ->label('Dibuat pada')
-                            ->badge()
-                            ->dateTime()
-                            ->timezone('Asia/Jakarta'),
-                        TextEntry::make('updated_at')
-                            ->label('Terakhir diubah pada')
-                            ->badge()
-                            ->dateTime()
-                            ->timezone('Asia/Jakarta'),
-                    ])->columns(2),
+                    ])->columns(3),
             ]);
     }
 
@@ -243,7 +254,7 @@ class KuisResource extends Resource
 //            'create' => Pages\CreateKuis::route('/create'),
             'edit' => Pages\EditKuis::route('/{record}/edit'),
             'view' => Pages\ViewKuis::route('/{record}'),
-            'penilaian'=> Pages\ManagePengerjaanKuis::route('/{record}/penilaian')
+            'penilaian' => Pages\ManagePengerjaanKuis::route('/{record}/penilaian')
         ];
     }
 

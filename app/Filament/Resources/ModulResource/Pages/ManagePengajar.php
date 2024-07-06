@@ -25,7 +25,10 @@ class ManagePengajar extends ManageRelatedRecords
     {
         return auth()->user()->role === 'admin';
     }
-
+    public static function getNavigationBadge(): ?string
+    {
+        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->pengajar->count());
+    }
     public static function getNavigationLabel(): string
     {
         return 'Pengajar';

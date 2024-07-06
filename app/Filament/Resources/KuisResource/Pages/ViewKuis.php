@@ -13,13 +13,4 @@ class ViewKuis extends ViewRecord
 
     protected static string $resource = KuisResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        $kuis = $this->getRecord()->mengerjakanKuis()->exists();
-        return [
-            Actions\DeleteAction::make()
-                ->label(fn() => $kuis? 'Kuis sudah dikerjakan, tidak dapat dihapus' : 'Hapus')
-                ->disabled(fn() => $kuis)
-        ];
-    }
 }

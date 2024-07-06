@@ -28,6 +28,10 @@ class ManageTugas extends ManageRelatedRecords
     {
         return 'Tugas';
     }
+    public static function getNavigationBadge(): ?string
+    {
+        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->tugas->count());
+    }
     public static function canAccess(array $parameters = []): bool
     {
         $id = $parameters['record']['id'];

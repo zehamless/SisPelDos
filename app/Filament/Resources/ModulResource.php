@@ -113,8 +113,7 @@ class ModulResource extends Resource
                 Section::make()
                     ->schema([
                         TextEntry::make('judul')
-                            ->label('Judul')
-                            ->columnSpanFull(),
+                            ->label('Judul'),
                         TextEntry::make('published')
                             ->label('Status')
                             ->badge()
@@ -131,12 +130,12 @@ class ModulResource extends Resource
                             ->dateTime()
                             ->timezone('Asia/Jakarta'),
                     ])
-                    ->columns(3),
+                    ->columns(2),
                 Section::make('Deskripsi')
                     ->schema([
                         TextEntry::make('deskripsi')
                             ->hiddenLabel()
-                            ->html(),
+                            ->markdown(),
                     ])->collapsible(),
             ]);
     }

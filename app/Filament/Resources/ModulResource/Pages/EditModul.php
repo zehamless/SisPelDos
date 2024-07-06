@@ -15,7 +15,10 @@ public function getRelationManagers(): array
 {
     return [];
 }
-
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('view', ['record' => $this->record]);
+    }
     protected function getHeaderActions(): array
     {
         return [

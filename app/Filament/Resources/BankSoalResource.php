@@ -23,6 +23,10 @@ class BankSoalResource extends Resource
     {
         return auth()->user()->role === 'admin';
     }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
     public static function form(Form $form): Form
     {
         return $form

@@ -22,10 +22,14 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
     protected static string $relationship = 'mengerjakanKuis';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationBadge(): ?string
+    {
+        return ( self::getResource()::getModel()::findOrFail(request()->route()->parameter('record'))->mengerjakanKuis()->wherePivotNotIn('status', ['belum'])->count());
+    }
 
     public static function getNavigationLabel(): string
     {
-        return 'Mengerjakan Kuis';
+        return 'Pengerjakan Kuis';
     }
 
     public function form(Form $form): Form

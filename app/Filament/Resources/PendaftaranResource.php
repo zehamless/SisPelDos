@@ -34,7 +34,10 @@ class PendaftaranResource extends Resource
     {
         return auth()->user()->role === 'admin';
     }
-
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::mendaftar()->count();
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -156,7 +159,7 @@ class PendaftaranResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 $query->with(['user', 'pelatihan'])->mendaftar();
             })
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('updated_at', 'desc')
             ->deferFilters();
     }
 

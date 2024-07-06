@@ -30,6 +30,11 @@ class ManageModul extends ManageRelatedRecords
         return 'Modul';
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->modul->count());
+    }
+
     public function form(Form $form): Form
     {
         return $form

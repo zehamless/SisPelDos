@@ -25,7 +25,10 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
     {
         return 'Pengerjaan Tugas';
     }
-
+    public static function getNavigationBadge(): ?string
+    {
+        return ( self::getResource()::getModel()::find(request()->route('record'))?->mengerjakanTugas()->wherePivotNotIn('status', ['belum'])->count());
+    }
     public function form(Form $form): Form
     {
         return $form

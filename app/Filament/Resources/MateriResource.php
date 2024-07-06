@@ -184,7 +184,7 @@ class MateriResource extends Resource
                     ->schema([
                         TextEntry::make('deskripsi')
                             ->label('Deskripsi')
-                            ->html()
+                            ->markdown()
 
                     ])->columns(1),
             ]);
