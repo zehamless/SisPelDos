@@ -27,6 +27,7 @@ class ViewModul extends ViewRecord
     {
         return [
             Action::make('Rekap Nilai')
+                ->openUrlInNewTab()
                 ->url(route('rekap.modul', $this->getRecord()))
         ];
     }

@@ -43,6 +43,8 @@ class SertifikatResource extends Resource
                     ->formatStateUsing(function ($record) {
                         return $record->pelatihan->judul;
                     }),
+                Forms\Components\TextInput::make('no_sertifikat')
+                    ->label('No. Sertifikat'),
                 Forms\Components\FileUpload::make('files')
                     ->hint('Klik icon untuk mengunduh sertifikat.')
                     ->hintIcon('heroicon-s-arrow-down-tray')
@@ -61,9 +63,12 @@ class SertifikatResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('pelatihan.judul')
                 ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('tgl_sertifikat')
                 ->label('Selesai Pada')
-                ->date('d-m-Y', 'Asia/Jakarta')
+                ->date()
+                ->timezone('Asia/Jakarta'),
+                Tables\Columns\TextColumn::make('no_sertifikat')
+                ->label('No. Sertifikat'),
             ])
             ->filters([
                 //

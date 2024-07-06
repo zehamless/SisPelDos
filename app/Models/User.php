@@ -124,7 +124,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
             ->withPivot('status', 'files', 'file_name', 'pesan', 'created_at')
             ->withTimestamps();
     }
-
+    public function sertifikat()
+    {
+        return $this->belongsToMany(Pelatihan::class, 'sertifikats', 'users_id', 'pelatihan_id')
+            ->withPivot('tgl_sertifikat', 'files', 'file_name', 'no_sertifikat')
+            ->withTimestamps();
+    }
     public function peserta()
     {
         return $this->belongsToMany(Pelatihan::class, 'daftarPeserta', 'users_id', 'pelatihan_id')
@@ -142,13 +147,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
     public function activities()
     {
         return $this->hasMany(Activity::class, 'causer_id');
-    }
-
-    public function sertifikat()
-    {
-        return $this->belongsToMany(Sertifikat::class, 'sertifikats', 'users_id', 'pelatihan_id')
-            ->withPivot('tgl_sertifikat', 'files', 'file_name', 'no_sertifikat')
-            ->withTimestamps();
     }
 
     public function materiTugas()

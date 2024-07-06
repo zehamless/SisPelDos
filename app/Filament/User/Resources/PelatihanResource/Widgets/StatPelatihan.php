@@ -10,7 +10,7 @@ class StatPelatihan extends BaseWidget
 {
     protected function getStats(): array
     {
-        $tugasDikerjakan = auth()->user()->mengerjakan()->count();
+        $tugasDikerjakan = auth()->user()->mengerjakan()->where('status', 'selesai')->count();
         $tugasTersisa =  MateriTugas::query()
             ->whereNot('jenis', 'materi')
             ->where('published', true)

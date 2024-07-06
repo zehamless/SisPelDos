@@ -2,7 +2,7 @@
 @props([
     'action' => filament()->getLogoutUrl(),
     'color' => 'primary',
-    'icon' => \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.logout-button') ?? 'heroicon-m-arrow-left-on-rectangle',
+    'icon' => 'heroicon-m-arrow-left-start-on-rectangle',
 ])
 
 <form method="POST" action="{{ $action }}">
