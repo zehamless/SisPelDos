@@ -9,8 +9,8 @@ class PengajarMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->user()->role !== 'pengajar') {
-            return redirect()->route('dashboard');
+        if (!in_array(auth()->user()->role, ['pengajar', 'admin'])) {
+            return redirect()->route('filament.user.pages.dashboard');
         }
         return $next($request);
     }
