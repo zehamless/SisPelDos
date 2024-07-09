@@ -29,7 +29,8 @@ use Illuminate\Database\Eloquent\Model;
 class MateriTugasResource extends Resource
 {
     use NestedResource;
-    protected static string | array $routeMiddleware = 'auth';
+
+    protected static string|array $routeMiddleware = 'auth';
     protected static ?string $model = MateriTugas::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -40,10 +41,12 @@ class MateriTugasResource extends Resource
     {
         return Ancestor::make('allTugas', 'modul');
     }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('published', true);
     }
+
     public static function canEdit(Model $record): bool
     {
         return false;
@@ -80,13 +83,15 @@ class MateriTugasResource extends Resource
     public static function infolist(Infolist $infolist): Infolist
     {
         $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->count();
-        $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi']);
-        $exist =auth()->user()->mengerjakan()->where('materi_tugas_id', $infolist->getRecord()->id)->where('status', 'belum')->exists();
+        $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi', 'slug']);
+        $exist = auth()->user()->mengerjakan()->where('materi_tugas_id', $infolist->getRecord()->id)->where('status', 'belum')->exists();
         return $infolist
             ->schema([
                 Actions::make([
                     Actions\Action::make('Kembali')
-                        ->url(url()->previous())
+                        ->url(function () use ($modul) {
+                            return ModulResource::getUrl('view', ['record' => $modul->slug]);
+                        })
                         ->icon('heroicon-o-arrow-left')
                         ->color('secondary'),
                 ]),
@@ -147,10 +152,10 @@ class MateriTugasResource extends Resource
                 Section::make('Tugas')
                     ->schema([
 
-                                TextEntry::make('tgl_tenggat')
-                                    ->label('Tenggat Waktu')
-                                    ->badge()
-                                    ->color('danger'),
+                        TextEntry::make('tgl_tenggat')
+                            ->label('Tenggat Waktu')
+                            ->badge()
+                            ->color('danger'),
                         Actions::make([
                             Actions\Action::make('Submit Tugas')
                                 ->form([
@@ -182,7 +187,7 @@ class MateriTugasResource extends Resource
                                         ->causedBy(auth()->user())
                                         ->performedOn($record)
                                         ->event('tugas')
-                                        ->log('Mengerjakan tugas '.$record->judul);
+                                        ->log('Mengerjakan tugas ' . $record->judul);
                                 })
                                 ->visible($exist)
                                 ->disabled(fn($record) => $record->tgl_selesai < now()),
@@ -257,7 +262,7 @@ class MateriTugasResource extends Resource
                                         'status' => $status,
                                     ]);
                                 })
-                            ->visible(!$exist)
+                                ->visible(!$exist)
                         ])
 
                     ])
