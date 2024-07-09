@@ -49,7 +49,7 @@ class TugasResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return $record->mengerjakanTugas()->wherePivot('status', 'belum')->exists();
+        return !$record->mengerjakanTugas()->wherePivot('status', '!=', 'selesai')->exists();
     }
 
     public static function form(Form $form): Form

@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AllTugasRelationManager extends RelationManager
 {
-    Use NestedRelationManager;
+    use NestedRelationManager;
+
     protected static string $relationship = 'allTugas';
     protected static ?string $label = 'Semua Tugas';
 
@@ -79,7 +80,6 @@ class AllTugasRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
                     ->limit(50),
-
                 Tables\Columns\TextColumn::make('tgl_selesai')
                     ->label('Tanggal Selesai')
                     ->badge()
@@ -87,7 +87,19 @@ class AllTugasRelationManager extends RelationManager
                     ->timezone('Asia/Jakarta')
                     ->color('danger')
                     ->searchable(),
-
+                Tables\Columns\TextColumn::make('modul_id')
+                    ->label('Penilaian')
+                    ->formatStateUsing(function ($record) {
+                        switch ($record->jenis) {
+                            case 'tugas':
+                                return $record->mengerjakanTugas()->where('users_id', auth()->user()->id)->first()->pivot->penilaian ?? '-';
+                            case 'kuis':
+                                return $record->mengerjakanKuis()->where('users_id', auth()->user()->id)->first()->pivot->penilaian ?? '-';
+                            default:
+                                return '-';
+                        }
+                    })
+                ->badge()
 
             ])
             ->filters([
@@ -124,9 +136,7 @@ class AllTugasRelationManager extends RelationManager
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                //
             ])
             ->modifyQueryUsing(fn(Builder $query) => $query->where('published', true))
             ->defaultSort('urutan');

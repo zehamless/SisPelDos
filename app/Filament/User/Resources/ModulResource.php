@@ -91,7 +91,7 @@ class ModulResource extends Resource
             ->schema([
                 Actions::make([
                     Action::make('Kembali')
-                        ->url(url()->previous())
+                        ->url(fn($record) => PelatihanResource::getUrl('view', ['record'=>$record->pelatihan->slug]))
                         ->icon('heroicon-o-arrow-left')
                         ->color('secondary'),
                 ]),
