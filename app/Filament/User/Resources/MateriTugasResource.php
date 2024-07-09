@@ -132,6 +132,8 @@ class MateriTugasResource extends Resource
                                 ->form([
                                     FileUpload::make('files')
                                         ->disabled()
+                                        ->hint('Klik icon untuk mengunduh sertifikat.')
+                                        ->hintIcon('heroicon-s-arrow-down-tray')
                                         ->label('Download Files')
                                         ->disk('public')
                                         ->directory('materi')
@@ -144,17 +146,11 @@ class MateriTugasResource extends Resource
                     ])->visible(fn($record) => $record->files !== null),
                 Section::make('Tugas')
                     ->schema([
-                        Fieldset::make('Tanggal')
-                            ->schema([
+
                                 TextEntry::make('tgl_tenggat')
-                                    ->label('Tenggat')
-                                    ->badge()
-                                    ->color('warning'),
-                                TextEntry::make('tgl_selesai')
-                                    ->label('Selesai')
+                                    ->label('Tenggat Waktu')
                                     ->badge()
                                     ->color('danger'),
-                            ])->columns(2),
                         Actions::make([
                             Actions\Action::make('Submit Tugas')
                                 ->form([
@@ -176,8 +172,8 @@ class MateriTugasResource extends Resource
                                     }
 
                                     auth()->user()->mengerjakan()->updateExistingPivot($record->id, [
-                                        'files' => json_encode($data['files']),
-                                        'file_name' => json_encode($data['file_name']),
+                                        'files' => $data['files'],
+                                        'file_name' => $data['file_name'],
                                         'pesan_peserta' => $data['pesan_peserta'],
                                         'tgl_submit' => now(),
                                         'status' => $status,
@@ -255,8 +251,8 @@ class MateriTugasResource extends Resource
                                         $status = $record->tgl_tenggat > now() ? 'selesai' : 'telat';
                                     }
                                     auth()->user()->mengerjakan()->updateExistingPivot($record->id, [
-                                        'files' => json_encode($data['files']),
-                                        'file_name' => json_encode($data['file_name']),
+                                        'files' => $data['files'],
+                                        'file_name' => $data['file_name'],
                                         'pesan_peserta' => $data['pesan_peserta'],
                                         'status' => $status,
                                     ]);

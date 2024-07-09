@@ -45,7 +45,7 @@ class KuisResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return $record->mengerjakanKuis()->wherePivot('status', 'belum')->exists();
+        return !$record->mengerjakanKuis()->wherePivot('status', '!=', 'selesai')->exists();
     }
 
     public static function canCreate(): bool
