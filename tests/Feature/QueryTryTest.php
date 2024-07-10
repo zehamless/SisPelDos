@@ -68,7 +68,7 @@ class QueryTryTest extends TestCase
 
     public function testQuery1()
     {
-        $kuis = kuis::with('kategories')->get();
+        $kuis =MateriTugas::find(9)->mengerjakanTugas()->first();
         dd($kuis);
     }
 
@@ -80,4 +80,5 @@ class QueryTryTest extends TestCase
         dd($err);
 //        $modul = Pelatihan::find(1)->peserta()->syncWithPivotValues();
     }
+
 }

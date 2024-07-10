@@ -41,7 +41,7 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
                     ->disabled(),
                 Textarea::make('pesan_admin'),
                 FileUpload::make('files')
-                    ->hint('Klik icon untuk mengunduh sertifikat.')
+                    ->hint('Klik icon untuk mengunduh tugas.')
                     ->hintIcon('heroicon-s-arrow-down-tray')
                     ->label('File Tugas')
                     ->disk('public')

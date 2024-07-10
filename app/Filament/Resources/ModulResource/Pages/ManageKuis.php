@@ -24,7 +24,7 @@ class ManageKuis extends ManageRelatedRecords
 
     protected static string $relationship = 'kuis';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-question-mark-circle';
 
     public static function getNavigationLabel(): string
     {

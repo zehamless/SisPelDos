@@ -22,7 +22,7 @@ class ManageTugas extends ManageRelatedRecords
 
     protected static string $resource = ModulResource::class;
     protected static string $relationship = 'tugas';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     public static function getNavigationLabel(): string
     {
@@ -160,7 +160,7 @@ class ManageTugas extends ManageRelatedRecords
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('view')
-                        ->label('View')
+                        ->label('Lihat')
                         ->action(fn($record) => $this->redirectRoute('filament.admin.resources.tugas.view', $record))
                         ->icon('heroicon-o-eye'),
                     Tables\Actions\ReplicateAction::make()

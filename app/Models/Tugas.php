@@ -8,7 +8,7 @@ class Tugas extends Pivot
 {
     protected $table = 'mengerjakan';
     protected $foreignKey = 'materi_tugas_id';
-    protected $relatedKey = 'uses_id';
+    protected $relatedKey = 'users_id';
     public $incrementing = true;
 
     public function user()

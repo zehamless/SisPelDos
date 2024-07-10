@@ -90,11 +90,7 @@ class ManagePendaftar extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('role')
                     ->label('Status Dosen')
                     ->badge()
-                    ->color(fn($record) => match ($record->role) {
-                        'admin' => 'primary',
-                        'Internal' => 'success',
-                        'External' => 'info',
-                    }),
+                    ->color('info'),
             ])
             ->filters([
 //                Tables\Filters\TrashedFilter::make()
@@ -112,6 +108,7 @@ class ManagePendaftar extends ManageRelatedRecords
                     ->label('Penentuan')
                     ->mutateFormDataUsing(function (array $data) {
                         $tugass = $this->getRecord()->allTugas;
+//                        dd($tugass);
                         if ($data['status'] === 'diterima') {
                             dispatch(new AttachTugasKuisJob($data['users_id'], $tugass));
                         }

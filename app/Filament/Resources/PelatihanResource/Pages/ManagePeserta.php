@@ -27,10 +27,12 @@ class ManagePeserta extends ManageRelatedRecords
     {
         return 'Peserta';
     }
+
     public static function getNavigationBadge(): ?string
     {
-        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->peserta->count());
+        return (self::getResource()::getModel()::where('slug', request()->route('record'))->first()?->peserta->count());
     }
+
     public function form(Form $form): Form
     {
         return $form
@@ -72,16 +74,12 @@ class ManagePeserta extends ManageRelatedRecords
             ->recordTitleAttribute('nama')
             ->columns([
                 Tables\Columns\TextColumn::make('nama')
-                ->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('role')
                     ->label('Status Dosen')
                     ->badge()
-                    ->color(fn($record) => match ($record->role) {
-                        'admin' => 'primary',
-                        'Internal' => 'success',
-                        'External' => 'info',
-                    })
-                ->sortable(),
+                    ->color('info')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -91,7 +89,7 @@ class ManagePeserta extends ManageRelatedRecords
                         'ditolak' => 'danger',
                         'selesai' => 'success',
                     })
-                ->sortable(),
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('exported')
                     ->label('Exported')
                     ->icon(fn($state) => $state ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle')
@@ -144,7 +142,7 @@ class ManagePeserta extends ManageRelatedRecords
                             ->where('pelatihan_id', $record->pelatihan_id)
                             ->update(['exported' => true]))
                         ->columnMapping(false)
-                    ->visible(fn($record) => $record->status === 'selesai'),
+                        ->visible(fn($record) => $record->status === 'selesai'),
                     Tables\Actions\DetachAction::make()
                         ->label('Hapus Peserta'),
                 ]),
@@ -156,12 +154,14 @@ class ManagePeserta extends ManageRelatedRecords
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ExportBulkAction::make()
                         ->label('Export Sertifikat')
-                        ->modifyQueryUsing(fn($query, $record) => Sertifikat::where('users_id', $record->id)
-                            ->where('pelatihan_id', $record->pelatihan_id)
-                            ->with('pelatihan.periode', 'user'))
-                        ->after(fn($record) => Pendaftaran::where('users_id', $record->id)
-                            ->where('pelatihan_id', $record->pelatihan_id)
-                            ->update(['exported' => true]))
+                        ->modifyQueryUsing(fn($query) => $query->with('pelatihan.periode'))
+                        ->after(function ($records) {
+                            foreach ($records as $record) {
+                                Pendaftaran::where('users_id', $record)
+                                    ->where('pelatihan_id', $this->getRecord()->id)
+                                    ->update(['exported' => true]);
+                            }
+                        })
                         ->exporter(PelatihanExporter::class)
                         ->columnMapping(false),
                 ]),
