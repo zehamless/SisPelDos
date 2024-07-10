@@ -46,7 +46,10 @@ class Modul extends Model
     {
         return $this->hasMany(MateriTugas::class)->where('jenis', 'tugas');
     }
-
+    public function diskusi(): HasMany
+    {
+        return $this->hasMany(MateriTugas::class)->where('jenis', 'diskusi');
+    }
     public function kuis(): HasMany
     {
         return $this->hasMany(MateriTugas::class)->where('jenis', 'kuis');

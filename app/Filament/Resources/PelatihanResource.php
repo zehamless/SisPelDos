@@ -162,13 +162,13 @@ class PelatihanResource extends Resource
                                         TextInput::make('no_sertifikat')
                                             ->label('No Sertifikat')
                                             ->prefix('/')
-                                            ->placeholder('Contoh: PPAI-IP-05/LP3M-UNILA/2023')
-                                            ->required(),
+                                            ->placeholder('Contoh: PPAI-IP-05/LP3M-UNILA/2023'),
                                         TextInput::make('jam_pelatihan')
                                             ->label('Jam Pelatihan')
                                             ->numeric()
                                             ->suffix('Jam')
                                             ->placeholder('Contoh: 40')
+                                            ->minValue(0)
                                             ->required(),
                                     ])->columns(2),
                                 Fieldset::make()

@@ -37,18 +37,6 @@ class ModulResource extends Resource
     {
         return Ancestor::make('modul', 'pelatihan');
     }
-//    public static function canAccess(): bool
-//    {
-//        if (auth()->user()->role === 'admin') {
-//            return true;
-//        }
-//        if (auth()->user()->role === 'pengajar' && auth()->user()->moduls()->exists()) {
-//            return true;
-//        }
-//        return false;
-//    }
-
-
     public static function canEdit(Model $record): bool
     {
         return auth()->user()->role === 'admin';
@@ -155,6 +143,7 @@ class ModulResource extends Resource
             Pages\ManageMateri::class,
             Pages\ManageTugas::class,
             Pages\ManageKuis::class,
+            Pages\ManageDiscuss::class,
             Pages\ManagePengajar::class,
         ]);
     }
@@ -169,6 +158,7 @@ class ModulResource extends Resource
             'materi' => Pages\ManageMateri::route('/{record}/materi'),
             'tugas' => Pages\ManageTugas::route('/{record}/tugas'),
             'kuis' => Pages\ManageKuis::route('/{record}/kuis'),
+            'diskusi' => Pages\ManageDiscuss::route('/{record}/diskusi'),
             'pengajar' => Pages\ManagePengajar::route('/{record}/pengajar'),
         ];
     }

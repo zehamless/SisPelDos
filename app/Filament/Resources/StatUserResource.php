@@ -67,10 +67,10 @@ class StatUserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListStatUsers::route('/'),
-            'create' => Pages\CreateStatUser::route('/create'),
+//            'index' => Pages\ListStatUsers::route('/'),
+//            'create' => Pages\CreateStatUser::route('/create'),
             'view' => Pages\ViewStatUser::route('/{user}/{pelatihan}'),
-            'edit' => Pages\EditStatUser::route('/{record}/edit'),
+//            'edit' => Pages\EditStatUser::route('/{record}/edit'),
         ];
     }
 }

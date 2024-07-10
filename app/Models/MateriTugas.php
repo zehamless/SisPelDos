@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
 
 class MateriTugas extends Model
 {
-    use SoftDeletes, HasFactory, Cloneable;
+    use SoftDeletes, HasFactory, Cloneable, HasFilamentComments;
 
 //    protected $cloneable_relations = ['kuis'];
     protected $fillable = [
@@ -88,7 +89,10 @@ class MateriTugas extends Model
     {
         return $this->peserta()->wherePivot('is_kuis', false)->withPivot('created_at', 'files', 'file_name', 'updated_at');
     }
-
+    public function mengerjakanDiskusi()
+    {
+        return $this->where('jenis', 'diskusi')->peserta()->wherePivot('is_kuis', false)->withPivot('created_at', 'files', 'file_name', 'updated_at');
+    }
     public function scopePeserta(Builder $query): Builder
     {
         return $this->peserta()->where();
@@ -103,7 +107,10 @@ class MateriTugas extends Model
     {
         return $this->where('jenis', 'tugas');
     }
-
+    public function scopeDiskusi(Builder $query): Builder
+    {
+        return $this->where('jenis', 'diskusi');
+    }
     public function scopeTerjadwal(Builder $query): Builder
     {
         return $query->where('terjadwal', true)->where('published', false)->whereTime('tgl_mulai', '<=', now())->whereTime('tgl_selesai', '>=', now());

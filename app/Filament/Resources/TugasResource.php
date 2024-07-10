@@ -14,13 +14,10 @@ use Filament\Infolists\Infolist;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TugasResource extends Resource
 {
@@ -49,7 +46,7 @@ class TugasResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return !$record->mengerjakanTugas()->wherePivot('status', '!=', 'selesai')->exists();
+        return !$record->mengerjakanTugas()->exists() || $record->mengerjakanTugas()->wherePivot('status', 'belum')->exists();
     }
 
     public static function form(Form $form): Form
@@ -109,81 +106,6 @@ class TugasResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('published')
-                    ->label('Published')
-                    ->badge()
-                    ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
-                    ->color(fn($state) => $state ? 'success' : 'danger')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('terjadwal')
-                    ->label('Terjadwal')
-                    ->badge()
-                    ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
-                    ->color(fn($state) => $state ? 'success' : 'danger')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('judul')
-                    ->label('Judul')
-                    ->searchable()
-                    ->words(5),
-                Tables\Columns\TextColumn::make('tgl_mulai')
-                    ->label('Tanggal Mulai')
-                    ->badge()
-                    ->color('success')
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta'),
-                Tables\Columns\TextColumn::make('tgl_tenggat')
-                    ->label('Tanggal Mulai')
-                    ->badge()
-                    ->color('warning')
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta'),
-                Tables\Columns\TextColumn::make('tgl_selesai')
-                    ->label('Tanggal Mulai')
-                    ->badge()
-                    ->color('danger')
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta'),
-                Tables\Columns\TextColumn::make('deskripsi')
-                    ->label('Deskripsi')
-                    ->limit(50),
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make(),
-//                    Tables\Actions\DissociateAction::make(),
-//                    Action::make('view materi')
-//                        ->label('View Materi')
-//                        ->icon('heroicon-c-document-magnifying-glass')
-//                        ->url(fn($record): string => MateriTugasResource::getUrl('view', $record->id)),
-                    Tables\Actions\DeleteAction::make()
-                        ->disabled(fn($record) => $record->peserta()->exists()),
-                    Tables\Actions\ForceDeleteAction::make(),
-                    Tables\Actions\RestoreAction::make(),
-                ]),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-//                    Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                ]),
-            ])->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]))
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('jenis', 'tugas'))
-            ->deferFilters()
-            ->defaultSort('urutan')
-            ->reorderable('urutan');
-    }
 
     public static function infolist(Infolist $infolist): Infolist
     {

@@ -16,6 +16,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\DB;
 
 class ViewStatUser extends ViewRecord
@@ -85,12 +86,13 @@ class ViewStatUser extends ViewRecord
                 Actions::make([
                     Action::make('Kelulusan')
                         ->requiresConfirmation()
+                        ->modalWidth(MaxWidth::Large)
                         ->fillForm(function ($record) use ($status) {
                             $sertifkat = $record->peserta()->where('pelatihan_id', $this->pelatihan)->first();
-//                            dd($sertifkat);
+//                            dd($sertifkat->pivot->files);
                             return [
                                 'status' => $status,
-                                'tgl_sertifikat' => $sertifkat->pivot->tgl_sertifikat ?? null,
+                                'tgl_sertifikat' => $sertifkat->pivot->tgl_sertifikat ?? $sertifkat->tgl_selesai,
                                 'files' => $sertifkat->pivot->files ?? null,
                                 'file_name' => $sertifkat->pivot->file_name ?? null,
                                 'no_sertifikat' => explode('/', $sertifkat->pivot->no_sertifikat)[0] ?? null
@@ -110,18 +112,17 @@ class ViewStatUser extends ViewRecord
                                 ])->grouped(),
                             DatePicker::make('tgl_sertifikat')
                                 ->label('Tanggal Sertifikat')
-                                ->required()
                                 ->native(false)
+                                ->hint('Tanggal default adalah tanggal selesai pelatihan')
                                 ->timezone('Asia/Jakarta'),
                             TextInput::make('no_sertifikat')
                                 ->label('No Sertifikat')
+                                ->hint('Periksa No Sertifikat di Pelatihan terlebih dahulu')
                                 ->numeric()
                                 ->maxLength(5)
                                 ->suffix(function ($record) use ($pelatihan) {
-//                                    dd($pelatihan);
                                     return "/" . $pelatihan->no_sertifikat;
-                                })
-                                ->required(),
+                                }),
                             FileUpload::make('files')
                                 ->label('Upload Sertifikat')
                                 ->deletable()

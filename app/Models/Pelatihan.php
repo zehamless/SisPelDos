@@ -69,6 +69,6 @@ class Pelatihan extends Model
     }
     public function allTugas()
     {
-        return $this->hasManyThrough(MateriTugas::class, Modul::class)->whereIn('jenis', ['tugas','kuis']);
+        return $this->hasManyThrough(MateriTugas::class, Modul::class)->whereNot('jenis', 'materi');
     }
 }

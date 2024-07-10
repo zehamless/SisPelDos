@@ -25,6 +25,7 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
 
 class MateriTugasResource extends Resource
 {
@@ -137,7 +138,7 @@ class MateriTugasResource extends Resource
                                 ->form([
                                     FileUpload::make('files')
                                         ->disabled()
-                                        ->hint('Klik icon untuk mengunduh sertifikat.')
+                                        ->hint('Klik icon untuk mengunduh file.')
                                         ->hintIcon('heroicon-s-arrow-down-tray')
                                         ->label('Download Files')
                                         ->disk('public')
@@ -319,6 +320,10 @@ class MateriTugasResource extends Resource
                     ])
                     ->columns(1)
                     ->visible(fn($record) => $record->jenis === 'kuis'),
+                Section::make('Diskusi')
+                ->schema([
+                    CommentsEntry::make('filament_comments'),
+                ])->visible(fn($record) => $record->jenis === 'diskusi'),
             ]);
     }
 

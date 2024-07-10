@@ -16,7 +16,7 @@ class KalenderWidget extends FullCalendarWidget
 //    protected static string $view = 'livewire.kalender-widget';
     public function fetchEvents(array $info): array
     {
-        $mengerjakan = Mengerjakan::where('users_id', auth()->user()->id)->pluck('materi_tugas_id')->toArray();
+        $mengerjakan = Mengerjakan::where('users_id', auth()->user()->id)->where('status','selesai')->pluck('materi_tugas_id')->toArray();
         return MateriTugas::query()
             ->whereNot('jenis', 'materi')
             ->where('published', true)

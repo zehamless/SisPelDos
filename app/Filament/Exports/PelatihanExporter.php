@@ -20,9 +20,9 @@ class PelatihanExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('user.no_induk')
+            ExportColumn::make('no_induk')
                 ->label('nidn'),
-            ExportColumn::make('user.nama')
+            ExportColumn::make('nama')
                 ->label('nm_peserta'),
             ExportColumn::make('pelatihan.periode.tahun')
                 ->label('thn'),
