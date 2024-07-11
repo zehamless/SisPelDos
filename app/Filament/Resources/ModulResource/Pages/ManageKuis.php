@@ -30,10 +30,10 @@ class ManageKuis extends ManageRelatedRecords
     {
         return 'Kuis';
     }
-//    public static function getNavigationBadge(): ?string
-//    {
-//        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->kuis->count());
-//    }
+    public static function getNavigationBadge(): ?string
+    {
+        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->kuis->count());
+    }
 
     public function form(Form $form): Form
     {
