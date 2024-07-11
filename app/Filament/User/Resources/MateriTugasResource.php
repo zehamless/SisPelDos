@@ -153,7 +153,7 @@ class MateriTugasResource extends Resource
                 Section::make('Tugas')
                     ->schema([
 
-                        TextEntry::make('tgl_tenggat')
+                        TextEntry::make('tgl_selesai')
                             ->label('Tenggat Waktu')
                             ->badge()
                             ->color('danger'),

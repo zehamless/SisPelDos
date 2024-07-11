@@ -97,7 +97,7 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
             ->actions([
                 EditAction::make()
                     ->label('Beri Penilaian')
-                    ->hidden(fn($record) => $record->status !== 'selesai'),
+                    ->hidden(fn($record) => $record->status === 'belum'),
             ])
             ->bulkActions([
                 //
