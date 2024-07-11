@@ -32,7 +32,8 @@ class PenilaianDiskusi extends ManageRelatedRecords
     }
     public static function getNavigationBadge(): ?string
     {
-        return ( self::getResource()::getModel()::find(request()->route('record'))?->mengerjakanTugas()->wherePivotNotIn('status', ['belum'])->count());
+        $record = self::getResource()::getModel()::find(request()->route()->parameter('record'));
+        return $record ? $record->mengerjakanTugas()->wherePivotNotIn('status', ['belum'])->count() : null;
     }
     public function form(Form $form): Form
     {

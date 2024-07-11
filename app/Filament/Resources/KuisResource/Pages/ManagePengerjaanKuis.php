@@ -22,9 +22,11 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
     protected static string $relationship = 'mengerjakanKuis';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     public static function getNavigationBadge(): ?string
     {
-        return ( self::getResource()::getModel()::findOrFail(request()->route()->parameter('record'))->mengerjakanKuis()->wherePivotNotIn('status', ['belum'])->count());
+        $record = self::getResource()::getModel()::find(request()->route()->parameter('record'));
+        return $record ? $record->mengerjakanKuis()->wherePivotNotIn('status', ['belum'])->count() : null;
     }
 
     public static function getNavigationLabel(): string
@@ -78,8 +80,8 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
                         }
                         return '-';
                     })
-                ->default('-')
-                ->color('info')
+                    ->default('-')
+                    ->color('info')
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -95,13 +97,13 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
             ->actions([
                 EditAction::make()
                     ->label('Beri Penilaian')
-                ->hidden(fn($record) => $record->status !== 'selesai'),
+                    ->hidden(fn($record) => $record->status !== 'selesai'),
                 Tables\Actions\Action::make('Review Kuis')
                     ->icon('heroicon-c-document-magnifying-glass')
                     ->url(fn($record) => route('kuis.review', $record->pivot->id))
                     ->openUrlInNewTab()
                     ->color('info')
-                ->hidden(fn($record) => $record->status !== 'selesai'),
+                    ->hidden(fn($record) => $record->status !== 'selesai'),
             ])
             ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([
