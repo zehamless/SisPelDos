@@ -69,7 +69,7 @@ class MateriTugas extends Model
 
     public function kuis()
     {
-        return $this->belongsToMany(Kuis::class, 'kuis_pertanyaan', 'materi_tugas_id', 'kuis_id');
+        return $this->belongsToMany(kuis::class, 'kuis_pertanyaan', 'materi_tugas_id', 'kuis_id');
     }
 
     public function peserta()
