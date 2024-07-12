@@ -97,13 +97,13 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
             ->actions([
                 EditAction::make()
                     ->label('Beri Penilaian')
-                    ->hidden(fn($record) => $record->status !== 'selesai'),
+                    ->hidden(fn($record) => $record->status === 'belum'),
                 Tables\Actions\Action::make('Review Kuis')
                     ->icon('heroicon-c-document-magnifying-glass')
                     ->url(fn($record) => route('kuis.review', $record->pivot->id))
                     ->openUrlInNewTab()
                     ->color('info')
-                    ->hidden(fn($record) => $record->status !== 'selesai'),
+                    ->hidden(fn($record) => $record->status === 'belum'),
             ])
             ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([

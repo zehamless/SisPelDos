@@ -79,6 +79,7 @@ class AllTugasRelationManager extends RelationManager
                     ->words(5),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
+                    ->markdown()
                     ->limit(50),
                 Tables\Columns\TextColumn::make('tgl_selesai')
                     ->label('Tanggal Selesai')
@@ -92,6 +93,8 @@ class AllTugasRelationManager extends RelationManager
                     ->formatStateUsing(function ($record) {
                         switch ($record->jenis) {
                             case 'tugas':
+                                return $record->mengerjakanTugas()->where('users_id', auth()->user()->id)->first()->pivot->penilaian ?? '-';
+                            case 'diskusi':
                                 return $record->mengerjakanTugas()->where('users_id', auth()->user()->id)->first()->pivot->penilaian ?? '-';
                             case 'kuis':
                                 return $record->mengerjakanKuis()->where('users_id', auth()->user()->id)->first()->pivot->penilaian ?? '-';
