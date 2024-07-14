@@ -25,10 +25,12 @@ class ManagePengajar extends ManageRelatedRecords
     {
         return auth()->user()->role === 'admin';
     }
-public static function getNavigationBadge(): ?string
-{
-    return self::getResource()::getModel()::where('slug', request()->route('record'))->first()?->pengajar->count();
-}
+
+    public static function getNavigationBadge(): ?string
+    {
+        return self::getResource()::getModel()::where('slug', request()->route('record'))->first()?->pengajar->count();
+    }
+
     public static function getNavigationLabel(): string
     {
         return 'Pengajar';
@@ -65,7 +67,12 @@ public static function getNavigationBadge(): ?string
             ->headerActions([
 //                Tables\Actions\CreateAction::make(),
                 Tables\Actions\AttachAction::make()
-                ->label('Tambah Pengajar')
+                    ->label('Tambah Pengajar')
+                    ->recordSelect(fn(Forms\Components\Select $select) =>
+                    $select->placeholder('Pilih Pengajar')
+                    )
+                    ->modalHeading('Tambah Pengajar')
+                    ->preloadRecordSelect()
             ])
             ->actions([
                 Tables\Actions\Action::make('lihatPengguna')
@@ -80,7 +87,7 @@ public static function getNavigationBadge(): ?string
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DetachBulkAction::make()
-                    ->label('Hapus Pengajar'),
+                        ->label('Hapus Pengajar'),
 //                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
