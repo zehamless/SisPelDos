@@ -66,6 +66,7 @@ class Modul extends Model
     public function pengajar()
     {
         return $this->belongsToMany(User::class, 'pengajar_modul', 'modul_id', 'user_id')
+            ->where('role', 'pengajar')
             ->withTimestamps();
 
     }
