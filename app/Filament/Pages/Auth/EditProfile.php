@@ -27,6 +27,11 @@ class EditProfile extends BaseEditProfile
         return $data;
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->check();
+    }
+
     public function form(Form $form): Form
     {
         return $form

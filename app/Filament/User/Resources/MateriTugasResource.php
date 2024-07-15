@@ -83,7 +83,7 @@ class MateriTugasResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->count();
+        $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->where('status', 'selesai')->count();
         $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi', 'slug']);
         $exist = auth()->user()->mengerjakan()->where('materi_tugas_id', $infolist->getRecord()->id)->where('status', 'belum')->exists();
         return $infolist
@@ -152,9 +152,12 @@ class MateriTugasResource extends Resource
                     ])->visible(fn($record) => $record->files !== null),
                 Section::make('Tugas')
                     ->schema([
-
-                        TextEntry::make('tgl_selesai')
-                            ->label('Tenggat Waktu')
+                        TextEntry::make('tgl_mulai')
+                            ->label('Tanggal Mulai')
+                            ->badge()
+                            ->color('success'),
+                        TextEntry::make('tgl_tenggat')
+                            ->label('Tanggal Selesai')
                             ->badge()
                             ->color('danger'),
                         Actions::make([
@@ -178,8 +181,8 @@ class MateriTugasResource extends Resource
                                     }
 
                                     auth()->user()->mengerjakan()->updateExistingPivot($record->id, [
-                                        'files' => $data['files'],
-                                        'file_name' => $data['file_name'],
+                                        'files' => json_encode($data['files']),
+                                        'file_name' => json_encode($data['file_name']),
                                         'pesan_peserta' => $data['pesan_peserta'],
                                         'tgl_submit' => now(),
                                         'status' => $status,
@@ -199,8 +202,8 @@ class MateriTugasResource extends Resource
                                     return [
                                         'tgl_submit' => $mengerjakan->updated_at,
                                         'penilaian' => $mengerjakan->penilaian,
-                                        'files' => $mengerjakan->files,
-                                        'file_name' => $mengerjakan->file_name,
+                                        'files' => json_decode($mengerjakan->files, true),
+                                        'file_name' => json_decode($mengerjakan->file_name, true),
                                         'pesan_peserta' => $mengerjakan->pesan_peserta,
                                         'status' => $mengerjakan->status,
                                         'pesan_admin' => $mengerjakan->pesan_admin,
@@ -265,8 +268,7 @@ class MateriTugasResource extends Resource
                                 })
                                 ->visible(!$exist)
                         ])
-
-                    ])
+                    ])->columns(2)
                     ->visible(fn($record) => $record->jenis === 'tugas'),
                 Section::make('Kuis')
                     ->schema([
@@ -292,8 +294,6 @@ class MateriTugasResource extends Resource
                                     ->suffix(' Menit')
                                     ->color('info'),
                             ])->columns(3),
-
-
                         Fieldset::make('Tanggal')
                             ->schema([
                                 TextEntry::make('tgl_mulai')
@@ -301,10 +301,6 @@ class MateriTugasResource extends Resource
                                     ->badge()
                                     ->color('success'),
                                 TextEntry::make('tgl_tenggat')
-                                    ->label('Tenggat')
-                                    ->badge()
-                                    ->color('warning'),
-                                TextEntry::make('tgl_selesai')
                                     ->label('Selesai')
                                     ->badge()
                                     ->color('danger'),

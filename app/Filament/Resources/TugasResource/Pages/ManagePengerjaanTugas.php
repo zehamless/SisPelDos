@@ -97,6 +97,12 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
             ->actions([
                 EditAction::make()
                     ->label('Beri Penilaian')
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['files']= json_decode($data['files'], true);
+                        $data['file_name']= json_decode($data['file_name'], true);
+
+                        return $data;
+                    })
                     ->hidden(fn($record) => $record->status === 'belum'),
             ])
             ->bulkActions([

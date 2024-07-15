@@ -22,7 +22,7 @@ class KuisRelationManager extends RelationManager
     public function isReadOnly(): bool
     {
         if ($this->isReadOnly === null) {
-            $this->isReadOnly = $this->getOwnerRecord()->mengerjakanKuis()->exists();
+            $this->isReadOnly = $this->getOwnerRecord()->mengerjakanKuis()->wherePivot('status', 'selesai')->exists();
         }
         return $this->isReadOnly;
     }
