@@ -265,7 +265,7 @@ class PelatihanResource extends Resource
                                 ->body(auth()->user()->nama . ' mengubah file pendaftaran')
                                 ->actions([
                                     \Filament\Notifications\Actions\Action::make('Lihat')
-                                        ->url(route('filament.admin.pelatihan.resources.pelatihans.view', $record->slug))
+                                        ->url(route('filament.admin.resources.pelatihans.pendaftar', $record->slug))
                                 ])
                                 ->info()
                                 ->sendToDatabase(User::admin()->get());
