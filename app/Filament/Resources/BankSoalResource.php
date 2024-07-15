@@ -50,6 +50,7 @@ class BankSoalResource extends Resource
                     ->label('Tipe Soal')
                     ->blocks([
                         Forms\Components\Builder\Block::make('Radio')
+                            ->label('1 Jawaban')
                             ->schema([
                                 Forms\Components\TagsInput::make('jawaban_option')
                                     ->label('Pilihan')
@@ -75,6 +76,7 @@ class BankSoalResource extends Resource
                                     }),
                             ])->columns(2),
                         Forms\Components\Builder\Block::make('Checkbox')
+                            ->label('Multiple Jawaban')
                             ->schema([
                                 Forms\Components\TagsInput::make('jawaban_option')
                                     ->label('Pilihan')

@@ -73,6 +73,7 @@ class AllTugasRelationManager extends RelationManager
                     ->words(5),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
+                    ->markdown()
                     ->limit(50),
                 Tables\Columns\TextColumn::make('tgl_mulai')
                     ->label('Tanggal Mulai')

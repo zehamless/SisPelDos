@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 class MengerjakanKuisRelationManager extends RelationManager
 {
     protected static string $relationship = 'mengerjakanKuis';
-public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
-{
-    return $ownerRecord->jenis=='kuis';
-}
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return $ownerRecord->jenis == 'kuis';
+    }
 
     public function form(Form $form): Form
     {
@@ -31,13 +32,16 @@ public static function canViewForRecord(Model $ownerRecord, string $pageClass): 
     {
         return $table
 //            ->recordTitleAttribute('created_at')
+                ->modifyQueryUsing(function ($query) {
+                    $query->where('status', 'selesai');
+                })
             ->columns([
                 Tables\Columns\TextColumn::make('pivot.created_at')
                     ->label('Dikerjakan Pada')
-                ->dateTime()
-                ->timezone('Asia/Jakarta'),
+                    ->dateTime()
+                    ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('penilaian')
-                ->numeric(),
+                    ->numeric(),
             ])
             ->filters([
                 //
@@ -47,9 +51,9 @@ public static function canViewForRecord(Model $ownerRecord, string $pageClass): 
             ])
             ->actions([
                 Tables\Actions\Action::make('Preview')
-                ->icon('heroicon-o-eye')
-                ->url(fn ($record) => route('kuis.review', $record->pivot->id))
-                ->openUrlInNewTab()
+                    ->icon('heroicon-o-eye')
+                    ->url(fn($record) => route('kuis.review', $record->pivot->id))
+                    ->openUrlInNewTab()
 //                Tables\Actions\EditAction::make(),
 //                Tables\Actions\DeleteAction::make(),
             ])
