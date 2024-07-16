@@ -65,7 +65,7 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
                     ->default('-')
                     ->color('success'),
                 TextColumn::make('tgl_submit')
-                    ->label('Waktu Mengerjakan')
+                    ->label('Tanggal mengerjakan')
                     ->dateTime()
                     ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('files')
