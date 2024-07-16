@@ -7,6 +7,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
@@ -41,23 +42,23 @@ class EditProfile extends BaseEditProfile
                         Tabs\Tab::make('profile')
                             ->label('Foto Profil')
                             ->schema([
-                                TextInput::make('link')
-                                    ->label('Link')
+                                Hidden::make('no_induk')
                                     ->hidden(),
                                 Actions::make([
                                     Action::make('Fetch Data')
                                         ->label('Sinkronisasi Data Dosen')
                                         ->action(function (Get $get, Set $set) {
-                                            $id = preg_replace('/^\/data_dosen\//', '', $get('link'));
+                                            $id = $get('no_induk');
                                             $data = $this->hitDosenApiController($id);
+//                                            dd($data);
                                             if (is_array($data)) {
-                                                $set('universitas', $data['namapt']);
-                                                $set('prodi', $data['namaprodi']);
-                                                $set('jenis_kelamin', $data['jk']);
-                                                $set('jabatan_fungsional', $data['fungsional']);
-                                                $set('pendidikan_tertinggi', $data['pend_tinggi']);
-                                                $set('status_kerja', $data['ikatankerja']);
-                                                $set('status_dosen', $data['statuskeaktifan']);
+                                                $set('universitas', $data['nama_pt']);
+                                                $set('prodi', $data['nama_prodi']);
+                                                $set('jenis_kelamin', $data['jenis_kelamin']);
+                                                $set('jabatan_fungsional', $data['jabatan_akademik']);
+                                                $set('pendidikan_tertinggi', $data['pendidikan_tertinggi']);
+                                                $set('status_kerja', $data['status_ikatan_kerja']);
+                                                $set('status_dosen', $data['status_aktivitas']);
                                                 Notification::make()
                                                     ->title('Success')
                                                     ->success()
@@ -161,9 +162,12 @@ class EditProfile extends BaseEditProfile
 
     private function hitDosenApiController(mixed $param)
     {
+//        https://pddikti.kemdikbud.go.id/api/pencarian/dosen/param
         try {
-            $response = Http::get('https://api-frontend.kemdikbud.go.id/detail_dosen/' . $param)->json();
-            return $response['dataumum'];
+            $getId = Http::get('https://pddikti.kemdikbud.go.id/api/pencarian/dosen/' . $param)->json();
+//            https://pddikti.kemdikbud.go.id/api/dosen/profile/param
+            $response = Http::get('https://pddikti.kemdikbud.go.id/api/dosen/profile/' . $getId[0]['id'])->json();
+            return  $response;
         } catch (Exception $e) {
             return $e->getMessage();
         }
