@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Jobs\AttachTugasKuisJob;
 use App\Jobs\clonePelatihanJob;
+use App\Jobs\unpublishPelatihanJob;
 use App\Models\kuis;
 use App\Models\MateriTugas;
 use App\Models\Pelatihan;
@@ -74,10 +75,13 @@ class QueryTryTest extends TestCase
 
     public function testJob()
     {
-        $modul = Pelatihan::find(1)->allTugas;
-        $user = User::first();
-        $err = dispatch(new AttachTugasKuisJob($user, $modul));
-        dd($err);
+        try {
+
+        unpublishPelatihanJob::dispatch(Pelatihan::find(1));
+        }
+        catch (\Exception $e) {
+            dd($e);
+        }
 //        $modul = Pelatihan::find(1)->peserta()->syncWithPivotValues();
     }
 
