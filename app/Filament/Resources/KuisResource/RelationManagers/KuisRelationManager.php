@@ -64,7 +64,9 @@ class KuisRelationManager extends RelationManager
                         ->optionsLimit(20)
                         ->options(function () {
                             $options = [];
-                            $kuis = kuis::with('kategories')->get();
+                            $attached = $this->getOwnerRecord()->kuis->pluck('id')->toArray();
+//                            dd($attached);
+                         $kuis = kuis::with('kategories')->whereNotIn('id', $attached)->get();
 
                             foreach ($kuis as $item) {
                                 $kategori = $item->kategories->kategori;
