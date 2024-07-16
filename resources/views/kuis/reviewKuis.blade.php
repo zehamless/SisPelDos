@@ -65,7 +65,7 @@
                 }
                 return item;
             });
-            console.log(options)
+            // console.log(options)
             return {
                 name: 'Soal ' + (index + 1),
                 navigationTitle: 'Soal ' + (index + 1),
@@ -117,7 +117,7 @@
 }
 
     })
-    console.log(surveyData)
+    // console.log(surveyData)
     survey.data = surveyData;
 
     var converter = new showdown.Converter();

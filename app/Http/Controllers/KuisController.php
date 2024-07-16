@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\kuisResource;
 use App\Models\MateriTugas;
+use App\Models\Mengerjakan;
 use Illuminate\Http\Request;
 
 class KuisController extends Controller
@@ -70,7 +71,8 @@ class KuisController extends Controller
                     'files' => json_encode($arrData),
                     'penilaian' => $penilaian,
                     'status' => $status,
-                    'is_kuis' => true
+                    'is_kuis' => true,
+                    'tgl_submit' => now()
                 ]);
                 activity('mengerjakan')
                     ->performedOn($model)
@@ -85,10 +87,11 @@ class KuisController extends Controller
         }
     }
 
-    public function review($kuis)
+    public function review( $kuis)
     {
         $jawaban = auth()->user()->kuis()->wherePivot('id', $kuis)->first();
-        $jsonData = MateriTugas::with('kuis')->where('id', $jawaban->pivot->materi_tugas_id)->first()->toJson();
+//        dd($jawaban);
+//        $jsonData = MateriTugas::with('kuis')->where('id', $jawaban->pivot->materi_tugas_id)->first()->toJson();
         $jsonJawaban = $jawaban->toJson();
 //        return response()->json($data);
         return view('kuis.reviewKuis', compact('jsonJawaban'));
