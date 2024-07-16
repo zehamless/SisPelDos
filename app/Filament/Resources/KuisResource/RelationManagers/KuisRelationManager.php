@@ -62,9 +62,17 @@ class KuisRelationManager extends RelationManager
 //                        ->multiple()
                         ->placeholder('Pilih Pertanyaan dari BankSoal')
                         ->optionsLimit(20)
+                        ->getSearchResultsUsing(function ($search) {
+                            $attachedIds = $this->getOwnerRecord()->kuis->pluck('id')->toArray();
+                            return kuis::where('pertanyaan', 'like', "%{$search}%")
+                                ->whereNotIn('id', $attachedIds)
+                                ->pluck('pertanyaan', 'id')->toArray();
+                        })
                         ->options(function () {
                             $options = [];
-                            $kuis = kuis::with('kategories')->get();
+                            $attached = $this->getOwnerRecord()->kuis->pluck('id')->toArray();
+//                            dd($attached);
+                         $kuis = kuis::with('kategories')->whereNotIn('id', $attached)->get();
 
                             foreach ($kuis as $item) {
                                 $kategori = $item->kategories->kategori;
