@@ -10,6 +10,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -41,7 +42,7 @@ class Register extends SimplePage
     use InteractsWithFormActions;
     use WithRateLimiting;
 
-   public  $dosenMapp;
+    public  $dosenMapp;
 
     /**
      * @var view-string
@@ -149,10 +150,8 @@ class Register extends SimplePage
 
     protected function getNameFormComponent(): Component
     {
-        return TextInput::make('nama')
-            ->label(__('filament-panels::pages/auth/register.form.name.label'))
-            ->readOnly()
-            ->maxLength(255);
+        return Hidden::make('nama')
+            ->label(__('filament-panels::pages/auth/register.form.name.label'));
     }
 
     protected function getEmailFormComponent(): Component
@@ -169,6 +168,7 @@ class Register extends SimplePage
     {
         return Select::make('link')
             ->label('Dosen')
+            ->placeholder('Nama atau Nomor Induk')
             ->searchable()
             ->required()
             ->autofocus()
@@ -213,8 +213,7 @@ class Register extends SimplePage
     }
     protected function nidnComponent()
     {
-        return TextInput::make('no_induk')
-            ->readOnly();
+        return Hidden::make('no_induk');
     }
     protected function getPasswordFormComponent(): Component
     {
