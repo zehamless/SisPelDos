@@ -119,8 +119,8 @@ class EditProfile extends BaseEditProfile
                                         Select::make('jenis_kelamin')
                                             ->label('Jenis Kelamin')
                                             ->options([
-                                                'L' => 'Laki-laki',
-                                                'P' => 'Perempuan',
+                                                'Laki-laki' => 'Laki-laki',
+                                                'Perempuan' => 'Perempuan',
                                             ]),
                                         TextInput::make('universitas')
                                             ->label('Universitas')
