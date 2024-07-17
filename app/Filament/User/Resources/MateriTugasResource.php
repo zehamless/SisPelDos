@@ -162,6 +162,7 @@ class MateriTugasResource extends Resource
                             ->color('danger'),
                         Actions::make([
                             Actions\Action::make('Submit Tugas')
+                                ->label(fn($record) => $record->tgl_selesai < now() ? 'Tugas Telah Ditutup' : ($record->tgl_mulai > now() ? 'Tugas Belum Dibuka' : 'Submit Tugas'))
                                 ->form([
                                     FileUpload::make('files')
                                         ->label('File Tugas')
@@ -194,7 +195,7 @@ class MateriTugasResource extends Resource
                                         ->log('Mengerjakan tugas ' . $record->judul);
                                 })
                                 ->visible($exist)
-                                ->disabled(fn($record) => $record->tgl_selesai < now()),
+                                ->disabled(fn($record) => $record->tgl_selesai < now() || $record->tgl_mulai > now()),
                             Actions\Action::make('Cek Tugas')
                                 ->fillForm(function ($record) {
                                     $mengerjakan = auth()->user()->mengerjakan()->where('materi_tugas_id', $record->id)->first()->pivot;
@@ -307,19 +308,20 @@ class MateriTugasResource extends Resource
                             ])->columns(3),
                         Actions::make([
                             Actions\Action::make('Kerjakan Sekarang')
+                                ->label(fn($record) => $record->tgl_selesai < now() ? 'Kuis Telah Ditutup' : ($record->tgl_mulai > now() ? 'Kuis Belum Dibuka' : ($attemped >= $record->max_attempt ? 'Maksimum Percobaan Terpenuhi' : 'Kerjakan Kuis')))
                                 ->action(function ($record) {
                                     return redirect()->route('kuis.show', $record->id);
                                 })
                                 ->requiresConfirmation()
+                                ->disabled(fn($record) => $record->tgl_mulai < now() || $record->tgl_selesai > now() || $attemped < $record->max_attempt),
                         ])
-                            ->visible(fn($record) => $record->tgl_mulai < now() && $record->tgl_selesai > now() && $attemped < $record->max_attempt),
                     ])
                     ->columns(1)
                     ->visible(fn($record) => $record->jenis === 'kuis'),
                 Section::make('Diskusi')
-                ->schema([
-                    CommentsEntry::make('filament_comments'),
-                ])->visible(fn($record) => $record->jenis === 'diskusi'),
+                    ->schema([
+                        CommentsEntry::make('filament_comments'),
+                    ])->visible(fn($record) => $record->jenis === 'diskusi'),
             ]);
     }
 
