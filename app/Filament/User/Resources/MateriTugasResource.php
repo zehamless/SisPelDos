@@ -313,7 +313,7 @@ class MateriTugasResource extends Resource
                                     return redirect()->route('kuis.show', $record->id);
                                 })
                                 ->requiresConfirmation()
-                                ->disabled(fn($record) => $record->tgl_mulai < now() || $record->tgl_selesai > now() || $attemped < $record->max_attempt),
+                        ->disabled(fn($record) => now() < $record->tgl_mulai || now() > $record->tgl_selesai || $attemped >= $record->max_attempt),
                         ])
                     ])
                     ->columns(1)
