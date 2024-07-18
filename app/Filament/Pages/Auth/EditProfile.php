@@ -54,7 +54,7 @@ class EditProfile extends BaseEditProfile
                                             if (is_array($data)) {
                                                 $set('universitas', $data['nama_pt']);
                                                 $set('prodi', $data['nama_prodi']);
-                                                $set('jenis_kelamin', $data['jenis_kelamin']);
+                                                $set('jenis_kelamin', $data['jenis_kelamin'] === 'Laki - laki' ? 'L' : 'P');
                                                 $set('jabatan_fungsional', $data['jabatan_akademik']);
                                                 $set('pendidikan_tertinggi', $data['pendidikan_tertinggi']);
                                                 $set('status_kerja', $data['status_ikatan_kerja']);
@@ -167,7 +167,7 @@ class EditProfile extends BaseEditProfile
             $getId = Http::get('https://pddikti.kemdikbud.go.id/api/pencarian/dosen/' . $param)->json();
 //            https://pddikti.kemdikbud.go.id/api/dosen/profile/param
             $response = Http::get('https://pddikti.kemdikbud.go.id/api/dosen/profile/' . $getId[0]['id'])->json();
-            return  $response;
+            return $response;
         } catch (Exception $e) {
             return $e->getMessage();
         }
