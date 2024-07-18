@@ -135,20 +135,18 @@ class ManagePeserta extends ManageRelatedRecords
 //                    Tables\Actions\EditAction::make(),
                     Tables\Actions\ExportAction::make()
                         ->label('Export Sertifikat')
-                        ->modifyQueryUsing(fn($query, $record) => Sertifikat::where('users_id', $record->id)
-                            ->where('pelatihan_id', $record->pelatihan_id)
-                            ->with('pelatihan.periode', 'user'))
+                        ->modifyQueryUsing(fn($query, $record) => $query->where('users_id', $record->id)->with('pelatihan.periode'))
                         ->exporter(PelatihanExporter::class)
-                        ->after(fn($record) => Pendaftaran::where('users_id', $record->id)
-                            ->where('pelatihan_id', $record->pelatihan_id)
-                            ->update(['exported' => true]))
+//                        ->after(fn($record) => Pendaftaran::where('users_id', $record->id)
+//                            ->where('pelatihan_id', $record->pelatihan_id)
+//                            ->update(['exported' => true]))
                         ->columnMapping(false)
                         ->visible(fn($record) => $record->status === 'selesai'),
                     Tables\Actions\DetachAction::make()
                         ->label('Hapus Peserta')
-                    ->before(function ($record){
-                      dispatch(new DetachUser_MateriTugasJob($record->id, $this->getOwnerRecord()->allTugas));
-                    }),
+                        ->before(function ($record) {
+                            dispatch(new DetachUser_MateriTugasJob($record->id, $this->getOwnerRecord()->allTugas));
+                        }),
                 ]),
 
             ])

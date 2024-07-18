@@ -54,7 +54,7 @@ class EditProfile extends BaseEditProfile
                                             if (is_array($data)) {
                                                 $set('universitas', $data['nama_pt']);
                                                 $set('prodi', $data['nama_prodi']);
-                                                $set('jenis_kelamin', $data['jenis_kelamin'] === 'Laki - laki' ? 'L' : 'P');
+                                                $set('jenis_kelamin', $data['jenis_kelamin'] === 'Laki-laki' ? 'L' : 'P');
                                                 $set('jabatan_fungsional', $data['jabatan_akademik']);
                                                 $set('pendidikan_tertinggi', $data['pendidikan_tertinggi']);
                                                 $set('status_kerja', $data['status_ikatan_kerja']);

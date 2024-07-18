@@ -32,10 +32,10 @@ class UserResource extends Resource
     protected static ?int $navigationSort = 99;
     protected static ?string $recordTitleAttribute = 'nama';
 
-public static function canAccess(): bool
-{
-    return auth()->user()->role === 'admin';
-}
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
 
     public static function form(Form $form): Form
     {
@@ -165,10 +165,7 @@ public static function canAccess(): bool
                         TextEntry::make('status_kerja')
                             ->label('Status Kerja')
                             ->badge()
-                            ->color(fn($record) => match ($record->status_kerja) {
-                                'Aktif' => 'success',
-                                'Non-aktif' => 'danger',
-                            }),
+                            ->color('info'),
                         TextEntry::make('status_dosen')
                             ->label('Status Dosen')
                             ->badge()
