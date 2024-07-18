@@ -256,14 +256,16 @@ class MateriTugasResource extends Resource
                                         ->placeholder('Tulis pesan untuk admin'),
                                 ])
                                 ->action(function (array $data, $record) {
-                                    $status = 'belum';
+                                    $status= 'selesai';
+//                                    dd($status);
                                     if ($record->tgl_selesai > now()) {
                                         $status = $record->tgl_tenggat > now() ? 'selesai' : 'telat';
                                     }
                                     auth()->user()->mengerjakan()->updateExistingPivot($record->id, [
-                                        'files' => $data['files'],
-                                        'file_name' => $data['file_name'],
+                                        'files' => json_encode($data['files']),
+                                        'file_name' => json_encode($data['file_name']),
                                         'pesan_peserta' => $data['pesan_peserta'],
+                                        'tgl_submit' => now(),
                                         'status' => $status,
                                     ]);
                                 })
