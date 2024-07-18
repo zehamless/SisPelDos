@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources\ModulResource\RelationManagers;
 
+use App\Filament\Resources\DiskusiResource;
+use App\Filament\Resources\KuisResource;
+use App\Filament\Resources\MateriResource;
+use App\Filament\Resources\TugasResource;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -23,6 +27,7 @@ class AllTugasRelationManager extends RelationManager
     {
         return false;
     }
+
     public function form(Form $form): Form
     {
         return $form
@@ -121,45 +126,57 @@ class AllTugasRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\Action::make('Detail')
-                        ->label('Detail')
-                        ->action(
-                            function ($record) {
-                                switch ($record->jenis) {
-                                    case 'tugas':
-                                        return $this->redirectRoute('filament.admin.resources.tugas.view', $record);
-                                    case 'materi':
-                                        return $this->redirectRoute('filament.admin.resources.materis.view', $record);
-                                    case 'kuis':
-                                        return $this->redirectRoute('filament.admin.resources.kuis.view', $record);
-                                }
+                    Tables\Actions\ViewAction::make()
+                        ->url(function ($record) {
+                            switch ($record->jenis) {
+                                case 'tugas':
+                                    return TugasResource::getUrl('view', ['record' => $record]);
+                                case 'materi':
+                                    return MateriResource::getUrl('view', ['record' => $record]);
+                                case 'kuis':
+                                    return KuisResource::getUrl('view', ['record' => $record]);
+                                case 'diskusi':
+                                    return DiskusiResource::getUrl('view', ['record' => $record]);
                             }
-                        )
-                        ->icon('heroicon-o-document-magnifying-glass')
-                    ->color('info'),
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make(),
-                ]),
+                        }),
+//                    Tables\Actions\Action::make('Detail')
+//                        ->label('Detail')
+//                        ->url(function ($record) {
+//                            switch ($record->jenis) {
+//                                case 'tugas':
+//                                    return TugasResource::getUrl('view', ['record' => $record]);
+//                                case 'materi':
+//                                    return MateriResource::getUrl('view', ['record' => $record]);
+//                                case 'kuis':
+//                                    return KuisResource::getUrl('view', ['record' => $record]);
+//                                case 'diskusi':
+//                                    return DiskusiResource::getUrl('view', ['record' => $record]);
+//                            }
+//                        })
+//                    ->icon('heroicon-o-document-magnifying-glass')
+//                    ->color('info'),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ]),
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    BulkAction::make('publish')
-                        ->label('Publish')
-                        ->icon('heroicon-c-check-circle')
-                        ->color('success')
-                        ->requiresConfirmation()
-                        ->action(fn(Collection $records) => $records->each->update(['published' => true])),
-                    BulkAction::make('draft')
-                        ->label('Draft')
-                        ->icon('heroicon-c-x-circle')
-                        ->requiresConfirmation()
-                        ->action(fn(Collection $records) => $records->each->update(['published' => false])),
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->defaultSort('urutan')
-            ->reorderable('urutan');
+        Tables\Actions\BulkActionGroup::make([
+            BulkAction::make('publish')
+                ->label('Publish')
+                ->icon('heroicon-c-check-circle')
+                ->color('success')
+                ->requiresConfirmation()
+                ->action(fn(Collection $records) => $records->each->update(['published' => true])),
+            BulkAction::make('draft')
+                ->label('Draft')
+                ->icon('heroicon-c-x-circle')
+                ->requiresConfirmation()
+                ->action(fn(Collection $records) => $records->each->update(['published' => false])),
+            Tables\Actions\DeleteBulkAction::make(),
+        ]),
+    ])
+        ->defaultSort('urutan')
+        ->reorderable('urutan');
     }
 }
