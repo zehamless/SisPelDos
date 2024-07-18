@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PelatihanResource\Pages;
 use App\Filament\Exports\PelatihanExporter;
 use App\Filament\Resources\PelatihanResource;
 use App\Filament\Resources\StatUserResource;
+use App\Jobs\DetachUser_MateriTugasJob;
 use App\Models\Pendaftaran;
 use App\Models\Sertifikat;
 use Filament\Forms;
@@ -131,7 +132,7 @@ class ManagePeserta extends ManageRelatedRecords
                         ->icon('heroicon-s-check-badge')
                         ->url(fn($record) => StatUserResource::getUrl('view', ['user' => $record->id, 'pelatihan' => $record->pelatihan_id]))
                         ->openUrlInNewTab(),
-                    Tables\Actions\EditAction::make(),
+//                    Tables\Actions\EditAction::make(),
                     Tables\Actions\ExportAction::make()
                         ->label('Export Sertifikat')
                         ->modifyQueryUsing(fn($query, $record) => Sertifikat::where('users_id', $record->id)
@@ -144,7 +145,10 @@ class ManagePeserta extends ManageRelatedRecords
                         ->columnMapping(false)
                         ->visible(fn($record) => $record->status === 'selesai'),
                     Tables\Actions\DetachAction::make()
-                        ->label('Hapus Peserta'),
+                        ->label('Hapus Peserta')
+                    ->before(function ($record){
+                      dispatch(new DetachUser_MateriTugasJob($record->id, $this->getOwnerRecord()->allTugas));
+                    }),
                 ]),
 
             ])

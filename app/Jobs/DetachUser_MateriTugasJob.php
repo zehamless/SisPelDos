@@ -2,13 +2,15 @@
 
 namespace App\Jobs;
 
+use App\Models\MateriTugas;
+use App\Models\Pelatihan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class AttachTugasKuisJob implements ShouldQueue
+class DetachUser_MateriTugasJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,10 +26,8 @@ class AttachTugasKuisJob implements ShouldQueue
     public function handle()
     {
         foreach ($this->tasks as $task) {
-            $isKuis = $task->jenis === 'kuis';
-            $task->peserta()->attach($this->userId, [
-                'is_kuis' => $isKuis,
-            ]);
+
+            $task->peserta()->detach($this->userId);
         }
     }
 }
