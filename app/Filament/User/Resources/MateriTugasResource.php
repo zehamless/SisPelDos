@@ -83,7 +83,7 @@ class MateriTugasResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
-        $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->where('status', 'selesai')->count();
+        $attemped = auth()->user()->kuis()->where('materi_tugas_id', $infolist->getRecord()->id)->whereNot('status', 'belum')->count();
         $modul = Modul::find($infolist->getRecord()->modul_id, ['judul', 'deskripsi', 'slug']);
         $exist = auth()->user()->mengerjakan()->where('materi_tugas_id', $infolist->getRecord()->id)->where('status', 'belum')->exists();
         return $infolist
