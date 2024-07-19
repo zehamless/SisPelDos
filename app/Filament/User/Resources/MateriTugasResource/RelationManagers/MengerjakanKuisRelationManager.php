@@ -33,7 +33,7 @@ class MengerjakanKuisRelationManager extends RelationManager
         return $table
 //            ->recordTitleAttribute('created_at')
                 ->modifyQueryUsing(function ($query) {
-                    $query->where('status', 'selesai');
+                    $query->whereNot('status', 'belum');
                 })
             ->columns([
                 Tables\Columns\TextColumn::make('pivot.created_at')

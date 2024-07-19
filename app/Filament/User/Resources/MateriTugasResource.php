@@ -303,7 +303,7 @@ class MateriTugasResource extends Resource
                                     ->label('Mulai')
                                     ->badge()
                                     ->color('success'),
-                                TextEntry::make('tgl_selesai')
+                                TextEntry::make('tgl_tenggat')
                                     ->label('Selesai')
                                     ->badge()
                                     ->color('danger'),
