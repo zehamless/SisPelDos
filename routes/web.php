@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
         Route::get('rekapModul/{modul}', [RekapController::class, 'indexModul'])->name('rekap.modul')->middleware(\App\Http\Middleware\PengajarMiddleware::class);
     Route::middleware(AdminMiddleware::class)->group(function () {
         Route::get('previewKuis/{kuis}', [KuisController::class, 'adminPreview'])->name('kuis.preview');
-        Route::get('adminReview', [KuisController::class, 'adminReview'])->name('kuis.adminReview');
+        Route::get('adminReview/{kuis}', [KuisController::class, 'adminReview'])->name('kuis.adminReview');
     });
 
 });
