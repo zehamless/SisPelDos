@@ -109,6 +109,6 @@ class KuisController extends Controller
 //        $jsonData = MateriTugas::with('kuis')->where('id', $jawaban->pivot->materi_tugas_id)->first()->toJson();
         $jsonJawaban = $jawaban->toJson();
 //        return response()->json($data);
-        return view('kuis.reviewKuis', compact('jsonJawaban'));
+        return view('kuis.adminreviewKuis', compact('jsonJawaban'));
     }
 }
