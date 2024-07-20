@@ -52,7 +52,7 @@ class MengerjakanKuisRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\Action::make('Preview')
                     ->icon('heroicon-o-eye')
-                    ->url(fn($record) => route('kuis.review', $record->pivot->id))
+                    ->url(fn($record) => route('kuis.adminReview', $record->pivot->id))
                     ->openUrlInNewTab()
 //                Tables\Actions\EditAction::make(),
 //                Tables\Actions\DeleteAction::make(),
