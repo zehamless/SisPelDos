@@ -100,7 +100,7 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
                     ->hidden(fn($record) => $record->status === 'belum'),
                 Tables\Actions\Action::make('Review Kuis')
                     ->icon('heroicon-c-document-magnifying-glass')
-                    ->url(fn($record) => route('kuis.review', $record->pivot->id))
+                    ->url(fn($record) => route('kuis.adminReview', $record->pivot->id))
                     ->openUrlInNewTab()
                     ->color('info')
                     ->hidden(fn($record) => $record->status === 'belum'),

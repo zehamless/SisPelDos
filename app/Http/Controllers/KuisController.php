@@ -103,5 +103,12 @@ class KuisController extends Controller
         $jsonData = $data->toJson();
         return view('kuis.adminPreviewKuis', compact('jsonData'));
     }
-
+    public function adminReview( $kuis)
+    {
+        $jawaban = Mengerjakan::find($kuis);
+//        $jsonData = MateriTugas::with('kuis')->where('id', $jawaban->pivot->materi_tugas_id)->first()->toJson();
+        $jsonJawaban = $jawaban->toJson();
+//        return response()->json($data);
+        return view('kuis.reviewKuis', compact('jsonJawaban'));
+    }
 }
