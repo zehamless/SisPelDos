@@ -3,12 +3,13 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Periode;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 
 class ChartDashboard extends ChartWidget
 {
     protected static ?string $heading = 'Periode';
-    protected int | string | array $columnSpan= 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected function getData(): array
     {
@@ -17,7 +18,7 @@ class ChartDashboard extends ChartWidget
         $labels = [];
         foreach ($periode as $p) {
             $data[] = $p->peserta()->count();
-            $labels[] = $p->tahun_ajar;
+            $labels[] = $p->tahun;
         }
         return [
             'datasets' => [
@@ -34,4 +35,20 @@ class ChartDashboard extends ChartWidget
     {
         return 'line';
     }
+
+  protected function getOptions(): RawJs
+{
+    return RawJs::make(<<<JS
+    {
+        scales: {
+            y: {
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+JS
+    );
+}
 }
