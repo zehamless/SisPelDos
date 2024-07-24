@@ -49,11 +49,15 @@ class MateriTugas extends Model
         });
         static::replicating(function ($kuis) {
             $kuis->published = false;
+
         });
         static::created(function ($kuis) {
             if ($kuis->jenis !== 'materi') {
                 dispatch(new AttachUser_MateriTugasJob($kuis, $kuis->modul->pelatihan->peserta));
             }
+        });
+        self::deleted(function ($kuis) {
+            $kuis->peserta()->detach();
         });
     }
 
