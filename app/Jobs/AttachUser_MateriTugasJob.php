@@ -20,6 +20,7 @@ class AttachUser_MateriTugasJob implements ShouldQueue
 
     public function handle(): void
     {
-        $this->materiTugas->peserta()->sync($this->users);
+        $this->materiTugas->peserta()->syncWithPivotValues($this->users,
+            ['is_kuis' => $this->materiTugas->jenis === 'kuis']);
     }
 }

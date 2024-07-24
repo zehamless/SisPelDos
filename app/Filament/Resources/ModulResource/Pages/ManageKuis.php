@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Resources\ModulResource;
+use App\Jobs\cloneKuisJob;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -165,7 +166,7 @@ class ManageKuis extends ManageRelatedRecords
                         ->label('Duplikat Data')
                         ->icon('heroicon-m-square-2-stack')
                         ->action(function ($record) {
-                            $record->duplicate();
+                            dispatch(new cloneKuisJob($record));
                         })
                         ->requiresConfirmation()
                         ->successNotificationTitle('Duplikat data berhasil'),
