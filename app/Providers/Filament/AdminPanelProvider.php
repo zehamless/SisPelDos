@@ -35,27 +35,6 @@ class AdminPanelProvider extends PanelProvider
 
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->renderHook(
-                'panels::body.end',
-
-                fn() => view('footer'),
-            )
-            ->renderHook(
-                'panels::sidebar.nav.start',
-                fn() => view('profilComponent' )
-            )
-            ->renderHook(
-                'panels::user-menu.after',
-                fn()=> view('LogoutButtonComponent')
-            )
-            ->renderHook(
-                'panels::auth.login.form.after',
-                fn()=>view('kembalikeDasborComponent')
-            )
-            ->renderHook(
-                'panels::auth.register.form.after',
-                fn()=>view('kembalikeDasborComponent')
-            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

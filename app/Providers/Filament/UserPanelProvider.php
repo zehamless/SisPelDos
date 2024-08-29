@@ -39,27 +39,6 @@ class UserPanelProvider extends PanelProvider
 //                'danger' => '#EE4E4E',
             ])
             ->viteTheme('resources/css/filament/user/theme.css')
-            ->renderHook(
-                'panels::body.end',
-
-                fn() => view('footer'),
-            )
-            ->renderHook(
-                'panels::sidebar.nav.start',
-                fn() => view(auth()->check() ? 'profilComponent' : 'masukDisiniComponent')
-            )
-            ->renderHook(
-                'panels::user-menu.after',
-                fn() => view(auth()->check() ? 'LogoutButtonComponent' : null)
-            )
-            ->renderHook(
-                'panels::auth.login.form.after',
-                fn() => view('kembalikeDasborComponent')
-            )
-            ->renderHook(
-                'panels::auth.register.form.after',
-                fn() => view('kembalikeDasborComponent')
-            )
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->pages([Pages\Dashboard::class])
