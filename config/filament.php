@@ -2,6 +2,14 @@
 
 return [
 
+    'colors'=>[
+        'primary' => env('color_primary', '#3046b5'),
+        'success'=> env('color_success', '#10b981'),
+        'danger'=> env('color_danger', '#ef4444'),
+        'warning'=> env('color_warning', '#f59e0b'),
+        'info'=> env('color_info', '#3b82f6'),
+        'gray'=> env('color_gray', '#6b7280'),
+    ],
     /*
     |--------------------------------------------------------------------------
     | Broadcasting

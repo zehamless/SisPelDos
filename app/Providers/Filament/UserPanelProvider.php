@@ -33,10 +33,13 @@ class UserPanelProvider extends PanelProvider
             ->registration()
             ->login()
             ->colors([
-                'primary' => '#3046b5',
-                'secondary' => Color::Gray,
-//                'success' => '#55AD9B',
-//                'danger' => '#EE4E4E',
+                'primary' => Color::hex(config('filament.colors.primary')),
+                'success' => Color::hex(config('filament.colors.success')),
+                'warning' => Color::hex(config('filament.colors.warning')),
+                'danger' => Color::hex(config('filament.colors.danger')),
+                'info' => Color::hex(config('filament.colors.info')),
+                'gray' => Color::hex(config('filament.colors.gray')),
+
             ])
             ->viteTheme('resources/css/filament/user/theme.css')
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')

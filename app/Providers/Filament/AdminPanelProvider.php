@@ -12,6 +12,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -30,9 +31,19 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => '#3046b5',
-                'secondary' => Color::Gray,
+                'primary' => Color::hex(config('filament.colors.primary')),
+                'success' => Color::hex(config('filament.colors.success')),
+                'warning' => Color::hex(config('filament.colors.warning')),
+                'danger' => Color::hex(config('filament.colors.danger')),
+                'info' => Color::hex(config('filament.colors.info')),
+                'gray' => Color::hex(config('filament.colors.gray')),
 
+            ])
+            ->plugins([
+                FilamentEnvEditorPlugin::make()
+                ->authorize(
+                    fn() => auth()->user()->isAdmin()
+                )
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
