@@ -119,8 +119,8 @@ class EditProfile extends BaseEditProfile
                                             ->maxLength(255),
                                         TextInput::make('no_hp')
                                             ->label('No. HP')
-                                            ->numeric()
-                                            ->maxLength(255),
+                                            ->tel()
+                                            ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
                                         Select::make('jenis_kelamin')
                                             ->label('Jenis Kelamin')
                                             ->options([

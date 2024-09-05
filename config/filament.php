@@ -10,6 +10,9 @@ return [
         'info'=> env('color_info', '#3b82f6'),
         'gray'=> env('color_gray', '#6b7280'),
     ],
+
+    'no_pddikti_register' => env('no_pddikti_register', false),
+
     /*
     |--------------------------------------------------------------------------
     | Broadcasting
