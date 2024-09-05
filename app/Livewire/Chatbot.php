@@ -33,7 +33,11 @@ class Chatbot extends Component
     private function botman()
     {
         $model = new ModelManager();
-        $trainedModel = $model->restoreFromFile(storage_path('app/botModel'));
+        if (auth()->user()->is_admin || auth()->user()->role === 'pengajar') {
+            $trainedModel = $model->restoreFromFile(storage_path('app/adminBotModel'));
+        } else {
+            $trainedModel = $model->restoreFromFile(storage_path('app/dosenBotModel'));
+        }
         $answer = $trainedModel->predict([$this->message]);
         // Check if the last two bot answers are the same as the current answer
         $previousAnswers = array_slice(array_filter($this->conversation, function($item) {

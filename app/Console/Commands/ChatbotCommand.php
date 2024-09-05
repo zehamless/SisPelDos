@@ -27,29 +27,36 @@ class ChatbotCommand extends Command
 
     protected $description = 'Command description';
 
-    public function handle(): bool
-    {
-        $this->info('Training chatbot model...');
-        try {
-            $datas = ChatbotDatas::all();
-            $questions = array_map('strtolower', $datas->pluck('question')->toArray());
-            $answers = array_map('strtolower', $datas->pluck('answer')->toArray());
-            $dataset = new ArrayDataset($questions, $answers);
-            $split = new RandomSplit($dataset);
-            $pipeline = new Pipeline([
-                new TokenCountVectorizer(new WordTokenizer()),
-                new TfIdfTransformer()
-            ], new NaiveBayes());
+public function handle(): bool
+{
+    $this->info('Training chatbot model...');
+    try {
+        $adminData = ChatbotDatas::admin()->get();
+        $adminQuestions = array_map('strtolower', $adminData->pluck('question')->toArray());
+        $adminAnswers = array_map('strtolower', $adminData->pluck('answer')->toArray());
+        $this->trainAndSaveModel($adminQuestions, $adminAnswers, 'adminBotModel');
 
-            $pipeline->train($questions, $answers);
-            $predictions = $pipeline->predict($split->getTestSamples());
-            dump('Accuracy: ' . Accuracy::score($split->getTestLabels(), $predictions));
-            (new ModelManager())->saveToFile($pipeline, storage_path('app/botModel'));
-            $this->info('Chatbot model trained successfully!');
-            return true;
-        } catch (\Exception $e) {
-            $this->error('An error occurred: ' . $e->getMessage());
-            return false;
-        }
+        $dosenData = ChatbotDatas::where('admin', false)->get();
+        $dosenQuestions = array_map('strtolower', $dosenData->pluck('question')->toArray());
+        $dosenAnswers = array_map('strtolower', $dosenData->pluck('answer')->toArray());
+        $this->trainAndSaveModel($dosenQuestions, $dosenAnswers, 'dosenBotModel');
+
+        $this->info('Chatbot model trained successfully!');
+        return true;
+    } catch (\Exception $e) {
+        $this->error('An error occurred: ' . $e->getMessage());
+        return false;
     }
+}
+
+private function trainAndSaveModel(array $questions, array $answers, string $modelName): void
+{
+    $pipeline = new Pipeline([
+        new TokenCountVectorizer(new WordTokenizer()),
+        new TfIdfTransformer()
+    ], new NaiveBayes());
+
+    $pipeline->train($questions, $answers);
+    (new ModelManager())->saveToFile($pipeline, storage_path('app/' . $modelName));
+}
 }

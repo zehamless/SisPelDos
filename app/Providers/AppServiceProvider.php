@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
 //            fn() => view('footer')
 //        );
         FilamentView::registerRenderHook(
-            PanelsRenderHook::FOOTER,
+            PanelsRenderHook::BODY_END,
             fn (): string => Blade::render('@livewire(\'chatbot\')'),
         );
         FilamentView::registerRenderHook(

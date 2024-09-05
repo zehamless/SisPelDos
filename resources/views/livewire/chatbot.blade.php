@@ -12,8 +12,8 @@
 
             <x-slot name="heading">
                 <div class="flex flex-col space-y-1.5 pb-6">
-                    <h2 class="font-semibold text-lg tracking-tight">Chatbot</h2>
-                    <p class="text-sm text-[#6b7280] leading-3">Powered by Mendable and Vercel</p>
+                    <h2 class="font-semibold text-lg tracking-tight">Bantuan</h2>
+                    <p class="text-sm text-[#6b7280] leading-3">Powered by Zehamless</p>
                 </div>
             </x-slot>
 
@@ -31,7 +31,7 @@
                         </div>
                     </span>
                     <p class="leading-relaxed bg-gray-200 p-2 rounded">
-                        <span class="block font-bold text-gray-700">AI </span>Hi, how can I help you today?
+                        <span class="block font-bold text-gray-700">Bot </span>Halo, ada yang bisa saya bantu?
                     </p>
                 </div>
 

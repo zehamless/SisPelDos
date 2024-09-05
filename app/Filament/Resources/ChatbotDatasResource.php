@@ -7,8 +7,10 @@ use App\Models\ChatbotDatas;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -21,10 +23,12 @@ use Filament\Tables\Table;
 class ChatbotDatasResource extends Resource
 {
     protected static ?string $model = ChatbotDatas::class;
+    protected static ?string $navigationLabel = 'Chatbot';
+    protected static ?string $navigationGroup = 'System';
 
     protected static ?string $slug = 'chatbot-datas';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-sparkles';
 
     public static function form(Form $form): Form
     {
@@ -37,7 +41,9 @@ class ChatbotDatasResource extends Resource
                 Placeholder::make('updated_at')
                     ->label('Last Modified Date')
                     ->content(fn(?ChatbotDatas $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
-                Group::make([
+                Section::make([
+                    Toggle::make('admin')
+                        ->helperText('Jika diaktifkan, jawaban ini hanya bisa diakses oleh admin'),
                     Textarea::make('question')
                         ->required(),
                     MarkdownEditor::make('answer')

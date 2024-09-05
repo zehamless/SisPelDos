@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\ChatbotDatas;
 use App\Models\Kategori;
 use App\Models\MateriTugas;
 use App\Models\Modul;
@@ -33,11 +34,11 @@ class DatabaseSeeder extends Seeder
 //        User::factory()->count(10)->create();
 //        //make 1 user with admin role
 //        User::factory()->admin()->create();
-//        Periode::factory()->count(2)->create();
-//        Kategori::factory()->count(10)->create();
-//        Pelatihan::factory()->count(10)->create();
-//        Modul::factory()->count(10)->create();
-//        MateriTugas::factory()->count(10)->create();
+        Periode::factory()->count(2)->create();
+        Kategori::factory()->count(10)->create();
+        Pelatihan::factory()->count(10)->create();
+        Modul::factory()->count(10)->create();
+        MateriTugas::factory()->count(10)->create();
         User::create([
             'nama' => 'Admin',
             'email' => 'mahez@gmail.com',
@@ -50,5 +51,13 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password25'),
             'role' => 'admin',
         ]);
+        $datas =[
+            [
+                'question' => 'Bagaimana cara membuat akun?',
+                'answer' => 'Untuk membuat akun, silahkan klik tombol "Daftar" pada halaman login. ',
+                'admin' => false,
+            ],
+        ];
+        ChatbotDatas::insert($datas);
     }
 }
