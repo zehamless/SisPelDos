@@ -6,6 +6,7 @@ use BezhanSalleh\PanelSwitch\PanelSwitch;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,9 +31,13 @@ class AppServiceProvider extends ServiceProvider
                 ->simple()
             ->visible(fn() =>  auth()->check()&&auth()->user()->role === 'admin' );
         });
+//        FilamentView::registerRenderHook(
+//            PanelsRenderHook::BODY_END,
+//            fn() => view('footer')
+//        );
         FilamentView::registerRenderHook(
-            PanelsRenderHook::BODY_END,
-            fn() => view('footer')
+            PanelsRenderHook::FOOTER,
+            fn (): string => Blade::render('@livewire(\'chatbot\')'),
         );
         FilamentView::registerRenderHook(
             PanelsRenderHook::SIDEBAR_NAV_START,
