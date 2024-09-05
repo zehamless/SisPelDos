@@ -7,6 +7,7 @@ use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -65,7 +66,7 @@ class Settings extends ViewEnv
                                         ->required(),
                                     TextInput::make('value')
                                         ->required()
-                                        ->hidden(fn() => str_starts_with($obj->key, 'COLOR'))
+                                        ->hidden(fn() => str_starts_with($obj->key, 'COLOR')||str_starts_with($obj->key, 'NO_PDDIKTI'))
                                         ->default(fn() => $obj->getValue()),
                                     ColorPicker::make('value')
                                         ->label('Value')
@@ -73,6 +74,16 @@ class Settings extends ViewEnv
                                         ->required()
                                         ->formatStateUsing(fn($state) =>  trim($state, '"'))
                                         ->hidden(fn() => !str_starts_with($obj->key, 'COLOR'))
+                                        ->columnSpan(3),
+                                    Select::make('value')
+                                        ->label('Value')
+                                        ->options([
+                                            'true' => 'True',
+                                            'false' => 'False',
+                                        ])
+                                        ->required()
+                                        ->hidden(fn() => !str_starts_with($obj->key, 'NO_PDDIKTI'))
+                                        ->default(fn() => $obj->getValue())
                                         ->columnSpan(3),
                                 ])->mutateFormDataUsing(function (array $data) use ($obj) {
                                     if (str_starts_with($obj->key, 'COLOR')) {
