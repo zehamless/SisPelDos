@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\RequestPasswordReset;
+use App\Filament\User\Pages\Auth\Register;
 use App\Filament\Widgets\RunningPengumuman;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -30,7 +31,7 @@ class UserPanelProvider extends PanelProvider
             ->path('user')
             ->profile(EditProfile::class)
             ->passwordReset(RequestPasswordReset::class)
-            ->registration()
+            ->registration(Register::class)
             ->login()
             ->colors([
                 'primary' => Color::hex(config('filament.colors.primary')),
