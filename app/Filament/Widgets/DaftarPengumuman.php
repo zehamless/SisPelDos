@@ -29,6 +29,8 @@ class DaftarPengumuman extends BaseWidget
             ])->contentGrid([
                 'md' => 1,
                 'xl' => 1,
-            ])->defaultPaginationPageOption(5);
+            ])
+            ->defaultPaginationPageOption(5)
+            ->emptyStateHeading('Belum Ada Pengumuman');
     }
 }

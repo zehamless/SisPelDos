@@ -54,6 +54,6 @@ class Pelatihan extends BaseWidget
             ->actions([
                 Tables\Actions\ViewAction::make()
                 ->url(fn($record) => !auth()->check() ? route('filament.user.auth.login') :PelatihanResource::getUrl('view', ['record' => $record])),
-            ]);
+            ])->emptyStateHeading('Belum Ada Pelatihan');
     }
 }
