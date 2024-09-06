@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
@@ -66,7 +67,7 @@ class Settings extends ViewEnv
                                         ->required(),
                                     TextInput::make('value')
                                         ->required()
-                                        ->hidden(fn() => str_starts_with($obj->key, 'COLOR')||str_starts_with($obj->key, 'NO_PDDIKTI'))
+                                        ->hidden(fn() => str_starts_with($obj->key, 'COLOR')||str_starts_with($obj->key, 'NO_PDDIKTI')||str_starts_with($obj->key, 'BRAND_LOGO'))
                                         ->default(fn() => $obj->getValue()),
                                     ColorPicker::make('value')
                                         ->label('Value')
@@ -84,6 +85,15 @@ class Settings extends ViewEnv
                                         ->required()
                                         ->hidden(fn() => !str_starts_with($obj->key, 'NO_PDDIKTI'))
                                         ->default(fn() => $obj->getValue())
+                                        ->columnSpan(3),
+                                    FileUpload::make('value')
+                                        ->label('Value')
+                                        ->required()
+                                        ->hidden(fn() => !str_starts_with($obj->key, 'BRAND_LOGO'))
+                                        ->image()
+                                        ->imageEditor()
+                                        ->disk('public')
+                                        ->directory('brand_logo')
                                         ->columnSpan(3),
                                 ])->mutateFormDataUsing(function (array $data) use ($obj) {
                                     if (str_starts_with($obj->key, 'COLOR')) {

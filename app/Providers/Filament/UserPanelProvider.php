@@ -19,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
@@ -87,8 +88,8 @@ class UserPanelProvider extends PanelProvider
                     ])
             ])
             ->darkMode(false)
-            ->brandName('Sistem Informasi Pelatihan Dosen UNILA')
-            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'))
-            ->brandLogoHeight('4rem');
+            ->brandName(config('app.name'))
+            ->brandLogo(Storage::url(config('filament.brand_logo')))
+            ->brandLogoHeight(config('filament.brand_logo_height'));
     }
 }

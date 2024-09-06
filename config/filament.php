@@ -12,6 +12,8 @@ return [
     ],
 
     'no_pddikti_register' => env('no_pddikti_register', false),
+    'brand_logo'=>env('brand_logo', asset('assets/Logo-Be-Strong-Unila-2023.png')),
+    'brand_logo_height'=>env('LOGO_HEIGHT', '3rem'),
 
     /*
     |--------------------------------------------------------------------------

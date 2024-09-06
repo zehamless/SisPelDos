@@ -19,7 +19,9 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -43,7 +45,8 @@ class AdminPanelProvider extends PanelProvider
                 FilamentEnvEditorPlugin::make()
                 ->authorize(
                     fn() => auth()->user()->isAdmin()
-                )
+                ),
+                SpotlightPlugin::make()
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -75,8 +78,8 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->darkMode(false)
-            ->brandName('Sistem Pelatihan Dosen Unila - Admin')
-            ->brandLogo(asset('assets/Logo-Be-Strong-Unila-2023.png'))
-            ->brandLogoHeight('50px');
+            ->brandName(config('app.name'))
+            ->brandLogo(Storage::url(config('filament.brand_logo')))
+            ->brandLogoHeight(config('filament.brand_logo_height'));
     }
 }
