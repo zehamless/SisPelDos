@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Jobs\ChatbotResponseFeedbackJob;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Phpml\ModelManager;
@@ -9,13 +10,16 @@ use Phpml\ModelManager;
 class Chatbot extends Component
 {
     public ?array $conversation = [];
+    public array $liked = [];
     #[Validate('required|string')]
     public $message;
+
     public function render()
     {
         return view('livewire.chatbot')
             ->layoutData(['attributes' => 'x-data="{ chatContainer: null }"']);
     }
+
     public function save()
     {
         $this->validate();
@@ -23,10 +27,9 @@ class Chatbot extends Component
             'sender' => auth()->id(),
             'question' => $this->message,
         ];
-        $this->conversation[] =$arr_data;
+        $this->conversation[] = $arr_data;
 
         $this->dispatch('scroll-to-bottom');
-//        dump($this->conversation);
         $this->botman();
     }
 
@@ -40,14 +43,14 @@ class Chatbot extends Component
         }
         $answer = $trainedModel->predict([$this->message]);
         // Check if the last two bot answers are the same as the current answer
-        $previousAnswers = array_slice(array_filter($this->conversation, function($item) {
+        $previousAnswers = array_slice(array_filter($this->conversation, function ($item) {
             return isset($item['sender']) && $item['sender'] === 1;
         }), -2);
 
 
         $arr_data = [
             'sender' => 1,
-            'answer' =>$answer[0],
+            'answer' => $answer[0],
         ];
         $currentAnswer = $answer[0];
         $this->conversation[] = $arr_data;
@@ -61,4 +64,11 @@ class Chatbot extends Component
         $this->dispatch('scroll-to-bottom');
     }
 
+    public function like(int $key)
+    {
+        $answer = $this->conversation[$key]['answer'];
+        $question = $this->conversation[$key - 1]['question'];
+        ChatbotResponseFeedbackJob::dispatch($question, $answer);
+        $this->liked[$key] = true;
+    }
 }

@@ -57,7 +57,37 @@ class DatabaseSeeder extends Seeder
                 'answer' => 'Untuk membuat akun, silahkan klik tombol "Daftar" pada halaman login. ',
                 'admin' => false,
             ],
+            [
+                'question' => 'Bagaimana cara mengubah password?',
+                'answer' => 'Untuk mengubah password, silahkan klik tombol "Lupa Password" pada halaman login. ',
+                'admin' => false,
+            ],
+            [
+                'question' => 'Bagaimana cara mengubah email?',
+                'answer' => 'Untuk mengubah email, silahkan hubungi admin. ',
+                'admin' => false,
+            ],
+            [
+                'question' => 'Bagaimana cara mengubah nama?',
+                'answer' => 'Untuk mengubah nama, silahkan hubungi admin. ',
+                'admin' => false,
+            ],
+            [
+                'question' => 'Bagaimana cara mengubah foto profil?',
+                'answer' => 'Untuk mengubah foto profil, silahkan hubungi admin. ',
+                'admin' => false,
+            ],
+            [
+                'question' => 'Bagaimana cara mengubah foto sampul?',
+                'answer' => 'Untuk mengubah foto sampul, silahkan hubungi admin. ',
+                'admin' => false,
+            ],
+            [
+                'question' => 'Bagaimana cara mengubah data diri?',
+                'answer' => 'Untuk mengubah data diri, silahkan hubungi admin. ',
+                'admin' => false,
+            ],
         ];
-        ChatbotDatas::insert($datas);
+        ChatbotDatas::create($datas);
     }
 }

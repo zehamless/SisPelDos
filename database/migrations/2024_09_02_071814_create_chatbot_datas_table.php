@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('chatbot_datas', function (Blueprint $table) {
             $table->id();
-            $table->text('question');
+            $table->text('question')->unique();
             $table->boolean('admin')->default(false);
             $table->longText('answer');
             $table->timestamps();

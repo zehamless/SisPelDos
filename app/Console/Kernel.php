@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('delete:unused-file')->daily()->timezone('Asia/Jakarta')->runInBackground();
         $schedule->job(new TerjadwalJob())->everyMinute()->timezone('Asia/Jakarta');
         $schedule->command('unpublish:pelatihan')->daily()->timezone('Asia/Jakarta');
+        $schedule->command('chatbot')->monthly()->timezone('Asia/Jakarta');
 
     }
 
@@ -25,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

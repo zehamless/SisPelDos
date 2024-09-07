@@ -3,10 +3,10 @@
         <x-filament::modal id="chat" class="flex justify-end">
             <x-slot name="trigger">
                 <x-filament::icon-button
-                        class="border-2"
-                        icon="heroicon-c-question-mark-circle"
-                        label="New label"
-                        size="xl"
+                    class="border-2"
+                    icon="heroicon-c-question-mark-circle"
+                    label="New label"
+                    size="xl"
                 />
             </x-slot>
 
@@ -35,7 +35,7 @@
                     </p>
                 </div>
 
-                @foreach($conversation as $text)
+                @foreach($conversation as $key => $text)
                     @if($text['sender'] == auth()->id())
                         <!-- User Chat Message -->
                         <div class="flex gap-3 my-4 text-gray-600 text-sm flex-1 justify-end">
@@ -46,7 +46,8 @@
                                 <div class="rounded-full bg-gray-100 border p-1">
                                     <svg stroke="none" fill="black" stroke-width="0" viewBox="0 0 16 16" height="20"
                                          width="20" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"></path>
+                                        <path
+                                            d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"></path>
                                     </svg>
                                 </div>
                             </span>
@@ -64,7 +65,16 @@
         </div>
     </span>
                             <div class="bg-gray-200 p-2 rounded leading-relaxed">
-                                <span class="block font-bold text-gray-700">Bot</span>
+                                <span class="flex gap-1 block font-bold text-gray-700">Bot
+                         @if(!isset($liked[$key]))
+                                        <x-filament::icon-button
+                                            wire:click="like({{ $key }})"
+                                            icon="heroicon-s-hand-thumb-up"
+                                            size="xs"
+                                            style="background: transparent; border: none;"
+                                        />
+                                    @endif
+</span>
                                 <div class="leading-relaxed markdown">
                                     {!! \Illuminate\Support\Str::markdown($text['answer']) !!}
                                 </div>
@@ -79,9 +89,9 @@
                 <x-filament::input.wrapper :is-valid="! $errors->has('message')">
                     <x-filament::input
                         required
-                            type="text"
-                            wire:model="message"
-                            placeholder="Type your message here..."
+                        type="text"
+                        wire:model="message"
+                        placeholder="Type your message here..."
                     />
                 </x-filament::input.wrapper>
                 <x-filament::button type="submit">

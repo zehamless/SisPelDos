@@ -17,8 +17,12 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ChatbotDatasResource extends Resource
 {
@@ -45,6 +49,7 @@ class ChatbotDatasResource extends Resource
                     Toggle::make('admin')
                         ->helperText('Jika diaktifkan, jawaban ini hanya bisa diakses oleh admin'),
                     Textarea::make('question')
+                        ->unique()
                         ->required(),
                     MarkdownEditor::make('answer')
                         ->toolbarButtons([
@@ -74,14 +79,22 @@ class ChatbotDatasResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('question'),
-
-                TextColumn::make('answer'),
+                ToggleColumn::make('admin')
+                    ->label('Untuk Admin')
+                    ->sortable(),
+                TextColumn::make('question')
+                    ->limit(50)
+                    ->searchable(),
+                TextColumn::make('answer')
+                    ->limit(50),
             ])
             ->filters([
-                //
+                Filter::make('Untuk Admin')
+                    ->query(fn(Builder $query): Builder => $query->where('admin', true))
+                    ->toggle()
             ])
             ->actions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -89,7 +102,8 @@ class ChatbotDatasResource extends Resource
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('updated_at', 'desc');
     }
 
     public static function getPages(): array

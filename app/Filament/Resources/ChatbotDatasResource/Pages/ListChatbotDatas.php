@@ -20,18 +20,11 @@ class ListChatbotDatas extends ListRecords
                 ->color('info')
                 ->action(function () {
                     $result = \Artisan::call('chatbot');
-                    if ($result === 1) {
-                        Notification::make()
-                            ->title('Bot Training Success')
-                            ->success()
-                            ->send();
-                    } else {
-                        Notification::make()
-                            ->title('Bot Training Failed')
-                            ->body()
-                            ->danger()
-                            ->send();
-                    }
+                    $message = ['Model chatbot berhasil dilatih','Model chatbot gagal dilatih', 'Tidak ada data admin untuk dilatih', 'Tidak ada data dosen untuk dilatih'];
+                    Notification::make()
+                        ->title($message[$result])
+                        ->info()
+                        ->send();
                 })
                 ->tooltip('Melatih model chatbot')
         ];
