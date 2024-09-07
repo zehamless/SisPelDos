@@ -92,17 +92,20 @@ class TugasResource extends Resource
                         ])->columns(3)->columnSpan(2),
                         Forms\Components\RichEditor::make('deskripsi')
                             ->columnSpan(2)
+                            ->disableToolbarButtons(['attachFiles'])
                             ->label('Deskripsi'),
                         Forms\Components\FileUpload::make('files')
                             ->columnSpan(2)
+                            ->deletable(true)
+//                    ->maxFiles(1)
+                            ->maxSize(102400)
                             ->label('File Materi')
-                            ->disk('public')
                             ->directory('materi')
                             ->downloadable()
                             ->multiple()
                             ->storeFileNamesIn('file_name')
                             ->visibility('public'),
-                    ])->columns(2),
+                    ])->columns(2)
             ]);
     }
 
@@ -126,12 +129,12 @@ class TugasResource extends Resource
                         TextEntry::make('created_at')
                             ->label('Dibuat pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                         TextEntry::make('updated_at')
                             ->label('Terakhir diubah pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                     ])->columns(2),
                 Section::make('Tanggal')
@@ -140,19 +143,19 @@ class TugasResource extends Resource
                             ->label('Tanggal Mulai')
                             ->badge()
                             ->color('success')
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                         TextEntry::make('tgl_tenggat')
                             ->label('Tanggal Tenggat')
                             ->badge()
                             ->color('warning')
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                         TextEntry::make('tgl_selesai')
                             ->label('Tanggal Selesai')
                             ->badge()
                             ->color('danger')
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                     ])->columns(3),
                 Section::make('File Materi')

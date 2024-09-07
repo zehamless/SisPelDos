@@ -52,7 +52,6 @@ class AllTugasRelationManager extends RelationManager
                 Forms\Components\FileUpload::make('files')
                     ->columnSpan(2)
                     ->label('File Materi')
-                    ->disk('public')
                     ->directory('materi')
                     ->downloadable()
                     ->multiple()
@@ -72,30 +71,6 @@ class AllTugasRelationManager extends RelationManager
                     ->offIcon('heroicon-c-x-mark')
                     ->onColor('success')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('judul')
-                    ->label('Judul')
-                    ->searchable()
-                    ->words(5),
-                Tables\Columns\TextColumn::make('deskripsi')
-                    ->label('Deskripsi')
-                    ->markdown()
-                    ->limit(50),
-                Tables\Columns\TextColumn::make('tgl_mulai')
-                    ->label('Tanggal Mulai')
-                    ->badge()
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta')
-                    ->color('success')
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tgl_selesai')
-                    ->label('Tanggal Selesai')
-                    ->badge()
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta')
-                    ->color('danger')
-                    ->sortable()
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('jenis')
                     ->label('Jenis')
                     ->badge()
@@ -104,11 +79,34 @@ class AllTugasRelationManager extends RelationManager
                             'tugas' => 'primary',
                             'materi' => 'info',
                             'kuis' => 'danger',
-                            default => 'secondary',
+                            default => 'primary',
                         }
                     )
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('judul')
+                    ->label('Judul')
+                    ->searchable()
+                    ->words(5),
+                Tables\Columns\TextColumn::make('deskripsi')
+                    ->label('Deskripsi')
+                    ->limit(50),
+                Tables\Columns\TextColumn::make('tgl_mulai')
+                    ->label('Tanggal Mulai')
+                    ->badge()
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
+                    ->color('success')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tgl_selesai')
+                    ->label('Tanggal Selesai')
+                    ->badge()
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
+                    ->color('danger')
+                    ->sortable(),
+
 
             ])
             ->filters([
@@ -155,28 +153,28 @@ class AllTugasRelationManager extends RelationManager
 //                        })
 //                    ->icon('heroicon-o-document-magnifying-glass')
 //                    ->color('info'),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ]),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
 
             ])
             ->bulkActions([
-        Tables\Actions\BulkActionGroup::make([
-            BulkAction::make('publish')
-                ->label('Publish')
-                ->icon('heroicon-c-check-circle')
-                ->color('success')
-                ->requiresConfirmation()
-                ->action(fn(Collection $records) => $records->each->update(['published' => true])),
-            BulkAction::make('draft')
-                ->label('Draft')
-                ->icon('heroicon-c-x-circle')
-                ->requiresConfirmation()
-                ->action(fn(Collection $records) => $records->each->update(['published' => false])),
-            Tables\Actions\DeleteBulkAction::make(),
-        ]),
-    ])
-        ->defaultSort('urutan')
-        ->reorderable('urutan');
+                Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('publish')
+                        ->label('Publish')
+                        ->icon('heroicon-c-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => true])),
+                    BulkAction::make('draft')
+                        ->label('Draft')
+                        ->icon('heroicon-c-x-circle')
+                        ->requiresConfirmation()
+                        ->action(fn(Collection $records) => $records->each->update(['published' => false])),
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])
+            ->defaultSort('urutan')
+            ->reorderable('urutan');
     }
 }

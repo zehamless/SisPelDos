@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Resources\ModulResource;
+use App\Filament\Resources\PelatihanResource;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -28,13 +30,16 @@ class ManagePengajar extends ManageRelatedRecords
 
     public static function getNavigationBadge(): ?string
     {
-        return self::getResource()::getModel()::where('slug', request()->route('record'))->first()?->pengajar->count();
+        return self::getResource()::getModel()::where('slug', request()->route('record'))
+            ->withCount('pengajar')
+            ->first()?->pengajar_count;
     }
 
     public static function getNavigationLabel(): string
     {
         return 'Pengajar';
     }
+
 
     protected function canCreate(): bool
     {
@@ -59,21 +64,29 @@ class ManagePengajar extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('nama'),
                 Tables\Columns\TextColumn::make('role')
                     ->badge()
-                    ->color('primary')
+                    ->color('primary'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Ditambahkan')
+                    ->badge()
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-//                Tables\Actions\CreateAction::make(),
+                Tables\Actions\Action::make('Kembali')
+                    ->url(fn() => PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]))
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('info'),
                 Tables\Actions\AttachAction::make()
                     ->label('Tambah Pengajar')
-                    ->recordSelect(fn(Forms\Components\Select $select) =>
-                    $select->placeholder('Pilih Pengajar')
+                    ->color('primary')
+                    ->recordSelect(fn(Forms\Components\Select $select) => $select->placeholder('Pilih Pengajar')
                     )
                     ->modalHeading('Tambah Pengajar')
                     ->preloadRecordSelect()
-            ])
+            ])->headerActionsPosition(Tables\Actions\HeaderActionsPosition::Bottom)
             ->actions([
                 Tables\Actions\Action::make('lihatPengguna')
                     ->icon('heroicon-s-user')

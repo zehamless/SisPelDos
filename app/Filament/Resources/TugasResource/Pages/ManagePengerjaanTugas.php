@@ -25,11 +25,16 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
     {
         return 'Pengerjaan Tugas';
     }
-    public static function getNavigationBadge(): ?string
-    {
-        $record = self::getResource()::getModel()::find(request()->route()->parameter('record'));
-        return $record ? $record->mengerjakanTugas()->wherePivotNotIn('status', ['belum'])->count() : null;
-    }
+
+public static function getNavigationBadge(): ?string
+{
+    return self::getResource()::getModel()::where('id', request()->route()->parameter('record'))
+        ->withCount(['mengerjakanTugas' => function ($query) {
+            $query->where('status', '!=', 'belum');
+        }])
+        ->first()?->mengerjakan_tugas_count;
+}
+
     public function form(Form $form): Form
     {
         return $form
@@ -98,8 +103,8 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
                 EditAction::make()
                     ->label('Beri Penilaian')
                     ->mutateRecordDataUsing(function (array $data): array {
-                        $data['files']= json_decode($data['files'], true);
-                        $data['file_name']= json_decode($data['file_name'], true);
+                        $data['files'] = json_decode($data['files'], true);
+                        $data['file_name'] = json_decode($data['file_name'], true);
 
                         return $data;
                     })

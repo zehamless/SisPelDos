@@ -22,6 +22,7 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class MateriResource extends Resource
 {
@@ -53,26 +54,43 @@ class MateriResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('judul')
-                    ->label('Judul')
-                    ->required()
-                    ->maxLength(255),
-                Toggle::make('published')
-                    ->label('Published')
-                    ->onIcon('heroicon-c-check')
-                    ->offIcon('heroicon-c-x-mark')
-                    ->onColor('success')
-                    ->default(false),
-                Forms\Components\RichEditor::make('deskripsi')
-                    ->label('Deskripsi'),
-                Forms\Components\FileUpload::make('files')
-                    ->label('File Materi')
-                    ->disk('public')
-                    ->directory('materi')
-                    ->downloadable()
-                    ->multiple()
-                    ->storeFileNamesIn('file_name')
-                    ->visibility('public'),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('judul')
+                            ->label('Judul')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Fieldset::make()
+                            ->schema([
+                                Toggle::make('published')
+                                    ->label('Published')
+                                    ->onIcon('heroicon-c-check')
+                                    ->offIcon('heroicon-c-x-mark')
+                                    ->onColor('success')
+                                    ->default(false),
+                                Toggle::make('terjadwal')
+                                    ->label('Terjadwal')
+                                    ->columnSpan(2)
+                                    ->onIcon('heroicon-c-check')
+                                    ->offIcon('heroicon-c-x-mark')
+                                    ->onColor('success')
+                                    ->helperText('Apabila terjadwal, maka materi akan diterbitkan pada tanggal mulai')
+                                    ->default(false),
+                            ])
+                            ->columns(3),
+                        Forms\Components\RichEditor::make('deskripsi')
+                            ->required()
+                            ->disableToolbarButtons(['attachFiles'])
+                            ->label('Deskripsi'),
+                        Forms\Components\FileUpload::make('files')
+                            ->label('File Materi')
+                            ->maxSize(102400)
+                            ->directory('materi')
+                            ->downloadable()
+                            ->multiple()
+                            ->storeFileNamesIn('file_name')
+                            ->visibility('public'),
+                    ])
 
             ])->columns(1);
     }
@@ -164,12 +182,12 @@ class MateriResource extends Resource
                         TextEntry::make('created_at')
                             ->label('Dibuat pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d F Y H:i')
                             ->timezone('Asia/Jakarta'),
                         TextEntry::make('updated_at')
                             ->label('Terakhir diubah pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d F Y H:i')
                             ->timezone('Asia/Jakarta'),
                     ])->columns(2),
                 Section::make()

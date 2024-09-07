@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ModulResource\Pages;
 use App\Filament\Resources\ModulResource\RelationManagers;
 use App\Models\Modul;
+use App\Models\Pelatihan;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
@@ -37,6 +38,7 @@ class ModulResource extends Resource
     {
         return Ancestor::make('modul', 'pelatihan');
     }
+
     public static function canEdit(Model $record): bool
     {
         return auth()->user()->role === 'admin';
@@ -56,6 +58,7 @@ class ModulResource extends Resource
                     ->onColor('success')
                     ->default(false),
                 Forms\Components\RichEditor::make('deskripsi')
+                    ->disableToolbarButtons(['attachFiles'])
                     ->label('Deskripsi'),
             ])->columns(1);
     }
@@ -94,9 +97,12 @@ class ModulResource extends Resource
             ->schema([
                 Actions::make([
                     Actions\Action::make('Kembali')
-                        ->url(url()->previous())
+                        ->url(fn(Modul $record) => PelatihanResource::getUrl('modul', ['record' => $record->pelatihan->slug]))
                         ->icon('heroicon-o-arrow-left')
-                        ->color('secondary'),
+                        ->color('info'),
+                    Actions\Action::make('Rekap Nilai')
+                        ->openUrlInNewTab()
+                        ->url(fn(Modul $record) => route('rekap.modul', $record))
                 ]),
                 Section::make()
                     ->schema([
@@ -110,12 +116,12 @@ class ModulResource extends Resource
                         TextEntry::make('created_at')
                             ->label('Dibuat pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                         TextEntry::make('updated_at')
                             ->label('Terakhir diubah pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                     ])
                     ->columns(2),
@@ -123,7 +129,7 @@ class ModulResource extends Resource
                     ->schema([
                         TextEntry::make('deskripsi')
                             ->hiddenLabel()
-                            ->markdown(),
+                            ->markdown()
                     ])->collapsible(),
             ]);
     }

@@ -190,7 +190,7 @@ class KuisResource extends Resource
                             TextEntry::make('created_at')
                                 ->label('Dibuat pada')
                                 ->badge()
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                         ]),
                         Group::make([
@@ -198,24 +198,24 @@ class KuisResource extends Resource
                                 ->label('Tanggal Mulai')
                                 ->badge()
                                 ->color('success')
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                             TextEntry::make('tgl_tenggat')
                                 ->label('Tanggal Tenggat')
                                 ->badge()
                                 ->color('warning')
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                             TextEntry::make('tgl_selesai')
                                 ->label('Tanggal Selesai')
                                 ->badge()
                                 ->color('danger')
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                             TextEntry::make('updated_at')
                                 ->label('Terakhir diubah pada')
                                 ->badge()
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                         ]),
                         Group::make([
@@ -231,8 +231,8 @@ class KuisResource extends Resource
                                 ->color('info'),
                             Actions::make([
                                 Actions\Action::make('preview')
-                                    ->openUrlInNewTab()
                                     ->url(fn($record) => route('kuis.preview', $record))
+                                    ->openUrlInNewTab()
                             ])
                         ]),
 

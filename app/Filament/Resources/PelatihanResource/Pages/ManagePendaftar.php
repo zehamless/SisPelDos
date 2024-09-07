@@ -29,10 +29,12 @@ class ManagePendaftar extends ManageRelatedRecords
     {
         return 'Pendaftar';
     }
-    public static function getNavigationBadge(): ?string
-    {
-        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->pendaftar->count());
-    }
+public static function getNavigationBadge(): ?string
+{
+    return self::getResource()::getModel()::where('slug', request()->route('record'))
+        ->withCount('pendaftar')
+        ->first()?->pendaftar_count;
+}
     protected function canCreate(): bool
     {
         return false;

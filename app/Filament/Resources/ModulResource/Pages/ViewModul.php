@@ -23,12 +23,4 @@ class ViewModul extends ViewRecord
         }
         return false;
     }
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('Rekap Nilai')
-                ->openUrlInNewTab()
-                ->url(route('rekap.modul', $this->getRecord()))
-        ];
-    }
 }

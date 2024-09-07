@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PenilaianDiskusi extends ManageRelatedRecords
 {
     use NestedPage;
+
     protected static string $resource = DiskusiResource::class;
 
     protected static string $relationship = 'mengerjakanTugas';
@@ -30,11 +31,16 @@ class PenilaianDiskusi extends ManageRelatedRecords
     {
         return 'Penilaian Diskusi';
     }
+
     public static function getNavigationBadge(): ?string
     {
-        $record = self::getResource()::getModel()::find(request()->route()->parameter('record'));
-        return $record ? $record->mengerjakanTugas()->wherePivotNotIn('status', ['belum'])->count() : null;
+        return self::getResource()::getModel()::where('id', request()->route()->parameter('record'))
+            ->withCount(['mengerjakanTugas' => function ($query) {
+                $query->where('status', '!=', 'belum');
+            }])
+            ->first()?->mengerjakan_tugas_count;
     }
+
     public function form(Form $form): Form
     {
         return $form
@@ -70,7 +76,7 @@ class PenilaianDiskusi extends ManageRelatedRecords
                     ->color('success'),
                 TextColumn::make('tgl_submit')
                     ->label('Waktu Mengerjakan')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->timezone('Asia/Jakarta'),
 
             ])

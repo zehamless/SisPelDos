@@ -32,7 +32,9 @@ class ManageModul extends ManageRelatedRecords
 
     public static function getNavigationBadge(): ?string
     {
-        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->modul->count());
+        return self::getResource()::getModel()::where('slug', request()->route('record'))
+            ->withCount('modul')
+            ->first()?->modul_count;
     }
 
     public function form(Form $form): Form
@@ -68,8 +70,13 @@ class ManageModul extends ManageRelatedRecords
                     ->searchable(),
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
-                    ->markdown()
-                    ->limit(100),
+                    ->limit(80),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat')
+                    ->dateTime('d M Y H:i')
+                    ->badge()
+                    ->sortable()
+                    ->timezone('Asia/Jakarta'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
@@ -92,10 +99,10 @@ class ManageModul extends ManageRelatedRecords
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\ReplicateAction::make()
                         ->beforeReplicaSaved(function (Modul $replica): void {
-                            $replica->slug = 'New-' . $replica->slug . '-' .now()->timestamp;
-                            $replica->judul = 'New-' . $replica->judul.'-'.now()->timestamp;
+                            $replica->slug = 'New-' . $replica->slug . '-' . now()->timestamp;
+                            $replica->judul = 'New-' . $replica->judul . '-' . now()->timestamp;
                         })
-                    ->requiresConfirmation(),
+                        ->requiresConfirmation(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),

@@ -29,10 +29,12 @@ class ManagePeserta extends ManageRelatedRecords
         return 'Peserta';
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return (self::getResource()::getModel()::where('slug', request()->route('record'))->first()?->peserta->count());
-    }
+public static function getNavigationBadge(): ?string
+{
+    return self::getResource()::getModel()::where('slug', request()->route('record'))
+        ->withCount('peserta')
+        ->first()?->peserta_count;
+}
 
     public function form(Form $form): Form
     {

@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\ModulResource\Pages;
 
+use App\Filament\Resources\KuisResource;
 use App\Filament\Resources\ModulResource;
+use App\Filament\Resources\PelatihanResource;
 use App\Jobs\cloneKuisJob;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
@@ -31,75 +33,17 @@ class ManageKuis extends ManageRelatedRecords
     {
         return 'Kuis';
     }
+
     public static function getNavigationBadge(): ?string
     {
-        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->kuis->count());
+        return self::getResource()::getModel()::where('slug', request()->route('record'))
+            ->withCount('kuis')
+            ->first()?->kuis_count;
     }
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()
-                    ->schema([
-                        Forms\Components\Group::make([
-                            Toggle::make('published')
-                                ->label('Published')
-                                ->onIcon('heroicon-c-check')
-                                ->offIcon('heroicon-c-x-mark')
-                                ->onColor('success')
-                                ->default(false),
-                            Toggle::make('terjadwal')
-                                ->label('Terjadwal')
-                                ->onIcon('heroicon-c-check')
-                                ->offIcon('heroicon-c-x-mark')
-                                ->onColor('success')
-                                ->helperText('Apabila terjadwal, maka kuis akan diterbitkan pada tanggal mulai')
-                                ->default(false),
-                        ])->columns(2)->grow(false),
-                        Forms\Components\Group::make([
-                            Forms\Components\TextInput::make('max_attempt')
-                                ->label(__('Max Attempt'))
-                                ->required()
-                                ->default(1)
-                                ->numeric(),
-                            Forms\Components\TextInput::make('durasi')
-                                ->label('Durasi Pengerjaan')
-                                ->suffix(' menit')
-                                ->required()
-                                ->step(10)
-                                ->default(0)
-                                ->numeric(),
-                        ])->columns(2),
-                        Forms\Components\TextInput::make('judul')
-                            ->label('Judul')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\Textarea::make('deskripsi')
-                            ->label('Deskripsi Singkat'),
-                        Forms\Components\Group::make([
-                            Forms\Components\DateTimePicker::make('tgl_mulai')
-                                ->label('Tanggal Mulai')
-                                ->native(false)
-                                ->timezone('Asia/Jakarta')
-                                ->required(),
-                            Forms\Components\DateTimePicker::make('tgl_tenggat')
-                                ->label('Tanggal Tenggat')
-                                ->native(false)
-                                ->timezone('Asia/Jakarta')
-                                ->after('tgl_mulai')
-                                ->rule('after:tgl_mulai')
-                                ->required(),
-                            Forms\Components\DateTimePicker::make('tgl_selesai')
-                                ->label('Tanggal Selesai')
-                                ->native(false)
-                                ->timezone('Asia/Jakarta')
-                                ->after('tgl_tenggat')
-                                ->rule('after:tgl_tenggat')
-                                ->required(),
-                        ])->columns(3),
-                    ]),
-            ]);
+        return KuisResource::form($form);
     }
 
     public function table(Table $table): Table
@@ -126,7 +70,7 @@ class ManageKuis extends ManageRelatedRecords
                     ->words(5),
                 Tables\Columns\TextColumn::make('tgl_mulai')
                     ->label('Tanggal Mulai')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->badge()
                     ->color('success')
                     ->timezone('Asia/Jakarta'),
@@ -134,20 +78,26 @@ class ManageKuis extends ManageRelatedRecords
                     ->label('Tanggal Selesai')
                     ->badge()
                     ->color('danger')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('max_attempt')
                     ->label('Max Attempt')
                     ->numeric(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat pada')
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
+                    ->badge()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
                 Tables\Actions\Action::make('Kembali')
-                    ->url(url()->previous())
+                    ->url(fn() => PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]))
                     ->icon('heroicon-o-arrow-left')
-                    ->color('secondary'),
+                    ->color('info'),
                 Tables\Actions\CreateAction::make()
                     ->label('Tambah Kuis')
                     ->mutateFormDataUsing(function (array $data) {
@@ -160,7 +110,7 @@ class ManageKuis extends ManageRelatedRecords
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('view')
                         ->label('View')
-                        ->action(fn($record) => $this->redirectRoute('filament.admin.resources.kuis.view', $record))
+                        ->url(fn($record) => KuisResource::getUrl('view', ['record' => $record]))
                         ->icon('heroicon-o-eye'),
                     Tables\Actions\Action::make('replicate')
                         ->label('Duplikat Data')
@@ -199,6 +149,7 @@ class ManageKuis extends ManageRelatedRecords
             ])
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
-            ]));
+            ]))
+            ->defaultSort('updated_at', 'desc');
     }
 }

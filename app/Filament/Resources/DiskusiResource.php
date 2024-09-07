@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DiskusiResource\Pages;
 use App\Filament\Resources\DiskusiResource\RelationManagers;
+use App\Livewire\CustomCommentEntry;
 use App\Models\Diskusi;
 use App\Models\MateriTugas;
 use Filament\Forms;
@@ -103,12 +104,12 @@ class DiskusiResource extends Resource
                        TextEntry::make('created_at')
                            ->label('Dibuat pada')
                            ->badge()
-                           ->dateTime()
+                           ->dateTime('d F Y H:i')
                            ->timezone('Asia/Jakarta'),
                        TextEntry::make('updated_at')
                            ->label('Terakhir diubah pada')
                            ->badge()
-                           ->dateTime()
+                           ->dateTime('d F Y H:i')
                            ->timezone('Asia/Jakarta'),
                    ])->columns(2),
                Section::make('Tanggal')
@@ -117,13 +118,13 @@ class DiskusiResource extends Resource
                            ->label('Tanggal Mulai')
                            ->badge()
                            ->color('success')
-                           ->dateTime()
+                           ->dateTime('d F Y H:i')
                            ->timezone('Asia/Jakarta'),
                        TextEntry::make('tgl_selesai')
                            ->label('Tanggal Selesai')
                            ->badge()
                            ->color('danger')
-                           ->dateTime()
+                           ->dateTime('d F Y H:i')
                            ->timezone('Asia/Jakarta'),
                    ])->columns(3),
                Section::make('Deskripsi')
