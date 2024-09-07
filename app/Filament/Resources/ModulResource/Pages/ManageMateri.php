@@ -38,9 +38,15 @@ class ManageMateri extends ManageRelatedRecords
 
     public static function getNavigationBadge(): ?string
     {
-        return self::getResource()::getModel()::where('slug', request()->route('record'))
-            ->withCount('materi')
-            ->first()?->materi_count;
+        $cacheKey = 'navigation_badge_' . request()->route('record') . '_materi';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('slug', request()->route('record'))
+                ->withCount('materi')
+                ->first()
+                ?->materi_count;
+        });
     }
 
     public static function canAccess(array $parameters = []): bool

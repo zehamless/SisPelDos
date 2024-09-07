@@ -29,13 +29,19 @@ class ManageModul extends ManageRelatedRecords
     {
         return 'Modul';
     }
-
     public static function getNavigationBadge(): ?string
-    {
-        return self::getResource()::getModel()::where('slug', request()->route('record'))
+{
+    $cacheKey = 'navigation_badge_' . request()->route('record').'_modul';
+
+    return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+        return self::getResource()::getModel()
+            ::where('slug', request()->route('record'))
             ->withCount('modul')
-            ->first()?->modul_count;
-    }
+            ->first()
+            ?->modul_count;
+    });
+}
+
 
     public function form(Form $form): Form
     {

@@ -23,14 +23,21 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
- public static function getNavigationBadge(): ?string
-{
-    return self::getResource()::getModel()::where('id', request()->route()->parameter('record'))
-        ->withCount(['mengerjakanKuis' => function ($query) {
-            $query->where('status', '!=', 'belum');
-        }])
-        ->first()?->mengerjakan_kuis_count;
-}
+    public static function getNavigationBadge(): ?string
+    {
+        $cacheKey = 'navigation_badge_' . request()->route()->parameter('record').'_mengerjakan_kuis';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('id', request()->route()->parameter('record'))
+                ->withCount(['mengerjakanKuis' => function ($query) {
+                    $query->where('status', '!=', 'belum');
+                }])
+                ->first()
+                ?->mengerjakan_kuis_count;
+        });
+    }
+
 
     public static function getNavigationLabel(): string
     {

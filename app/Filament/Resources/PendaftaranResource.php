@@ -25,6 +25,7 @@ class PendaftaranResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
     protected static ?int $navigationSort = 2;
+
     public static function canCreate(): bool
     {
         return false;
@@ -34,10 +35,15 @@ class PendaftaranResource extends Resource
     {
         return auth()->user()->role === 'admin';
     }
+
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::mendaftar()->count();
+        return cache()->remember('navigation_badge_pendaftaran', now()->addMinutes(5), function () {
+            return static::getModel()::count();
+        });
     }
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -83,27 +89,27 @@ class PendaftaranResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('status')
-                ->label('Status')
+                    ->label('Status')
                     ->sortable()
-                ->badge(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('user.nama')
-                ->label('Nama')
-                ->words(3),
+                    ->label('Nama')
+                    ->words(3),
                 Tables\Columns\TextColumn::make('pelatihan.judul')
                     ->searchable()
-                ->label('Pelatihan')
-                ->limit(50),
+                    ->label('Pelatihan')
+                    ->limit(50),
                 Tables\Columns\TextColumn::make('created_at')
-                ->label('Daftar Pada')
-                ->date()
+                    ->label('Daftar Pada')
+                    ->date()
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                ->options([
-                    'pending' => 'Pending',
-                    'diterima' => 'Diterima',
-                    'ditolak' => 'Ditolak',
-                ]),
+                    ->options([
+                        'pending' => 'Pending',
+                        'diterima' => 'Diterima',
+                        'ditolak' => 'Ditolak',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -126,7 +132,7 @@ class PendaftaranResource extends Resource
                         };
 
                         Notification::make()
-                            ->title('Pelatihan '.$record->pelatihan->judul.' - Status Pendaftaran')
+                            ->title('Pelatihan ' . $record->pelatihan->judul . ' - Status Pendaftaran')
                             ->status(
                                 match ($data['status']) {
                                     'pending' => 'warning',
@@ -149,7 +155,7 @@ class PendaftaranResource extends Resource
                 Tables\Actions\Action::make('lihatPelatihan')
                     ->icon('heroicon-o-academic-cap')
                     ->label('Lihat Pelatihan')
-                    ->url(fn($record) => PelatihanResource::getUrl('view',['record'=>$record->pelatihan])),
+                    ->url(fn($record) => PelatihanResource::getUrl('view', ['record' => $record->pelatihan])),
             ])
             ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([

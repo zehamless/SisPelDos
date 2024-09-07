@@ -36,9 +36,15 @@ class ManageKuis extends ManageRelatedRecords
 
     public static function getNavigationBadge(): ?string
     {
-        return self::getResource()::getModel()::where('slug', request()->route('record'))
-            ->withCount('kuis')
-            ->first()?->kuis_count;
+        $cacheKey = 'navigation_badge_' . request()->route('record') . '_kuis';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('slug', request()->route('record'))
+                ->withCount('kuis')
+                ->first()
+                ?->kuis_count;
+        });
     }
 
     public function form(Form $form): Form

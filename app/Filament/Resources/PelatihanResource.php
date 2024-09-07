@@ -88,13 +88,9 @@ class PelatihanResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        static $count = null;
-
-        if ($count === null) {
-            $count = static::getModel()::count();
-        }
-
-        return $count;
+        return cache()->remember('navigation_badge_pelatihan', now()->addMinutes(5), function () {
+            return static::getModel()::count();
+        });
     }
 
     public static function form(Form $form): Form

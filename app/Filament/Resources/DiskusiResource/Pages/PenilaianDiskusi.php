@@ -34,12 +34,19 @@ class PenilaianDiskusi extends ManageRelatedRecords
 
     public static function getNavigationBadge(): ?string
     {
-        return self::getResource()::getModel()::where('id', request()->route()->parameter('record'))
-            ->withCount(['mengerjakanTugas' => function ($query) {
-                $query->where('status', '!=', 'belum');
-            }])
-            ->first()?->mengerjakan_tugas_count;
+        $cacheKey = 'navigation_badge_' . request()->route()->parameter('record').'_penilaian_diskusi';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('id', request()->route()->parameter('record'))
+                ->withCount(['mengerjakanTugas' => function ($query) {
+                    $query->where('status', '!=', 'belum');
+                }])
+                ->first()
+                ?->mengerjakan_tugas_count;
+        });
     }
+
 
     public function form(Form $form): Form
     {

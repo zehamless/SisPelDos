@@ -33,9 +33,15 @@ class ManageTugas extends ManageRelatedRecords
 
     public static function getNavigationBadge(): ?string
     {
-        return self::getResource()::getModel()::where('slug', request()->route('record'))
-            ->withCount('tugas')
-            ->first()?->tugas_count;
+        $cacheKey = 'navigation_badge_' . request()->route('record') . '_tugas';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('slug', request()->route('record'))
+                ->withCount('tugas')
+                ->first()
+                ?->tugas_count;
+        });
     }
 
     public static function canAccess(array $parameters = []): bool
