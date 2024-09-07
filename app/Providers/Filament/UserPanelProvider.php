@@ -27,6 +27,8 @@ class UserPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $logo = config('filament.brand_logo');
+        $panel->brandLogo($logo ? Storage::url($logo) : asset('assets/Logo-Be-Strong-Unila-2023.png'));
         return $panel
             ->id('user')
             ->path('user')
@@ -89,7 +91,6 @@ class UserPanelProvider extends PanelProvider
             ])
             ->darkMode(false)
             ->brandName(config('app.name'))
-            ->brandLogo(Storage::url(config('filament.brand_logo')))
             ->brandLogoHeight(config('filament.brand_logo_height'));
     }
 }

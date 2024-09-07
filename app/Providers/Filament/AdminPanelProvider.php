@@ -27,6 +27,8 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $logo = config('filament.brand_logo');
+        $panel->brandLogo($logo ? Storage::url($logo) : asset('assets/Logo-Be-Strong-Unila-2023.png'));
         return $panel
             ->default()
             ->id('admin')
@@ -43,9 +45,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentEnvEditorPlugin::make()
-                ->authorize(
-                    fn() => auth()->user()->isAdmin()
-                ),
+                    ->authorize(
+                        fn() => auth()->user()->isAdmin()
+                    ),
                 SpotlightPlugin::make()
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
@@ -79,7 +81,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->darkMode(false)
             ->brandName(config('app.name'))
-            ->brandLogo(Storage::url(config('filament.brand_logo')))
             ->brandLogoHeight(config('filament.brand_logo_height'));
     }
 }
