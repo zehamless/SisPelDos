@@ -22,6 +22,7 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class KuisResource extends Resource
 {
@@ -57,6 +58,17 @@ class KuisResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Actions::make([
+                    Forms\Components\Actions\Action::make('Modul')
+                        ->url(function ($record) {
+                            $cacheKey = 'modul_url_' . $record->modul_id. '_kuis';
+                            return Cache::remember($cacheKey, now()->addHour(), function () use ($record) {
+                                return ModulResource::getUrl('kuis', ['record' => $record->modul->slug]);
+                            });
+                        })
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('info'),
+                ])->hiddenOn('create'),
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Group::make([
@@ -177,6 +189,29 @@ class KuisResource extends Resource
     {
         return $infolist
             ->schema([
+                Actions::make([
+                    Actions\Action::make('Modul')
+                        ->url(function ($record) {
+                            $cacheKey = 'modul_url_' . $record->modul_id. '_kuis';
+                            return Cache::remember($cacheKey, now()->addHour(), function () use ($record) {
+                                return ModulResource::getUrl('kuis', ['record' => $record->modul->slug]);
+                            });
+                        })
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('info'),
+                    Actions\Action::make('publish')
+                        ->label('Publish')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->action(fn($record) => $record->update(['published' => true]))
+                        ->hidden(fn($record) => $record->published),
+                    Actions\Action::make('draft')
+                        ->label('Draft')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn($record) => $record->update(['published' => false]))
+                        ->hidden(fn($record) => !$record->published),
+                ]),
                 Section::make()
                     ->schema([
                         Group::make([
@@ -190,7 +225,7 @@ class KuisResource extends Resource
                             TextEntry::make('created_at')
                                 ->label('Dibuat pada')
                                 ->badge()
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                         ]),
                         Group::make([
@@ -198,24 +233,24 @@ class KuisResource extends Resource
                                 ->label('Tanggal Mulai')
                                 ->badge()
                                 ->color('success')
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                             TextEntry::make('tgl_tenggat')
                                 ->label('Tanggal Tenggat')
                                 ->badge()
                                 ->color('warning')
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                             TextEntry::make('tgl_selesai')
                                 ->label('Tanggal Selesai')
                                 ->badge()
                                 ->color('danger')
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                             TextEntry::make('updated_at')
                                 ->label('Terakhir diubah pada')
                                 ->badge()
-                                ->dateTime()
+                                ->dateTime('d F Y H:i')
                                 ->timezone('Asia/Jakarta'),
                         ]),
                         Group::make([
@@ -231,8 +266,8 @@ class KuisResource extends Resource
                                 ->color('info'),
                             Actions::make([
                                 Actions\Action::make('preview')
-                                    ->openUrlInNewTab()
                                     ->url(fn($record) => route('kuis.preview', $record))
+                                    ->openUrlInNewTab()
                             ])
                         ]),
 

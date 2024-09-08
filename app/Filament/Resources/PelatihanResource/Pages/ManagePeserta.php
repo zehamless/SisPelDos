@@ -31,8 +31,17 @@ class ManagePeserta extends ManageRelatedRecords
 
     public static function getNavigationBadge(): ?string
     {
-        return (self::getResource()::getModel()::where('slug', request()->route('record'))->first()?->peserta->count());
+        $cacheKey = 'navigation_badge_' . request()->route('record').'_peserta';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('slug', request()->route('record'))
+                ->withCount('peserta')
+                ->first()
+                ?->peserta_count;
+        });
     }
+
 
     public function form(Form $form): Form
     {

@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\RequestPasswordReset;
+use App\Filament\User\Pages\Auth\Register;
 use App\Filament\Widgets\RunningPengumuman;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -18,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
@@ -25,41 +27,25 @@ class UserPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $logo = config('filament.brand_logo');
+        $panel->brandLogo($logo ? Storage::url($logo) : asset('assets/Logo-Be-Strong-Unila-2023.png'));
         return $panel
             ->id('user')
             ->path('user')
             ->profile(EditProfile::class)
             ->passwordReset(RequestPasswordReset::class)
-            ->registration()
+            ->registration(Register::class)
             ->login()
             ->colors([
-                'primary' => '#3046b5',
-                'secondary' => Color::Gray,
-//                'success' => '#55AD9B',
-//                'danger' => '#EE4E4E',
+                'primary' => Color::hex(config('filament.colors.primary')),
+                'success' => Color::hex(config('filament.colors.success')),
+                'warning' => Color::hex(config('filament.colors.warning')),
+                'danger' => Color::hex(config('filament.colors.danger')),
+                'info' => Color::hex(config('filament.colors.info')),
+                'gray' => Color::hex(config('filament.colors.gray')),
+
             ])
             ->viteTheme('resources/css/filament/user/theme.css')
-            ->renderHook(
-                'panels::body.end',
-
-                fn() => view('footer'),
-            )
-            ->renderHook(
-                'panels::sidebar.nav.start',
-                fn() => view(auth()->check() ? 'profilComponent' : 'masukDisiniComponent')
-            )
-            ->renderHook(
-                'panels::user-menu.after',
-                fn() => view(auth()->check() ? 'LogoutButtonComponent' : null)
-            )
-            ->renderHook(
-                'panels::auth.login.form.after',
-                fn() => view('kembalikeDasborComponent')
-            )
-            ->renderHook(
-                'panels::auth.register.form.after',
-                fn() => view('kembalikeDasborComponent')
-            )
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->pages([Pages\Dashboard::class])
@@ -104,8 +90,7 @@ class UserPanelProvider extends PanelProvider
                     ])
             ])
             ->darkMode(false)
-            ->brandName('Sistem Informasi Pelatihan Dosen UNILA')
-            ->brandLogo(asset('assets/cropped-logo-unila-resmi-1-768x769.png'))
-            ->brandLogoHeight('4rem');
+            ->brandName(config('app.name'))
+            ->brandLogoHeight(config('filament.brand_logo_height'));
     }
 }

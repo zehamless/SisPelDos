@@ -56,6 +56,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class PelatihanResource extends Resource
@@ -75,7 +76,6 @@ class PelatihanResource extends Resource
     {
         return null;
     }
-
 //    public static function getBreadcrumbRecordLabel(Model $record)
 //    {
 //        return $record->judul . ' - ' . $record->periode->tahun;
@@ -85,9 +85,12 @@ class PelatihanResource extends Resource
     {
         return auth()->user()->role === 'admin';
     }
+
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return cache()->remember('navigation_badge_pelatihan', now()->addMinutes(5), function () {
+            return static::getModel()::count();
+        });
     }
 
     public static function form(Form $form): Form
@@ -109,43 +112,39 @@ class PelatihanResource extends Resource
                         Tab::make('Detail Pelatihan')
                             ->schema([
                                 Fieldset::make()
-                                ->schema([
-//                                        Select::make('periode_id')
-//                                            ->relationship('periode', 'tahun_ajar')
-//                                            ->label('Periode')
-//                                            ->required(),
-                                    Select::make('periode_id')
-                                        ->label('Periode')
-                                        ->relationship('periode', 'tahun')
-                                        ->createOptionForm([
-                                            TextInput::make('tahun')
-                                                ->label('Tahun')
-                                                ->numeric()
-                                                ->minValue(1900)
-                                                ->maxValue(2099)
-                                                ->placeholder('Contoh: 2021')
-                                                ->required()
-                                        ])
-                                        ->preload()
-                                        ->searchable()
-                                        ->required(),
-                                    Select::make('kategori_pelatihan_id')
-                                        ->label('Kategori Pelatihan')
-                                        ->relationship('kategori', 'nama')
-                                        ->createOptionForm([
-                                            TextInput::make('nama')
-                                                ->label('Nama')
-                                                ->required()
-                                        ])
-                                        ->preload()
-                                        ->searchable()
-                                        ->required(),
-                                    ToggleButtons::make('published')
-                                        ->label('Status?')
-                                        ->boolean('Published', 'Draft')
-                                        ->default(false)
-                                        ->grouped()
-                                ]),
+                                    ->schema([
+                                        Select::make('periode_id')
+                                            ->label('Periode')
+                                            ->relationship('periode', 'tahun')
+                                            ->createOptionForm([
+                                                TextInput::make('tahun')
+                                                    ->label('Tahun')
+                                                    ->numeric()
+                                                    ->minValue(1900)
+                                                    ->maxValue(2099)
+                                                    ->placeholder('Contoh: 2021')
+                                                    ->required()
+                                            ])
+                                            ->preload()
+                                            ->searchable()
+                                            ->required(),
+                                        Select::make('kategori_pelatihan_id')
+                                            ->label('Kategori Pelatihan')
+                                            ->relationship('kategori', 'nama')
+                                            ->createOptionForm([
+                                                TextInput::make('nama')
+                                                    ->label('Nama')
+                                                    ->required()
+                                            ])
+                                            ->preload()
+                                            ->searchable()
+                                            ->required(),
+                                        ToggleButtons::make('published')
+                                            ->label('Status?')
+                                            ->boolean('Published', 'Draft')
+                                            ->default(false)
+                                            ->grouped()
+                                    ]),
                                 TextInput::make('judul')
                                     ->label('Judul')
                                     ->required()
@@ -186,8 +185,6 @@ class PelatihanResource extends Resource
                                             ->rule('after:tgl_mulai')
                                             ->required(),
                                     ]),
-
-
                                 FileUpload::make('sampul')
                                     ->label('Sampul')
                                     ->required()
@@ -199,15 +196,11 @@ class PelatihanResource extends Resource
 //                                    ->imageResizeMode('cover')
                                     ->imageCropAspectRatio('16:9')
                                     ->previewable()
-                                    ->disk('public')
-                                    ->directory('pelatihan-sampul')
-                                    ->visibility('public')
+                                    ->directory('pelatihan/sampul')
                                     ->maxSize(2048),
                                 RichEditor::make('deskripsi')
                                     ->label('Deskripsi')
-                                    ->fileAttachmentsDisk('public')
-                                    ->fileAttachmentsDirectory('pelatihan-deskripsi')
-                                    ->fileAttachmentsVisibility('private')
+                                    ->disableToolbarButtons(['attachFiles'])
                                     ->required(),
 
 
@@ -248,16 +241,13 @@ class PelatihanResource extends Resource
                     ->sortable()
                     ->badge()
                     ->color('success')
-                    ->timezone('Asia/Jakarta')
-                    ->date(),
+                    ->date('d M Y'),
                 TextColumn::make('tgl_selesai')
                     ->label('Tanggal Selesai')
                     ->sortable()
                     ->badge()
                     ->color('danger')
-                    ->timezone('Asia/Jakarta')
-                    ->date(),
-
+                    ->date('d M Y'),
             ])
             ->filters([
                 SelectFilter::make('periode')
@@ -319,6 +309,20 @@ class PelatihanResource extends Resource
     {
         return $infolist
             ->schema([
+                Actions::make([
+                    Actions\Action::make('publish')
+                        ->label('Publish')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->action(fn(Pelatihan $record) => $record->update(['published' => true]))
+                        ->hidden(fn(Pelatihan $record) => $record->published),
+                    Actions\Action::make('draft')
+                        ->label('Draft')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn(Pelatihan $record) => $record->update(['published' => false]))
+                        ->hidden(fn(Pelatihan $record) => !$record->published),
+                ]),
                 \Filament\Infolists\Components\Section::make()
                     ->schema([
                         Grid::make(4)
@@ -336,26 +340,26 @@ class PelatihanResource extends Resource
                                     TextEntry::make('created_at')
                                         ->label('Dibuat pada')
                                         ->badge()
-                                        ->dateTime()
+                                        ->dateTime('d M Y H:i')
                                         ->timezone('Asia/Jakarta'),
                                     TextEntry::make('tgl_mulai')
                                         ->label('Tanggal Mulai')
-                                        ->date()
+                                        ->date('d M Y')
                                         ->badge()
                                         ->color('success'),
                                 ]),
                                 Group::make([
 
                                     TextEntry::make('kategori.nama')
-                                    ->label('Kategori'),
+                                        ->label('Kategori'),
                                     TextEntry::make('updated_at')
                                         ->label('Terakhir diubah pada')
                                         ->badge()
-                                        ->dateTime()
+                                        ->dateTime('d M Y H:i')
                                         ->timezone('Asia/Jakarta'),
                                     TextEntry::make('tgl_selesai')
                                         ->label('Tanggal Selesai')
-                                        ->date()
+                                        ->date('d M Y')
                                         ->badge()
                                         ->color('danger'),
 
@@ -367,10 +371,9 @@ class PelatihanResource extends Resource
                                         ->badge()
                                         ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
                                         ->color(fn($state) => $state ? 'success' : 'danger'),
-
                                     TextEntry::make('no_sertifikat')
                                         ->label('No. Sertifikat')
-                                    ->badge(),
+                                        ->badge(),
                                     TextEntry::make('jam_pelatihan')
                                         ->label('Jam pelatihan')
                                         ->badge()
@@ -382,7 +385,6 @@ class PelatihanResource extends Resource
                     ->schema([
                         TextEntry::make('deskripsi')
                             ->hiddenLabel()
-                            ->prose()
                             ->markdown(),
                     ]),
                 \Filament\Infolists\Components\Section::make('Syarat')

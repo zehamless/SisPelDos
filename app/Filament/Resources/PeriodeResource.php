@@ -36,11 +36,20 @@ class PeriodeResource extends Resource
 //                    ->native(false)
 //                    ->timezone('Asia/Jakarta')
 //                    ->required(),
+                Placeholder::make('created_at')
+                    ->label('Created Date')
+                    ->content(fn($record): string => $record?->created_at?->diffForHumans() ?? '-'),
+
+                Placeholder::make('updated_at')
+                    ->label('Last Modified Date')
+                    ->content(fn($record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+
                 TextInput::make('tahun')
                     ->label('Tahun')
                     ->numeric()
                     ->minValue(1900)
                     ->maxValue(2099)
+                    ->columnSpanFull()
                     ->placeholder('Contoh: 2021')
                     ->required()
             ]);
@@ -60,7 +69,8 @@ class PeriodeResource extends Resource
                 //
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()
+                ->modal(),
 //                ReplicateAction::make()
 //                    ->beforeReplicaSaved(function (Periode $replica): void {
 //                        $replica->tahun_ajar = 'New ' . $replica->tahun_ajar;
@@ -79,7 +89,7 @@ class PeriodeResource extends Resource
         return [
             'index' => Pages\ListPeriodes::route('/'),
             'create' => Pages\CreatePeriode::route('/create'),
-            'edit' => Pages\EditPeriode::route('/{record}/edit'),
+//            'edit' => Pages\EditPeriode::route('/{record}/edit'),
         ];
     }
 

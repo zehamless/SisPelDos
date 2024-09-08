@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Resources\DiskusiResource;
 use App\Filament\Resources\ModulResource;
+use App\Filament\Resources\PelatihanResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
@@ -15,10 +16,12 @@ use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Cache;
 
 class ManageDiscuss extends ManageRelatedRecords
 {
     use NestedPage;
+
     protected static string $resource = ModulResource::class;
 
     protected static string $relationship = 'diskusi';
@@ -29,10 +32,20 @@ class ManageDiscuss extends ManageRelatedRecords
     {
         return 'Diskusi';
     }
+
     public static function getNavigationBadge(): ?string
     {
-        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->diskusi->count());
+        $cacheKey = 'navigation_badge_' . request()->route('record') . '_diskusi';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('slug', request()->route('record'))
+                ->withCount('diskusi')
+                ->first()
+                ?->diskusi_count;
+        });
     }
+
     public static function canAccess(array $parameters = []): bool
     {
         $id = $parameters['record']['id'];
@@ -44,6 +57,7 @@ class ManageDiscuss extends ManageRelatedRecords
         }
         return false;
     }
+
     public function form(Form $form): Form
     {
         return DiskusiResource::form($form);
@@ -74,23 +88,34 @@ class ManageDiscuss extends ManageRelatedRecords
                     ->label('Tanggal Mulai')
                     ->badge()
                     ->color('success')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->timezone('Asia/Jakarta'),
                 Tables\Columns\TextColumn::make('tgl_selesai')
                     ->label('Tanggal Selesai')
                     ->badge()
                     ->color('danger')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->timezone('Asia/Jakarta'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat pada')
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
+                    ->badge()
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\Action::make('Kembali')
-                    ->url(url()->previous())
+                Tables\Actions\Action::make('Pelatihan')
+                    ->url(function () {
+                        $cacheKey = 'url_pelatihan_' . $this->record->pelatihan_id;
+                        return Cache::remember($cacheKey, now()->addHour(1), function () {
+                            return PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]);
+                        });
+                    })
                     ->icon('heroicon-o-arrow-left')
-                    ->color('secondary'),
+                    ->color('info'),
                 Tables\Actions\CreateAction::make()
                     ->label('Tambah Diskusi')
                     ->mutateFormDataUsing(function (array $data) {
@@ -115,6 +140,7 @@ class ManageDiscuss extends ManageRelatedRecords
                     Tables\Actions\DissociateBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('updated_at', 'desc');
     }
 }

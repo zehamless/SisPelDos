@@ -3,23 +3,28 @@
 namespace App\Filament\Resources\DiskusiResource\Pages;
 
 use App\Filament\Resources\DiskusiResource;
+use App\Filament\Resources\ModulResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\HeaderActionsPosition;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Cache;
 
 class PenilaianDiskusi extends ManageRelatedRecords
 {
     use NestedPage;
+
     protected static string $resource = DiskusiResource::class;
 
     protected static string $relationship = 'mengerjakanTugas';
@@ -30,11 +35,23 @@ class PenilaianDiskusi extends ManageRelatedRecords
     {
         return 'Penilaian Diskusi';
     }
+
     public static function getNavigationBadge(): ?string
     {
-        $record = self::getResource()::getModel()::find(request()->route()->parameter('record'));
-        return $record ? $record->mengerjakanTugas()->wherePivotNotIn('status', ['belum'])->count() : null;
+        $cacheKey = 'navigation_badge_' . request()->route()->parameter('record').'_penilaian_diskusi';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('id', request()->route()->parameter('record'))
+                ->withCount(['mengerjakanTugas' => function ($query) {
+                    $query->where('status', '!=', 'belum');
+                }])
+                ->first()
+                ?->mengerjakan_tugas_count;
+        });
     }
+
+
     public function form(Form $form): Form
     {
         return $form
@@ -70,7 +87,7 @@ class PenilaianDiskusi extends ManageRelatedRecords
                     ->color('success'),
                 TextColumn::make('tgl_submit')
                     ->label('Waktu Mengerjakan')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->timezone('Asia/Jakarta'),
 
             ])
@@ -83,8 +100,16 @@ class PenilaianDiskusi extends ManageRelatedRecords
                     ])
             ])
             ->headerActions([
-//                Tables\Actions\CreateAction::make(),
-            ])
+                Action::make('Modul')
+                    ->url(function () {
+                        $cacheKey = 'modul_url_' .$this->record->modul_id . '_diskusi';
+                        return Cache::remember($cacheKey, now()->addHour(), function () {
+                            return ModulResource::getUrl('diskusi', ['record' => $this->record->modul->slug]);
+                        });
+                    })
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('info'),
+            ])->headerActionsPosition(HeaderActionsPosition::Bottom)
             ->actions([
                 EditAction::make()
                     ->label('Beri Penilaian')

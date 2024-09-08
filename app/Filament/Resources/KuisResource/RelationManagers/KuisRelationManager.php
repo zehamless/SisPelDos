@@ -29,8 +29,7 @@ class KuisRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        $form = BankSoalResource::form($form);
-        return $form;
+        return BankSoalResource::form($form);
     }
 
     public function table(Table $table): Table
@@ -46,8 +45,8 @@ class KuisRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat pada')
                     ->searchable()
-                    ->date()
-                ->timezone('Asia/Jakarta'),
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta'),
             ])
             ->filters([
                 //
@@ -57,8 +56,7 @@ class KuisRelationManager extends RelationManager
                     ->tooltip('Tambahkan Pertanyaan Baru'),
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                    ->recordSelect(fn(Select $select) =>
-                    $select
+                    ->recordSelect(fn(Select $select) => $select
 //                        ->multiple()
                         ->placeholder('Pilih Pertanyaan dari BankSoal')
                         ->optionsLimit(20)
@@ -72,7 +70,7 @@ class KuisRelationManager extends RelationManager
                             $options = [];
                             $attached = $this->getOwnerRecord()->kuis->pluck('id')->toArray();
 //                            dd($attached);
-                         $kuis = kuis::with('kategories')->whereNotIn('id', $attached)->get();
+                            $kuis = kuis::with('kategories')->whereNotIn('id', $attached)->get();
 
                             foreach ($kuis as $item) {
                                 $kategori = $item->kategories->kategori;
@@ -84,7 +82,7 @@ class KuisRelationManager extends RelationManager
 
                             return $options;
                         })
-                        ->extraAttributes(['class'=>'mt-20'])
+                        ->extraAttributes(['class' => 'mt-20'])
                         ->native(false)
                         ->allowHtml(),
                     )

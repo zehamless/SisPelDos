@@ -58,7 +58,7 @@ class PengumumanResource extends Resource
                 //
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()->modal(),
                 DeleteAction::make(),
             ])
             ->bulkActions([
@@ -73,7 +73,7 @@ class PengumumanResource extends Resource
         return [
             'index' => Pages\ListPengumuman::route('/'),
             'create' => Pages\CreatePengumuman::route('/create'),
-            'edit' => Pages\EditPengumuman::route('/{record}/edit'),
+//            'edit' => Pages\EditPengumuman::route('/{record}/edit'),
         ];
     }
 

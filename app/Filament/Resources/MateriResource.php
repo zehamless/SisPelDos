@@ -10,6 +10,8 @@ use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -22,6 +24,8 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\HtmlString;
 
 class MateriResource extends Resource
 {
@@ -53,26 +57,54 @@ class MateriResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('judul')
-                    ->label('Judul')
-                    ->required()
-                    ->maxLength(255),
-                Toggle::make('published')
-                    ->label('Published')
-                    ->onIcon('heroicon-c-check')
-                    ->offIcon('heroicon-c-x-mark')
-                    ->onColor('success')
-                    ->default(false),
-                Forms\Components\RichEditor::make('deskripsi')
-                    ->label('Deskripsi'),
-                Forms\Components\FileUpload::make('files')
-                    ->label('File Materi')
-                    ->disk('public')
-                    ->directory('materi')
-                    ->downloadable()
-                    ->multiple()
-                    ->storeFileNamesIn('file_name')
-                    ->visibility('public'),
+                Forms\Components\Actions::make([
+                    Forms\Components\Actions\Action::make('Modul')
+                        ->url(function ($record) {
+                            $cacheKey = 'modul_url_' . $record->modul_id. '_materi';
+                            return Cache::remember($cacheKey, now()->addHour(), function () use ($record) {
+                                return ModulResource::getUrl('materi', ['record' => $record->modul->slug]);
+                            });
+                        })
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('info'),
+                ])->hiddenOn('create'),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('judul')
+                            ->label('Judul')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Fieldset::make()
+                            ->schema([
+                                Toggle::make('published')
+                                    ->label('Published')
+                                    ->onIcon('heroicon-c-check')
+                                    ->offIcon('heroicon-c-x-mark')
+                                    ->onColor('success')
+                                    ->default(false),
+                                Toggle::make('terjadwal')
+                                    ->label('Terjadwal')
+                                    ->columnSpan(2)
+                                    ->onIcon('heroicon-c-check')
+                                    ->offIcon('heroicon-c-x-mark')
+                                    ->onColor('success')
+                                    ->helperText('Apabila terjadwal, maka materi akan diterbitkan pada tanggal mulai')
+                                    ->default(false),
+                            ])
+                            ->columns(3),
+                        Forms\Components\RichEditor::make('deskripsi')
+                            ->required()
+                            ->disableToolbarButtons(['attachFiles'])
+                            ->label('Deskripsi'),
+                        Forms\Components\FileUpload::make('files')
+                            ->label('File Materi')
+                            ->maxSize(102400)
+                            ->directory('materi')
+                            ->downloadable()
+                            ->multiple()
+                            ->storeFileNamesIn('file_name')
+                            ->visibility('public'),
+                    ])
 
             ])->columns(1);
     }
@@ -149,6 +181,30 @@ class MateriResource extends Resource
     {
         return $infolist
             ->schema([
+                Actions::make([
+                    Actions\Action::make('Modul')
+                        ->url(function ($record) {
+                            $cacheKey = 'modul_url_' . $record->modul_id. '_materi';
+                            return Cache::remember($cacheKey, now()->addHour(), function () use ($record) {
+                                return ModulResource::getUrl('materi', ['record' => $record->modul->slug]);
+                            });
+                        })
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('info'),
+                    Actions\Action::make('publish')
+                        ->label('Publish')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->action(fn($record) => $record->update(['published' => true]))
+                        ->hidden(fn($record) => $record->published),
+                    Actions\Action::make('draft')
+                        ->label('Draft')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn($record) => $record->update(['published' => false]))
+                        ->hidden(fn($record) => !$record->published),
+
+                ]),
                 Section::make('Status')
                     ->schema([
                         TextEntry::make('published')
@@ -164,12 +220,12 @@ class MateriResource extends Resource
                         TextEntry::make('created_at')
                             ->label('Dibuat pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d F Y H:i')
                             ->timezone('Asia/Jakarta'),
                         TextEntry::make('updated_at')
                             ->label('Terakhir diubah pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d F Y H:i')
                             ->timezone('Asia/Jakarta'),
                     ])->columns(2),
                 Section::make()

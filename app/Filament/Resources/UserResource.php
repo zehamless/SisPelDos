@@ -129,9 +129,9 @@ class UserResource extends Resource
             ->schema([
                 Actions::make([
                     Actions\Action::make('Kembali')
-                        ->url(url()->previous())
+                        ->url(UserResource::getUrl('index'))
                         ->icon('heroicon-o-arrow-left')
-                        ->color('secondary'),
+                        ->color('info'),
                 ]),
                 Section::make('Informasi Akun')
                     ->schema([

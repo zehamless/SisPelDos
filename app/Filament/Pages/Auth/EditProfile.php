@@ -9,6 +9,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
@@ -37,42 +38,45 @@ class EditProfile extends BaseEditProfile
     {
         return $form
             ->schema([
+                Section::make()
+            ->schema([
+                Hidden::make('no_induk')
+                    ->hidden(),
+                Actions::make([
+                    Action::make('Fetch Data')
+                        ->label('Sinkronisasi Data Dosen')
+                        ->action(function (Get $get, Set $set) {
+                            $id = $get('no_induk');
+                            $data = $this->hitDosenApiController($id);
+                            if (is_array($data)) {
+                                $set('universitas', $data['nama_pt']);
+                                $set('prodi', $data['nama_prodi']);
+                                $set('jenis_kelamin', $data['jenis_kelamin'] === 'Laki-laki' ? 'L' : 'P');
+                                $set('jabatan_fungsional', $data['jabatan_akademik']);
+                                $set('pendidikan_tertinggi', $data['pendidikan_tertinggi']);
+                                $set('status_kerja', $data['status_ikatan_kerja']);
+                                $set('status_dosen', $data['status_aktivitas']);
+                                Notification::make()
+                                    ->title('Success')
+                                    ->success()
+                                    ->body('Data Dosen Berhasil Diambil.')
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Error')
+                                    ->warning()
+                                    ->body('PDDikti Service Error, coba lagi nanti.')
+                                    ->send();
+                            }
+                        })
+                ]),
+            ]),
                 Tabs::make()
                     ->tabs([
                         Tabs\Tab::make('profile')
                             ->label('Foto Profil')
                             ->schema([
-                                Hidden::make('no_induk')
-                                    ->hidden(),
-                                Actions::make([
-                                    Action::make('Fetch Data')
-                                        ->label('Sinkronisasi Data Dosen')
-                                        ->action(function (Get $get, Set $set) {
-                                            $id = $get('no_induk');
-                                            $data = $this->hitDosenApiController($id);
-//                                            dd($data);
-                                            if (is_array($data)) {
-                                                $set('universitas', $data['nama_pt']);
-                                                $set('prodi', $data['nama_prodi']);
-                                                $set('jenis_kelamin', $data['jenis_kelamin'] === 'Laki-laki' ? 'L' : 'P');
-                                                $set('jabatan_fungsional', $data['jabatan_akademik']);
-                                                $set('pendidikan_tertinggi', $data['pendidikan_tertinggi']);
-                                                $set('status_kerja', $data['status_ikatan_kerja']);
-                                                $set('status_dosen', $data['status_aktivitas']);
-                                                Notification::make()
-                                                    ->title('Success')
-                                                    ->success()
-                                                    ->body('Data Dosen Berhasil Diambil.')
-                                                    ->send();
-                                            } else {
-                                                Notification::make()
-                                                    ->title('Error')
-                                                    ->warning()
-                                                    ->body('PDDikti Service Error, coba lagi nanti.')
-                                                    ->send();
-                                            }
-                                        })
-                                ]),
+
                                 Fieldset::make('foto profile')
                                     ->schema([
                                         Placeholder::make('picture')
@@ -114,8 +118,8 @@ class EditProfile extends BaseEditProfile
                                             ->maxLength(255),
                                         TextInput::make('no_hp')
                                             ->label('No. HP')
-                                            ->numeric()
-                                            ->maxLength(255),
+                                            ->tel()
+                                            ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
                                         Select::make('jenis_kelamin')
                                             ->label('Jenis Kelamin')
                                             ->options([
@@ -162,10 +166,8 @@ class EditProfile extends BaseEditProfile
 
     private function hitDosenApiController(mixed $param)
     {
-//        https://pddikti.kemdikbud.go.id/api/pencarian/dosen/param
         try {
             $getId = Http::get('https://pddikti.kemdikbud.go.id/api/pencarian/dosen/' . $param)->json();
-//            https://pddikti.kemdikbud.go.id/api/dosen/profile/param
             $response = Http::get('https://pddikti.kemdikbud.go.id/api/dosen/profile/' . $getId[0]['id'])->json();
             return $response;
         } catch (Exception $e) {

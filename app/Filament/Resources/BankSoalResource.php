@@ -25,7 +25,13 @@ class BankSoalResource extends Resource
     }
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        static $count = null;
+
+        if ($count === null) {
+            $count = static::getModel()::count();
+        }
+
+        return $count;
     }
     public static function form(Form $form): Form
     {

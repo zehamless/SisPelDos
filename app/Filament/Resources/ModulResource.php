@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ModulResource\Pages;
 use App\Filament\Resources\ModulResource\RelationManagers;
 use App\Models\Modul;
+use App\Models\Pelatihan;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
@@ -22,6 +23,7 @@ use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class ModulResource extends Resource
 {
@@ -37,6 +39,7 @@ class ModulResource extends Resource
     {
         return Ancestor::make('modul', 'pelatihan');
     }
+
     public static function canEdit(Model $record): bool
     {
         return auth()->user()->role === 'admin';
@@ -46,18 +49,33 @@ class ModulResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('judul')
-                    ->required()
-                    ->maxLength(255),
-                Toggle::make('published')
-                    ->label('Published')
-                    ->onIcon('heroicon-c-check')
-                    ->offIcon('heroicon-c-x-mark')
-                    ->onColor('success')
-                    ->default(false),
-                Forms\Components\RichEditor::make('deskripsi')
-                    ->label('Deskripsi'),
-            ])->columns(1);
+                Forms\Components\Actions::make([
+                    Forms\Components\Actions\Action::make('Pelatihan')
+                        ->url(function ($record) {
+                            $cacheKey = 'url_pelatihan_' . $record->pelatihan_id;
+                            return Cache::remember($cacheKey, now()->addHour(1), function () use ($record) {
+                                return PelatihanResource::getUrl('modul', ['record' => $record->pelatihan->slug]);
+                            });
+                        })
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('info'),
+                ])->hiddenOn('create'),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('judul')
+                            ->required()
+                            ->maxLength(255),
+                        Toggle::make('published')
+                            ->label('Published')
+                            ->onIcon('heroicon-c-check')
+                            ->offIcon('heroicon-c-x-mark')
+                            ->onColor('success')
+                            ->default(false),
+                        Forms\Components\RichEditor::make('deskripsi')
+                            ->disableToolbarButtons(['attachFiles'])
+                            ->label('Deskripsi'),
+                    ])
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -90,13 +108,35 @@ class ModulResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
+
         return $infolist
             ->schema([
                 Actions::make([
-                    Actions\Action::make('Kembali')
-                        ->url(url()->previous())
+                    Actions\Action::make('Pelatihan')
+                        ->url(function ($record) {
+                            $cacheKey = 'url_pelatihan_' . $record->pelatihan_id;
+                            return Cache::remember($cacheKey, now()->addHour(1), function () use ($record) {
+                                return PelatihanResource::getUrl('modul', ['record' => $record->pelatihan->slug]);
+                            });
+                        })
                         ->icon('heroicon-o-arrow-left')
-                        ->color('secondary'),
+                        ->color('info'),
+                    Actions\Action::make('Rekap Nilai')
+                        ->openUrlInNewTab()
+                        ->url(fn(Modul $record) => route('rekap.modul', $record)),
+                    Actions\Action::make('publish')
+                        ->label('Publish')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->action(fn(Modul $record) => $record->update(['published' => true]))
+                        ->hidden(fn(Modul $record) => $record->published),
+                    Actions\Action::make('draft')
+                        ->label('Draft')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn(Modul $record) => $record->update(['published' => false]))
+                        ->hidden(fn(Modul $record) => !$record->published),
+
                 ]),
                 Section::make()
                     ->schema([
@@ -110,12 +150,12 @@ class ModulResource extends Resource
                         TextEntry::make('created_at')
                             ->label('Dibuat pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                         TextEntry::make('updated_at')
                             ->label('Terakhir diubah pada')
                             ->badge()
-                            ->dateTime()
+                            ->dateTime('d M Y H:i')
                             ->timezone('Asia/Jakarta'),
                     ])
                     ->columns(2),
@@ -123,7 +163,7 @@ class ModulResource extends Resource
                     ->schema([
                         TextEntry::make('deskripsi')
                             ->hiddenLabel()
-                            ->markdown(),
+                            ->markdown()
                     ])->collapsible(),
             ]);
     }

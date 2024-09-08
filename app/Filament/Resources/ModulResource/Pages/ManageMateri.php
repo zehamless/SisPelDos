@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\ModulResource\Pages;
 
 use App\Filament\Clusters\Pelatihan;
+use App\Filament\Resources\MateriResource;
 use App\Filament\Resources\ModulResource;
+use App\Filament\Resources\PelatihanResource;
+use App\Models\Modul;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -16,6 +19,7 @@ use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Cache;
 
 class ManageMateri extends ManageRelatedRecords
 {
@@ -32,10 +36,20 @@ class ManageMateri extends ManageRelatedRecords
     {
         return 'Materi';
     }
+
     public static function getNavigationBadge(): ?string
     {
-        return ( self::getResource()::getModel()::where('slug',request()->route('record'))->first()?->materi->count());
+        $cacheKey = 'navigation_badge_' . request()->route('record') . '_materi';
+
+        return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
+            return self::getResource()::getModel()
+                ::where('slug', request()->route('record'))
+                ->withCount('materi')
+                ->first()
+                ?->materi_count;
+        });
     }
+
     public static function canAccess(array $parameters = []): bool
     {
         $id = $parameters['record']['id'];
@@ -47,45 +61,10 @@ class ManageMateri extends ManageRelatedRecords
         }
         return false;
     }
+
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('judul')
-                    ->label('Judul')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Fieldset::make()
-                    ->schema([
-                        Toggle::make('published')
-                            ->label('Published')
-                            ->onIcon('heroicon-c-check')
-                            ->offIcon('heroicon-c-x-mark')
-                            ->onColor('success')
-                            ->default(false),
-                        Toggle::make('terjadwal')
-                            ->label('Terjadwal')
-                            ->columnSpan(2)
-                            ->onIcon('heroicon-c-check')
-                            ->offIcon('heroicon-c-x-mark')
-                            ->onColor('success')
-                            ->helperText('Apabila terjadwal, maka materi akan diterbitkan pada tanggal mulai')
-                            ->default(false),
-                    ])
-                    ->columns(3),
-                Forms\Components\RichEditor::make('deskripsi')
-                    ->required()
-                    ->label('Deskripsi'),
-                Forms\Components\FileUpload::make('files')
-                    ->label('File Materi')
-                    ->disk('public')
-                    ->directory('materi')
-                    ->downloadable()
-                    ->multiple()
-                    ->storeFileNamesIn('file_name')
-                    ->visibility('public'),
-
-            ])->columns(1);
+        return MateriResource::form($form);
     }
 
     public function table(Table $table): Table
@@ -106,24 +85,29 @@ class ManageMateri extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi')
                     ->limit(50),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat pada')
-                    ->dateTime()
-                    ->timezone('Asia/Jakarta')
-                    ->badge()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('file_name')
                     ->label('File Materi')
                     ->limit(20),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat pada')
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
+                    ->badge()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
-                Tables\Actions\Action::make('Kembali')
-                    ->url(url()->previous())
+                Tables\Actions\Action::make('Pelatihan')
+                    ->url(function () {
+                        $cacheKey = 'url_pelatihan_' . $this->record->pelatihan_id;
+                        return Cache::remember($cacheKey, now()->addHour(1), function () {
+                            return PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]);
+                        });
+                    })
                     ->icon('heroicon-o-arrow-left')
-                    ->color('secondary'),
+                    ->color('info'),
                 Tables\Actions\CreateAction::make()
                     ->label('Tambah Materi')
                     ->mutateFormDataUsing(function (array $data) {
@@ -136,10 +120,10 @@ class ManageMateri extends ManageRelatedRecords
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('view')
                         ->label('View')
-                        ->action(fn($record) => $this->redirectRoute('filament.admin.resources.materis.view', $record))
+                        ->url(fn($record) => MateriResource::getUrl('view', ['record' => $record]))
                         ->icon('heroicon-o-eye'),
                     Tables\Actions\ReplicateAction::make()
-                    ->requiresConfirmation(),
+                        ->requiresConfirmation(),
 //                    Tables\Actions\DissociateAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
@@ -168,7 +152,7 @@ class ManageMateri extends ManageRelatedRecords
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
-            ->defaultSort('urutan');
+            ->defaultSort('updated_at', 'desc');
 
     }
 

@@ -12,50 +12,45 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $logo = config('filament.brand_logo');
+        $panel->brandLogo($logo ? Storage::url($logo) : asset('assets/Logo-Be-Strong-Unila-2023.png'));
         return $panel
             ->default()
             ->id('admin')
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => '#3046b5',
-                'secondary' => Color::Gray,
+                'primary' => Color::hex(config('filament.colors.primary')),
+                'success' => Color::hex(config('filament.colors.success')),
+                'warning' => Color::hex(config('filament.colors.warning')),
+                'danger' => Color::hex(config('filament.colors.danger')),
+                'info' => Color::hex(config('filament.colors.info')),
+                'gray' => Color::hex(config('filament.colors.gray')),
 
             ])
+            ->plugins([
+                FilamentEnvEditorPlugin::make()
+                    ->authorize(
+                        fn() => auth()->user()->isAdmin()
+                    ),
+                SpotlightPlugin::make()
+            ])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->renderHook(
-                'panels::body.end',
-
-                fn() => view('footer'),
-            )
-            ->renderHook(
-                'panels::sidebar.nav.start',
-                fn() => view('profilComponent' )
-            )
-            ->renderHook(
-                'panels::user-menu.after',
-                fn()=> view('LogoutButtonComponent')
-            )
-            ->renderHook(
-                'panels::auth.login.form.after',
-                fn()=>view('kembalikeDasborComponent')
-            )
-            ->renderHook(
-                'panels::auth.register.form.after',
-                fn()=>view('kembalikeDasborComponent')
-            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -85,8 +80,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->darkMode(false)
-            ->brandName('Sistem Pelatihan Dosen Unila - Admin')
-            ->brandLogo(asset('assets/Logo-Be-Strong-Unila-2023.png'))
-            ->brandLogoHeight('50px');
+            ->brandName(config('app.name'))
+            ->brandLogoHeight(config('filament.brand_logo_height'));
     }
 }
