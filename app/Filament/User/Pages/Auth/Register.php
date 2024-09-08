@@ -141,7 +141,6 @@ class Register extends \Filament\Pages\Auth\Register
             })
             ->afterStateUpdated(function (Set $set, $state) {
                 $fullText = $this->dosenMapp[$state] ?? 'tidak ada';
-                dd($state, $fullText);
                 if ($fullText !== 'tidak ada') {
                     $namePart = $this->extractNameFromText($fullText);
                     $set('nama', $namePart);
