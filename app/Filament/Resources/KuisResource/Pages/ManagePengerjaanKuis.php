@@ -3,15 +3,19 @@
 namespace App\Filament\Resources\KuisResource\Pages;
 
 use App\Filament\Resources\KuisResource;
+use App\Filament\Resources\ModulResource;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\HeaderActionsPosition;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
+use Illuminate\Support\Facades\Cache;
 
 class ManagePengerjaanKuis extends ManageRelatedRecords
 {
@@ -102,8 +106,16 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
                     ])
             ])
             ->headerActions([
-//                Tables\Actions\CreateAction::make(),
-            ])
+                Action::make('Modul')
+                    ->url(function () {
+                        $cacheKey = 'modul_url_' .$this->record->modul_id . '_kuis';
+                        return Cache::remember($cacheKey, now()->addHour(), function () {
+                            return ModulResource::getUrl('kuis', ['record' => $this->record->modul->slug]);
+                        });
+                    })
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('info'),
+            ])->headerActionsPosition(HeaderActionsPosition::Bottom)
             ->actions([
                 EditAction::make()
                     ->label('Beri Penilaian')

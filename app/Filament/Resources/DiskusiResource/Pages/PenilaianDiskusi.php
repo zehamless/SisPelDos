@@ -3,19 +3,23 @@
 namespace App\Filament\Resources\DiskusiResource\Pages;
 
 use App\Filament\Resources\DiskusiResource;
+use App\Filament\Resources\ModulResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\HeaderActionsPosition;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Cache;
 
 class PenilaianDiskusi extends ManageRelatedRecords
 {
@@ -96,8 +100,16 @@ class PenilaianDiskusi extends ManageRelatedRecords
                     ])
             ])
             ->headerActions([
-//                Tables\Actions\CreateAction::make(),
-            ])
+                Action::make('Modul')
+                    ->url(function () {
+                        $cacheKey = 'modul_url_' .$this->record->modul_id . '_diskusi';
+                        return Cache::remember($cacheKey, now()->addHour(), function () {
+                            return ModulResource::getUrl('diskusi', ['record' => $this->record->modul->slug]);
+                        });
+                    })
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('info'),
+            ])->headerActionsPosition(HeaderActionsPosition::Bottom)
             ->actions([
                 EditAction::make()
                     ->label('Beri Penilaian')

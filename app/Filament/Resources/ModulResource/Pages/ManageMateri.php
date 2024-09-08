@@ -19,6 +19,7 @@ use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Cache;
 
 class ManageMateri extends ManageRelatedRecords
 {
@@ -98,8 +99,13 @@ class ManageMateri extends ManageRelatedRecords
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
-                Tables\Actions\Action::make('Kembali')
-                    ->url(fn() => PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]))
+                Tables\Actions\Action::make('Pelatihan')
+                    ->url(function () {
+                        $cacheKey = 'url_pelatihan_' . $this->record->pelatihan_id;
+                        return Cache::remember($cacheKey, now()->addHour(1), function () {
+                            return PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]);
+                        });
+                    })
                     ->icon('heroicon-o-arrow-left')
                     ->color('info'),
                 Tables\Actions\CreateAction::make()

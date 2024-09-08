@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class ManagePengajar extends ManageRelatedRecords
 {
@@ -81,8 +82,13 @@ class ManagePengajar extends ManageRelatedRecords
                 //
             ])
             ->headerActions([
-                Tables\Actions\Action::make('Kembali')
-                    ->url(fn() => PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]))
+                Tables\Actions\Action::make('Pelatihan')
+                    ->url(function () {
+                        $cacheKey = 'url_pelatihan_' . $this->record->pelatihan_id;
+                        return Cache::remember($cacheKey, now()->addHour(1), function () {
+                            return PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]);
+                        });
+                    })
                     ->icon('heroicon-o-arrow-left')
                     ->color('info'),
                 Tables\Actions\AttachAction::make()

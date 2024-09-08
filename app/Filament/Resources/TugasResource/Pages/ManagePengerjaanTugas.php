@@ -2,17 +2,22 @@
 
 namespace App\Filament\Resources\TugasResource\Pages;
 
+use App\Filament\Resources\ModulResource;
 use App\Filament\Resources\TugasResource;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\HeaderActionsPosition;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Concerns\NestedPage;
+use Illuminate\Support\Facades\Cache;
 
 class ManagePengerjaanTugas extends ManageRelatedRecords
 {
@@ -103,8 +108,16 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
                     ])
             ])
             ->headerActions([
-//                Tables\Actions\CreateAction::make(),
-            ])
+                Action::make('Modul')
+                    ->url(function () {
+                        $cacheKey = 'modul_url_' .$this->record->modul_id . '_tugas';
+                        return Cache::remember($cacheKey, now()->addHour(), function () {
+                            return ModulResource::getUrl('tugas', ['record' => $this->record->modul->slug]);
+                        });
+                    })
+                    ->icon('heroicon-o-arrow-left')
+                    ->color('info'),
+            ])->headerActionsPosition(HeaderActionsPosition::Bottom)
             ->actions([
                 EditAction::make()
                     ->label('Beri Penilaian')

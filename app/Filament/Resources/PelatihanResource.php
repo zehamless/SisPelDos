@@ -309,6 +309,20 @@ class PelatihanResource extends Resource
     {
         return $infolist
             ->schema([
+                Actions::make([
+                    Actions\Action::make('publish')
+                        ->label('Publish')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->action(fn(Pelatihan $record) => $record->update(['published' => true]))
+                        ->hidden(fn(Pelatihan $record) => $record->published),
+                    Actions\Action::make('draft')
+                        ->label('Draft')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn(Pelatihan $record) => $record->update(['published' => false]))
+                        ->hidden(fn(Pelatihan $record) => !$record->published),
+                ]),
                 \Filament\Infolists\Components\Section::make()
                     ->schema([
                         Grid::make(4)
@@ -357,7 +371,6 @@ class PelatihanResource extends Resource
                                         ->badge()
                                         ->formatStateUsing(fn($state) => $state ? 'Published' : 'Draft')
                                         ->color(fn($state) => $state ? 'success' : 'danger'),
-
                                     TextEntry::make('no_sertifikat')
                                         ->label('No. Sertifikat')
                                         ->badge(),

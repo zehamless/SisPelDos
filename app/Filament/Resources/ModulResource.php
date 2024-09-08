@@ -23,6 +23,7 @@ use Filament\Tables\Table;
 use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class ModulResource extends Resource
 {
@@ -48,19 +49,33 @@ class ModulResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('judul')
-                    ->required()
-                    ->maxLength(255),
-                Toggle::make('published')
-                    ->label('Published')
-                    ->onIcon('heroicon-c-check')
-                    ->offIcon('heroicon-c-x-mark')
-                    ->onColor('success')
-                    ->default(false),
-                Forms\Components\RichEditor::make('deskripsi')
-                    ->disableToolbarButtons(['attachFiles'])
-                    ->label('Deskripsi'),
-            ])->columns(1);
+                Forms\Components\Actions::make([
+                    Forms\Components\Actions\Action::make('Pelatihan')
+                        ->url(function ($record) {
+                            $cacheKey = 'url_pelatihan_' . $record->pelatihan_id;
+                            return Cache::remember($cacheKey, now()->addHour(1), function () use ($record) {
+                                return PelatihanResource::getUrl('modul', ['record' => $record->pelatihan->slug]);
+                            });
+                        })
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('info'),
+                ])->hiddenOn('create'),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('judul')
+                            ->required()
+                            ->maxLength(255),
+                        Toggle::make('published')
+                            ->label('Published')
+                            ->onIcon('heroicon-c-check')
+                            ->offIcon('heroicon-c-x-mark')
+                            ->onColor('success')
+                            ->default(false),
+                        Forms\Components\RichEditor::make('deskripsi')
+                            ->disableToolbarButtons(['attachFiles'])
+                            ->label('Deskripsi'),
+                    ])
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -93,16 +108,35 @@ class ModulResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
+
         return $infolist
             ->schema([
                 Actions::make([
-                    Actions\Action::make('Kembali')
-                        ->url(fn(Modul $record) => PelatihanResource::getUrl('modul', ['record' => $record->pelatihan->slug]))
+                    Actions\Action::make('Pelatihan')
+                        ->url(function ($record) {
+                            $cacheKey = 'url_pelatihan_' . $record->pelatihan_id;
+                            return Cache::remember($cacheKey, now()->addHour(1), function () use ($record) {
+                                return PelatihanResource::getUrl('modul', ['record' => $record->pelatihan->slug]);
+                            });
+                        })
                         ->icon('heroicon-o-arrow-left')
                         ->color('info'),
                     Actions\Action::make('Rekap Nilai')
                         ->openUrlInNewTab()
-                        ->url(fn(Modul $record) => route('rekap.modul', $record))
+                        ->url(fn(Modul $record) => route('rekap.modul', $record)),
+                    Actions\Action::make('publish')
+                        ->label('Publish')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->action(fn(Modul $record) => $record->update(['published' => true]))
+                        ->hidden(fn(Modul $record) => $record->published),
+                    Actions\Action::make('draft')
+                        ->label('Draft')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn(Modul $record) => $record->update(['published' => false]))
+                        ->hidden(fn(Modul $record) => !$record->published),
+
                 ]),
                 Section::make()
                     ->schema([

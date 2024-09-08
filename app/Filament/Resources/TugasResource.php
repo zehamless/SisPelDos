@@ -8,6 +8,7 @@ use App\Models\MateriTugas;
 use Filament\Forms;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -18,6 +19,7 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class TugasResource extends Resource
 {
@@ -53,6 +55,17 @@ class TugasResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Actions::make([
+                    Forms\Components\Actions\Action::make('Modul')
+                        ->url(function ($record) {
+                            $cacheKey = 'modul_url_' . $record->modul_id. '_tugas';
+                            return Cache::remember($cacheKey, now()->addHour(), function () use ($record) {
+                                return ModulResource::getUrl('tugas', ['record' => $record->modul->slug]);
+                            });
+                        })
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('info'),
+                ])->hiddenOn('create'),
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('judul')
@@ -114,6 +127,29 @@ class TugasResource extends Resource
     {
         return $infolist
             ->schema([
+                Actions::make([
+                    Actions\Action::make('Modul')
+                        ->url(function ($record) {
+                            $cacheKey = 'modul_url_' . $record->modul_id. '_tugas';
+                            return Cache::remember($cacheKey, now()->addHour(), function () use ($record) {
+                                return ModulResource::getUrl('tugas', ['record' => $record->modul->slug]);
+                            });
+                        })
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('info'),
+                    Actions\Action::make('publish')
+                        ->label('Publish')
+                        ->requiresConfirmation()
+                        ->color('success')
+                        ->action(fn($record) => $record->update(['published' => true]))
+                        ->hidden(fn($record) => $record->published),
+                    Actions\Action::make('draft')
+                        ->label('Draft')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn($record) => $record->update(['published' => false]))
+                        ->hidden(fn($record) => !$record->published),
+                ]),
                 Section::make('Status')
                     ->schema([
                         TextEntry::make('published')

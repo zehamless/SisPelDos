@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PelatihanResource\Pages;
 
+use App\Filament\Resources\ModulResource;
 use App\Filament\Resources\PelatihanResource;
 use App\Models\Modul;
 use Filament\Forms;
@@ -45,20 +46,7 @@ class ManageModul extends ManageRelatedRecords
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('judul')
-                    ->required()
-                    ->maxLength(255),
-                Toggle::make('published')
-                    ->label('Published')
-                    ->onIcon('heroicon-c-check')
-                    ->offIcon('heroicon-c-x-mark')
-                    ->onColor('success')
-                    ->default(false),
-                Forms\Components\RichEditor::make('deskripsi')
-                    ->label('Deskripsi'),
-            ])->columns(1);
+        return ModulResource::form($form);
     }
 
     public function table(Table $table): Table
