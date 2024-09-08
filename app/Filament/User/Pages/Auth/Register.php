@@ -13,6 +13,7 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class Register extends \Filament\Pages\Auth\Register
@@ -34,7 +35,7 @@ class Register extends \Filament\Pages\Auth\Register
                                     ->label('Terdaftar PDDIKTI?')
                                     ->live()
                                     ->default(true),
-                            ])->hidden(fn()=> !config('filament.no_pddikti_register')),
+                            ])->hidden(fn() => !config('filament.no_pddikti_register')),
                         Group::make([
                             $this->getDosenComponent(),
                             $this->getNameFormComponent(),
@@ -42,13 +43,14 @@ class Register extends \Filament\Pages\Auth\Register
                             $this->getEmailFormComponent(),
                             $this->getPasswordFormComponent(),
                             $this->getPasswordConfirmationFormComponent(),
-                        ])->hidden(fn (Get $get) => !$get('is_dosen')),
-                        $this->wizard()->hidden(fn (Get $get) => $get('is_dosen')),
+                        ])->hidden(fn(Get $get) => !$get('is_dosen')),
+                        $this->wizard()->hidden(fn(Get $get) => $get('is_dosen')),
                     ])
                     ->statePath('data'),
             ),
         ];
     }
+
     protected function wizard()
     {
         return Wizard::make([
@@ -112,6 +114,7 @@ class Register extends \Filament\Pages\Auth\Register
                 ]),
         ]);
     }
+
     protected function getDosenComponent()
     {
         return Select::make('link')
@@ -123,41 +126,89 @@ class Register extends \Filament\Pages\Auth\Register
             ->live()
             ->preload()
             ->getSearchResultsUsing(function (string $search) {
-                $response = Http::get('https://api-frontend.kemdikbud.go.id/hit/' . $search)->json();
-//                dd($response['dosen']);
-                if (isset($response['dosen']) && is_array($response['dosen'])) {
-                    // Memodifikasi array sehingga key adalah 'website-link' dan value adalah 'text'
-                    $this->dosenMapp = collect($response['dosen'])->mapWithKeys(function ($item) {
-                        return [$item['website-link'] => $item['text']];
-                    })->toArray();
-//                    dd($this->dosenMapp);
+                // Attempt to retrieve dosenMapp from cache
+                $cacheKey = 'dosen_mapp_' . $search;
+                $this->dosenMapp = Cache::get($cacheKey);
+
+                if ($this->dosenMapp !== null) {
                     return $this->dosenMapp;
                 }
-
-                return [];
+                // If data is not in cache, fetch from API and cache the response
+                $response = $this->fetchDosenData($search);
+                $mappedData = $this->mapDosenData($response['dosen'] ?? []);
+                Cache::put($cacheKey, $mappedData, now()->addHours(1)); // Cache dosenMapp for 1 hour
+                return $this->dosenMapp = $mappedData;
             })
             ->afterStateUpdated(function (Set $set, $state) {
                 $fullText = $this->dosenMapp[$state] ?? 'tidak ada';
-//                dump($this->dosenMapp);
-//                dump($state);
+                dd($state, $fullText);
                 if ($fullText !== 'tidak ada') {
-                    // Extract the name before the comma
-                    $namePart = explode(',', $fullText)[0];
+                    $namePart = $this->extractNameFromText($fullText);
                     $set('nama', $namePart);
 
-                    // Extract the NIDN
-                    if (preg_match('/NIDN\s*:\s*(\d+)/', $fullText, $matches)) {
-                        $nidn = $matches[1];
-                        $set('no_induk', $nidn);
-                    }
+                    $nidn = $this->extractNidnFromText($fullText);
+                    $set('no_induk', $nidn);
                 } else {
                     $set('nama', $fullText);
                     $set('no_induk', '');
                 }
-
             });
-//            ->getSelectedRecord(fn($value, $state) => dd($value, $state));
+    }
 
+    /**
+     * Fetch dosen data from the API.
+     *
+     * @param string $search
+     * @return array
+     */
+    protected function fetchDosenData(string $search): array
+    {
+        try {
+            $response = Http::get('https://api-frontend.kemdikbud.go.id/hit/' . $search)->json();
+            return $response;
+        } catch (\Exception $e) {
+            // Handle the exception appropriately
+            return [];
+        }
+    }
+
+    /**
+     * Map the dosen data to the desired format.
+     *
+     * @param array $dosenData
+     * @return array
+     */
+    protected function mapDosenData(array $dosenData): array
+    {
+        return collect($dosenData)
+            ->filter(fn($item) => $item['website-link'] !== '/data_dosen/')
+            ->mapWithKeys(fn($item) => [$item['website-link'] => $item['text']])
+            ->toArray();
+    }
+
+    /**
+     * Extract the name from the full text.
+     *
+     * @param string $fullText
+     * @return string
+     */
+    protected function extractNameFromText(string $fullText): string
+    {
+        return explode(',', $fullText)[0];
+    }
+
+    /**
+     * Extract the NIDN from the full text.
+     *
+     * @param string $fullText
+     * @return string
+     */
+    protected function extractNidnFromText(string $fullText): string
+    {
+        if (preg_match('/NIDN\s*:\s*(\d+)/', $fullText, $matches)) {
+            return $matches[1];
+        }
+        return '';
     }
 
     protected function nidnComponent()

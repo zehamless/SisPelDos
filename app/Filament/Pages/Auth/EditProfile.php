@@ -48,7 +48,6 @@ class EditProfile extends BaseEditProfile
                         ->action(function (Get $get, Set $set) {
                             $id = $get('no_induk');
                             $data = $this->hitDosenApiController($id);
-//                                            dd($data);
                             if (is_array($data)) {
                                 $set('universitas', $data['nama_pt']);
                                 $set('prodi', $data['nama_prodi']);
@@ -167,10 +166,8 @@ class EditProfile extends BaseEditProfile
 
     private function hitDosenApiController(mixed $param)
     {
-//        https://pddikti.kemdikbud.go.id/api/pencarian/dosen/param
         try {
             $getId = Http::get('https://pddikti.kemdikbud.go.id/api/pencarian/dosen/' . $param)->json();
-//            https://pddikti.kemdikbud.go.id/api/dosen/profile/param
             $response = Http::get('https://pddikti.kemdikbud.go.id/api/dosen/profile/' . $getId[0]['id'])->json();
             return $response;
         } catch (Exception $e) {
