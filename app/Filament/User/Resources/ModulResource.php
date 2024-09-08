@@ -18,13 +18,14 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class ModulResource extends Resource
 {
     use NestedResource;
 
     protected static ?string $model = Modul::class;
-    protected static string | array $routeMiddleware = 'auth';
+    protected static string|array $routeMiddleware = 'auth';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $recordTitleAttribute = 'judul';
@@ -38,10 +39,12 @@ class ModulResource extends Resource
     {
         return false;
     }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('published', true);
     }
+
     public static function canDelete(Model $record): bool
     {
         return false;
@@ -90,10 +93,15 @@ class ModulResource extends Resource
         return $infolist
             ->schema([
                 Actions::make([
-                    Action::make('Kembali')
-                        ->url(fn($record) => PelatihanResource::getUrl('view', ['record'=>$record->pelatihan->slug]))
+                    Action::make('kembali')
+                        ->url(function ($record) {
+                            $cacheKey = 'user_pelatihan_url_' . $record->pelatihan_id;
+                            return Cache::remember($cacheKey, now()->addHour(), function () use ($record) {
+                                return PelatihanResource::getUrl('view', ['record' => $record->pelatihan->slug]);
+                            });
+                        })
                         ->icon('heroicon-o-arrow-left')
-                        ->color('secondary'),
+                        ->color('info'),
                 ]),
                 Section::make('Deskripsi')
                     ->schema([

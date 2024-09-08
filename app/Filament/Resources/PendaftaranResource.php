@@ -18,6 +18,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Cache;
 
 class PendaftaranResource extends Resource
 {
@@ -38,8 +39,8 @@ class PendaftaranResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return cache()->remember('navigation_badge_pendaftaran', now()->addMinutes(5), function () {
-            return static::getModel()::count();
+        return Cache::remember('navigation_badge_pendaftaran', now()->addMinutes(5), function () {
+            return self::getModel()::mendaftar()->count();
         });
     }
 

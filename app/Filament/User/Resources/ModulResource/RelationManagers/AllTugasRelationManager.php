@@ -23,6 +23,11 @@ class AllTugasRelationManager extends RelationManager
         return false;
     }
 
+    protected function canCreate(): bool
+    {
+        return false;
+    }
+
     public function form(Form $form): Form
     {
         return $form
@@ -47,7 +52,6 @@ class AllTugasRelationManager extends RelationManager
                 Forms\Components\FileUpload::make('files')
                     ->columnSpan(2)
                     ->label('File Materi')
-                    ->disk('public')
                     ->directory('materi')
                     ->downloadable()
                     ->multiple()
@@ -69,7 +73,7 @@ class AllTugasRelationManager extends RelationManager
                             'tugas' => 'primary',
                             'materi' => 'info',
                             'kuis' => 'warning',
-                            default => 'secondary',
+                            default => 'success',
                         }
                     )
                     ->searchable(),
@@ -84,7 +88,7 @@ class AllTugasRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('tgl_selesai')
                     ->label('Tanggal Selesai')
                     ->badge()
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->timezone('Asia/Jakarta')
                     ->color('danger')
                     ->searchable(),
@@ -102,7 +106,7 @@ class AllTugasRelationManager extends RelationManager
                                 return '-';
                         }
                     })
-                ->badge()
+                    ->badge()
 
             ])
             ->filters([
