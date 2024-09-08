@@ -113,6 +113,7 @@ class ManagePengerjaanKuis extends ManageRelatedRecords
                             return ModulResource::getUrl('kuis', ['record' => $this->record->modul->slug]);
                         });
                     })
+                    ->tooltip('Kembali ke Modul terkait')
                     ->icon('heroicon-o-arrow-left')
                     ->color('info'),
             ])->headerActionsPosition(HeaderActionsPosition::Bottom)

@@ -63,6 +63,7 @@ class TugasResource extends Resource
                                 return ModulResource::getUrl('tugas', ['record' => $record->modul->slug]);
                             });
                         })
+                        ->tooltip('Kembali ke Modul terkait')
                         ->icon('heroicon-o-arrow-left')
                         ->color('info'),
                 ])->hiddenOn('create'),
@@ -135,17 +136,20 @@ class TugasResource extends Resource
                                 return ModulResource::getUrl('tugas', ['record' => $record->modul->slug]);
                             });
                         })
+                        ->tooltip('Kembali ke Modul terkait')
                         ->icon('heroicon-o-arrow-left')
                         ->color('info'),
                     Actions\Action::make('publish')
                         ->label('Publish')
                         ->requiresConfirmation()
                         ->color('success')
+                        ->tooltip('Ubah status menjadi published')
                         ->action(fn($record) => $record->update(['published' => true]))
                         ->hidden(fn($record) => $record->published),
                     Actions\Action::make('draft')
                         ->label('Draft')
                         ->color('danger')
+                        ->tooltip('Ubah status menjadi draft')
                         ->requiresConfirmation()
                         ->action(fn($record) => $record->update(['published' => false]))
                         ->hidden(fn($record) => !$record->published),
