@@ -31,7 +31,7 @@ class ManagePeserta extends ManageRelatedRecords
 
     public static function getNavigationBadge(): ?string
     {
-        $cacheKey = 'navigation_badge_' . request()->route('record').'_peserta';
+        $cacheKey = 'navigation_badge_' . request()->route('record') . '_peserta';
 
         return cache()->remember($cacheKey, now()->addMinutes(5), function () use ($cacheKey) {
             return self::getResource()::getModel()

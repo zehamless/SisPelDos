@@ -108,6 +108,7 @@ class ManageKuis extends ManageRelatedRecords
                             return PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]);
                         });
                     })
+                    ->tooltip('Kembali ke pelatihan terkait')
                     ->icon('heroicon-o-arrow-left')
                     ->color('info'),
                 Tables\Actions\CreateAction::make()

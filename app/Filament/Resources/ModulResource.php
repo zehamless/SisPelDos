@@ -57,6 +57,7 @@ class ModulResource extends Resource
                                 return PelatihanResource::getUrl('modul', ['record' => $record->pelatihan->slug]);
                             });
                         })
+                        ->tooltip('Kembali ke pelatihan terkait')
                         ->icon('heroicon-o-arrow-left')
                         ->color('info'),
                 ])->hiddenOn('create'),
@@ -119,20 +120,24 @@ class ModulResource extends Resource
                                 return PelatihanResource::getUrl('modul', ['record' => $record->pelatihan->slug]);
                             });
                         })
+                        ->tooltip('Kembali ke pelatihan terkait')
                         ->icon('heroicon-o-arrow-left')
                         ->color('info'),
                     Actions\Action::make('Rekap Nilai')
-                        ->openUrlInNewTab()
-                        ->url(fn(Modul $record) => route('rekap.modul', $record)),
+                        ->tooltip('Lihat rekap nilai')
+                        ->url(fn(Modul $record) => route('rekap.modul', $record))
+                        ->openUrlInNewTab(),
                     Actions\Action::make('publish')
                         ->label('Publish')
                         ->requiresConfirmation()
+                        ->tooltip('Ubah status menjadi published')
                         ->color('success')
                         ->action(fn(Modul $record) => $record->update(['published' => true]))
                         ->hidden(fn(Modul $record) => $record->published),
                     Actions\Action::make('draft')
                         ->label('Draft')
                         ->color('danger')
+                        ->tooltip('Ubah status menjadi draft')
                         ->requiresConfirmation()
                         ->action(fn(Modul $record) => $record->update(['published' => false]))
                         ->hidden(fn(Modul $record) => !$record->published),

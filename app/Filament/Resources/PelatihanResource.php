@@ -313,12 +313,14 @@ class PelatihanResource extends Resource
                     Actions\Action::make('publish')
                         ->label('Publish')
                         ->requiresConfirmation()
+                        ->tooltip('Ubah status menjadi published')
                         ->color('success')
                         ->action(fn(Pelatihan $record) => $record->update(['published' => true]))
                         ->hidden(fn(Pelatihan $record) => $record->published),
                     Actions\Action::make('draft')
                         ->label('Draft')
                         ->color('danger')
+                        ->tooltip('Ubah status menjadi draft')
                         ->requiresConfirmation()
                         ->action(fn(Pelatihan $record) => $record->update(['published' => false]))
                         ->hidden(fn(Pelatihan $record) => !$record->published),

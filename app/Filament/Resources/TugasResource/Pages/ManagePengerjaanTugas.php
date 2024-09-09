@@ -115,6 +115,7 @@ class ManagePengerjaanTugas extends ManageRelatedRecords
                             return ModulResource::getUrl('tugas', ['record' => $this->record->modul->slug]);
                         });
                     })
+                    ->tooltip('Kembali ke Modul terkait')
                     ->icon('heroicon-o-arrow-left')
                     ->color('info'),
             ])->headerActionsPosition(HeaderActionsPosition::Bottom)

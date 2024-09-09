@@ -25,6 +25,7 @@ use Guava\FilamentNestedResources\Ancestor;
 use Guava\FilamentNestedResources\Concerns\NestedResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
 
 class MateriTugasResource extends Resource
@@ -91,10 +92,13 @@ class MateriTugasResource extends Resource
                 Actions::make([
                     Actions\Action::make('Kembali')
                         ->url(function () use ($modul) {
-                            return ModulResource::getUrl('view', ['record' => $modul->slug]);
+                            $cacheKey = 'user_modul_url_' . $modul->id;
+                            return Cache::remember($cacheKey, now()->addHour(), function () use ($modul) {
+                                return ModulResource::getUrl('view', ['record' => $modul->slug]);
+                            });
                         })
                         ->icon('heroicon-o-arrow-left')
-                        ->color('secondary'),
+                        ->color('info'),
                 ]),
                 Section::make('Modul')
                     ->schema([
@@ -119,7 +123,7 @@ class MateriTugasResource extends Resource
                                 'tugas' => 'primary',
                                 'materi' => 'info',
                                 'kuis' => 'danger',
-                                default => 'secondary',
+                                default => 'success',
                             }),
                         TextEntry::make('deskripsi')
                             ->hiddenLabel()
@@ -154,11 +158,13 @@ class MateriTugasResource extends Resource
                     ->schema([
                         TextEntry::make('tgl_mulai')
                             ->label('Tanggal Mulai')
+                            ->dateTime('d M Y H:i')
                             ->badge()
                             ->color('success'),
                         TextEntry::make('tgl_tenggat')
                             ->label('Tanggal Selesai')
                             ->badge()
+                            ->dateTime('d M Y H:i')
                             ->color('danger'),
                         Actions::make([
                             Actions\Action::make('Submit Tugas')
@@ -172,15 +178,14 @@ class MateriTugasResource extends Resource
                                         ->storeFileNamesIn('file_name')
                                         ->visibility('public'),
                                     Textarea::make('pesan_peserta')
-                                        ->label('Pesan Peserta')
-                                        ->placeholder('Tulis pesan untuk admin'),
+                                        ->label('Catatan')
+                                        ->placeholder('Masukkan catatan untuk admin atau pengajar'),
                                 ])
                                 ->action(function (array $data, $record) {
                                     $status = 'belum';
                                     if ($record->tgl_selesai > now()) {
                                         $status = $record->tgl_tenggat > now() ? 'selesai' : 'telat';
                                     }
-
                                     auth()->user()->mengerjakan()->updateExistingPivot($record->id, [
                                         'files' => json_encode($data['files']),
                                         'file_name' => json_encode($data['file_name']),
@@ -256,7 +261,7 @@ class MateriTugasResource extends Resource
                                         ->placeholder('Tulis pesan untuk admin'),
                                 ])
                                 ->action(function (array $data, $record) {
-                                    $status= 'selesai';
+                                    $status = 'selesai';
 //                                    dd($status);
                                     if ($record->tgl_selesai > now()) {
                                         $status = $record->tgl_tenggat > now() ? 'selesai' : 'telat';
@@ -302,10 +307,12 @@ class MateriTugasResource extends Resource
                                 TextEntry::make('tgl_mulai')
                                     ->label('Mulai')
                                     ->badge()
+                                    ->dateTime('d M Y H:i')
                                     ->color('success'),
                                 TextEntry::make('tgl_tenggat')
                                     ->label('Selesai')
                                     ->badge()
+                                    ->dateTime('d M Y H:i')
                                     ->color('danger'),
                             ])->columns(3),
                         Actions::make([
@@ -315,7 +322,7 @@ class MateriTugasResource extends Resource
                                     return redirect()->route('kuis.show', $record->id);
                                 })
                                 ->requiresConfirmation()
-                        ->disabled(fn($record) => now() < $record->tgl_mulai || now() > $record->tgl_selesai || $attemped >= $record->max_attempt),
+                                ->disabled(fn($record) => now() < $record->tgl_mulai || now() > $record->tgl_selesai || $attemped >= $record->max_attempt),
                         ])
                     ])
                     ->columns(1)

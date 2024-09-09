@@ -89,6 +89,7 @@ class ManagePengajar extends ManageRelatedRecords
                             return PelatihanResource::getUrl('modul', ['record' => $this->record->pelatihan->slug]);
                         });
                     })
+                    ->tooltip('Kembali ke halaman pelatihan')
                     ->icon('heroicon-o-arrow-left')
                     ->color('info'),
                 Tables\Actions\AttachAction::make()

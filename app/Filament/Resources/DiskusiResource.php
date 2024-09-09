@@ -64,6 +64,7 @@ class DiskusiResource extends Resource
                                 return ModulResource::getUrl('diskusi', ['record' => $record->modul->slug]);
                             });
                         })
+                        ->tooltip('Kembali ke Modul terkait')
                         ->icon('heroicon-o-arrow-left')
                         ->color('info'),
                 ])->hiddenOn('create'),
@@ -118,17 +119,20 @@ class DiskusiResource extends Resource
                                 return ModulResource::getUrl('diskusi', ['record' => $record->modul->slug]);
                             });
                         })
+                        ->tooltip('Kembali ke Modul terkait')
                         ->icon('heroicon-o-arrow-left')
                         ->color('info'),
                     Actions\Action::make('publish')
                         ->label('Publish')
                         ->requiresConfirmation()
+                        ->tooltip('Ubah status menjadi published')
                         ->color('success')
                         ->action(fn($record) => $record->update(['published' => true]))
                         ->hidden(fn($record) => $record->published),
                     Actions\Action::make('draft')
                         ->label('Draft')
                         ->color('danger')
+                        ->tooltip('Ubah status menjadi draft')
                         ->requiresConfirmation()
                         ->action(fn($record) => $record->update(['published' => false]))
                         ->hidden(fn($record) => !$record->published),
