@@ -83,9 +83,11 @@ class ChatbotDatasResource extends Resource
                     ->label('Untuk Admin')
                     ->sortable(),
                 TextColumn::make('question')
+                    ->label('Pertanyaan')
                     ->limit(50)
                     ->searchable(),
                 TextColumn::make('answer')
+                    ->label('Jawaban')
                     ->searchable()
                     ->sortable()
                     ->limit(50),
