@@ -42,7 +42,7 @@ class Chatbot extends Component
         } else {
             $trainedModel = $model->restoreFromFile(storage_path('app/dosenBotModel'));
         }
-        $answer = $trainedModel->predict([$this->message]);
+        $answer = $trainedModel->predict([strtolower($this->message)]);
         // Check if the last two bot answers are the same as the current answer
         $previousAnswers = array_slice(array_filter($this->conversation, function ($item) {
             return isset($item['sender']) && $item['sender'] === 1;
