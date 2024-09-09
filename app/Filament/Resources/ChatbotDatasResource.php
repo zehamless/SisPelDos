@@ -86,6 +86,8 @@ class ChatbotDatasResource extends Resource
                     ->limit(50)
                     ->searchable(),
                 TextColumn::make('answer')
+                    ->searchable()
+                    ->sortable()
                     ->limit(50),
             ])
             ->filters([

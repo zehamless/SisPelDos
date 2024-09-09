@@ -60,6 +60,7 @@ class Chatbot extends Component
             $this->conversation[] = [
                 'sender' => 1,
                 'answer' => $currentAnswer,
+                'is_error' => true,
             ];
         }
         $this->dispatch('scroll-to-bottom');
@@ -67,9 +68,15 @@ class Chatbot extends Component
 
     public function like(int $key)
     {
-        $answer = $this->conversation[$key]['answer'];
-        $question = $this->conversation[$key - 1]['question'];
-        ChatbotResponseFeedbackJob::dispatch($question, $answer);
-        $this->liked[$key] = true;
+        if (array_key_exists('is_error', $this->conversation[$key]) && $this->conversation[$key]['is_error']) {
+            $this->liked[$key] = true;
+        } else {
+            ChatbotResponseFeedbackJob::dispatch(
+                $this->conversation[$key - 1]['question'],
+                $this->conversation[$key]['answer']
+            );
+            $this->liked[$key] = true;
+        }
     }
+
 }
