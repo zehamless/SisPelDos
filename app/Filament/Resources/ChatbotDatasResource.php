@@ -49,7 +49,7 @@ class ChatbotDatasResource extends Resource
                     Toggle::make('admin')
                         ->helperText('Jika diaktifkan, jawaban ini hanya bisa diakses oleh admin'),
                     Textarea::make('question')
-                        ->unique()
+                        ->unique(ignoreRecord: true)
                         ->required(),
                     MarkdownEditor::make('answer')
                         ->toolbarButtons([

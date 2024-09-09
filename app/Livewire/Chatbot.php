@@ -31,6 +31,7 @@ class Chatbot extends Component
 
         $this->dispatch('scroll-to-bottom');
         $this->botman();
+        $this->message = '';
     }
 
     private function botman()
