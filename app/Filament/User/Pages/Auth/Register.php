@@ -32,6 +32,7 @@ class Register extends \Filament\Pages\Auth\Register
                         Section::make()
                             ->schema([
                                 Toggle::make('is_dosen')
+                                    ->dehydrated(false)
                                     ->label('Terdaftar PDDIKTI?')
                                     ->live()
                                     ->default(true),
