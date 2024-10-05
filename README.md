@@ -1,4 +1,4 @@
-# Pelatihan Dosen
+# Learning Management System
 *by Mahez Pradana*
 ### Table of Contents
 **[Installation Instructions(ID)](#instalasi)**<br>
@@ -240,3 +240,15 @@ https://medium.com/beyn-technology/hola-frankenphp-laravel-octane-servers-compar
 ### Server Performance References
 https://medium.com/@dimdev/9-php-runtimes-performance-benchmark-cbc0527b9df9  
 https://medium.com/beyn-technology/hola-frankenphp-laravel-octane-servers-comparison-pushing-the-boundaries-of-performance-d3e7ad8e652c
+
+## View
+![image](https://github.com/user-attachments/assets/67aad54f-0ba0-4e11-abc0-cb0f7cad3203)
+![image](https://github.com/user-attachments/assets/7389e32b-5329-433d-8762-5d1239e39cb5)
+![image](https://github.com/user-attachments/assets/32639fdc-c2e2-4114-805f-52e1b1184864)
+![image](https://github.com/user-attachments/assets/4c576390-32b7-48bd-8198-3266ec28631c)
+![image](https://github.com/user-attachments/assets/890af9e4-1a9c-4fdb-92f1-959b37fc14f0)
+
+
+
+
+
